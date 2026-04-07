@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SiteHeader from '@/components/site-header';
 import SiteFooter from '@/components/site-footer';
@@ -542,7 +542,7 @@ function validateStartForm(
 export default function HomePage() {
   const router = useRouter();
 
-  const [preferredLanguage, setPreferredLanguage] = useState<UiLanguage>('en');
+  const [preferredLanguage, setPreferredLanguage] = useState<UiLanguage>(() => getClientUiLanguage('en'));
   const [idea, setIdea] = useState('');
   const [market, setMarket] = useState('');
   const [customer, setCustomer] = useState('');
@@ -551,10 +551,6 @@ export default function HomePage() {
   const formSectionRef = useRef<HTMLDivElement | null>(null);
   const ideaInputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    const initialLanguage = getClientUiLanguage('en');
-    setPreferredLanguage(initialLanguage);
-  }, []);
 
   const copy = UI_COPY[preferredLanguage];
   const isArabic = preferredLanguage === 'ar';
