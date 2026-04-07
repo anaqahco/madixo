@@ -85,7 +85,7 @@ function compactItems(items: string[], maxItems = 6, maxLength = 110) {
   );
 }
 
-function sanitizeValidationPlan(plan: ValidationPlan, uiLang: UiLanguage): ValidationPlan {
+function sanitizeValidationPlan(plan: ValidationPlan): ValidationPlan {
   const checklist = compactItems(getPlanChecklist(plan), 6, 110);
   const validationFocus = compactText(plan.validationFocus || plan.validationThesis, 220);
   const targetSegment = compactText(plan.targetSegment || plan.idealFirstCustomer, 180);
@@ -157,11 +157,9 @@ function mapRowToSavedValidationPlan(row: ValidationPlansRow): SavedValidationPl
                 : 'Test the right commitment level.',
           },
           checklist7Day: [],
-        },
-        row.ui_lang
-      ),
-    row.ui_lang
-  );
+        }
+      )
+    );
   const cleanIterationEngine = sanitizeIterationEngineOutput(
     normalizeIterationEngineOutput(row.iteration_engine_json)
   );
@@ -287,8 +285,7 @@ function buildAppliedPlan(params: {
         ...plan.firstOffer,
         description: updatedValue || plan.firstOffer.description,
       },
-    },
-    uiLang
+    }
   );
 }
 
@@ -328,7 +325,7 @@ export async function saveUserValidationPlan(params: {
     user_id: user.id,
     report_id: params.reportId,
     ui_lang: params.uiLang,
-    plan_json: sanitizeValidationPlan(params.plan, params.uiLang),
+    plan_json: sanitizeValidationPlan(params.plan),
   };
 
   const { data, error } = await supabase
