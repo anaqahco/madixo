@@ -26,6 +26,21 @@ const client = new OpenAI({
 
 const MODEL = process.env.OPENAI_MODEL || 'gpt-5';
 
+
+type JsonRecord = Record<string, unknown>;
+
+function isRecord(value: unknown): value is JsonRecord {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function getRecordArray(value: unknown): JsonRecord[] {
+  return Array.isArray(value) ? value.filter(isRecord) : [];
+}
+
+function getTrimmedString(value: unknown): string | null {
+  return typeof value === 'string' && value.trim() ? value.trim() : null;
+}
+
 function getLocalizedError(
   key:
     | 'missingReportId'
@@ -66,30 +81,42 @@ function getInstructions(uiLang: UiLanguage, secondPass = false) {
     : 'You are Madixo, a practical advisor that turns the current report, saved market notes, and the decision view into the best practical step now. Use only the current report, current plan, saved decision view, and saved notes. Do not repeat the old plan verbatim; propose the next practical step. Output only JSON matching the requested schema, with no markdown or code fences.';
 }
 
-function extractTextFromOutputItem(item: any): string[] {
-  if (!item || typeof item !== 'object') return [];
+function extractTextFromOutputItem(item: unknown): string[] {
+  if (!isRecord(item)) return [];
 
-  if (Array.isArray(item.content)) {
-    return item.content.flatMap((part: any) => {
-      if (!part || typeof part !== 'object') return [];
-      if (typeof part.text === 'string' && part.text.trim()) return [part.text.trim()];
-      if (typeof part.output_text === 'string' && part.output_text.trim()) return [part.output_text.trim()];
-      if (typeof part.value === 'string' && part.value.trim()) return [part.value.trim()];
+  const content = getRecordArray(item.content);
+  if (content.length) {
+    return content.flatMap((part) => {
+      const text = getTrimmedString(part.text);
+      if (text) return [text];
+
+      const outputText = getTrimmedString(part.output_text);
+      if (outputText) return [outputText];
+
+      const value = getTrimmedString(part.value);
+      if (value) return [value];
+
       return [];
     });
   }
 
-  if (typeof item.text === 'string' && item.text.trim()) return [item.text.trim()];
-  return [];
+  const text = getTrimmedString(item.text);
+  return text ? [text] : [];
 }
 
-function getRawResponseText(response: any): string {
-  if (typeof response?.output_text === 'string' && response.output_text.trim()) {
-    return response.output_text.trim();
+function getRawResponseText(response: unknown): string {
+  if (!isRecord(response)) {
+    return '';
   }
 
-  if (Array.isArray(response?.output)) {
-    const collected = response.output.flatMap((item: any) => extractTextFromOutputItem(item));
+  const outputText = getTrimmedString(response.output_text);
+  if (outputText) {
+    return outputText;
+  }
+
+  const output = getRecordArray(response.output);
+  if (output.length) {
+    const collected = output.flatMap((item) => extractTextFromOutputItem(item));
     if (collected.length) return collected.join('\n').trim();
   }
 
@@ -119,25 +146,21 @@ function extractJsonCandidate(value: string) {
   return stripped;
 }
 
-function extractStructuredOutput(response: any): IterationEngineOutput | null {
-  const directParsed = (response as any)?.output_parsed;
-  const normalizedDirect = normalizeIterationEngineOutput(directParsed);
+function extractStructuredOutput(response: unknown): IterationEngineOutput | null {
+  if (!isRecord(response)) {
+    return null;
+  }
+
+  const normalizedDirect = normalizeIterationEngineOutput(response.output_parsed);
   if (normalizedDirect) return normalizedDirect;
 
-  if (Array.isArray(response?.output)) {
-    for (const item of response.output) {
-      if (item && typeof item === 'object') {
-        const normalizedItem = normalizeIterationEngineOutput((item as any).parsed);
-        if (normalizedItem) return normalizedItem;
+  for (const item of getRecordArray(response.output)) {
+    const normalizedItem = normalizeIterationEngineOutput(item.parsed);
+    if (normalizedItem) return normalizedItem;
 
-        if (Array.isArray((item as any).content)) {
-          for (const part of (item as any).content) {
-            if (!part || typeof part !== 'object') continue;
-            const normalizedPart = normalizeIterationEngineOutput((part as any).parsed);
-            if (normalizedPart) return normalizedPart;
-          }
-        }
-      }
+    for (const part of getRecordArray(item.content)) {
+      const normalizedPart = normalizeIterationEngineOutput(part.parsed);
+      if (normalizedPart) return normalizedPart;
     }
   }
 
