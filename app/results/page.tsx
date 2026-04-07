@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import SiteHeader from '@/components/site-header';
 import MixedText from '@/components/mixed-text';
 import PlanUpgradeNotice from '@/components/plan-upgrade-notice';
@@ -20,7 +20,6 @@ import { saveResultReportAction } from './actions';
 import { normalizePlan } from '@/lib/madixo-plans';
 
 type UiLanguage = 'ar' | 'en';
-type BreakdownKey = keyof AnalysisResult['scoreBreakdown'];
 
 type DisplayInputs = {
   query: string;
@@ -756,353 +755,6 @@ function getBreakdownColor(score: number) {
 }
 
 
-function PdfSection({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="rounded-[28px] border border-[#E5E7EB] bg-white shadow-sm">
-      <div className="rounded-t-[28px] bg-[#F3F4F6] px-8 py-5 text-[24px] font-semibold text-[#111827]">
-        {title}
-      </div>
-      <div className="p-8">{children}</div>
-    </section>
-  );
-}
-
-function HtmlPdfReport({
-  exportRef,
-  result,
-  copy,
-  uiLang,
-  safeMarket,
-  safeCustomer,
-  safeLabel,
-  scoreBreakdownRows,
-  generatedAt,
-}: {
-  exportRef: { current: HTMLDivElement | null };
-  result: AnalysisResult;
-  copy: (typeof UI_COPY)[UiLanguage];
-  uiLang: UiLanguage;
-  safeMarket: string;
-  safeCustomer: string;
-  safeLabel: string;
-  scoreBreakdownRows: Array<{ key: BreakdownKey; label: string; score: number; note: string }>;
-  generatedAt: string;
-}) {
-  const feasibilityCopy = FEASIBILITY_COPY[uiLang];
-
-  return (
-    <div className="fixed left-0 top-0 z-[-1] pointer-events-none opacity-0">
-      <div
-        id="madixo-pdf-export-root"
-        ref={exportRef}
-        dir={copy.dir}
-        lang={uiLang === 'ar' ? 'ar' : 'en'}
-        className="w-[1120px] bg-white px-12 py-12 text-[#111827]"
-        style={{
-          fontFamily:
-            uiLang === 'ar'
-              ? 'Cairo, Tahoma, Arial, sans-serif'
-              : 'Inter, Arial, sans-serif',
-          transform: 'translateZ(0)',
-        }}
-      >
-
-        <div className="mb-10 border-b border-[#E5E7EB] pb-8 text-center">
-          <img
-            src="/brand/madixo-logo.png"
-            alt="Madixo"
-            className="mx-auto h-12 w-auto"
-          />
-          <div className="mt-8 text-[56px] font-bold tracking-tight text-[#0F172A]">
-            MADIXO
-          </div>
-          <div className="mt-3 text-[22px] font-semibold text-[#374151]">
-            {copy.reportHeader}
-          </div>
-          <div className="mt-7 text-[34px] font-bold text-[#111827] leading-[1.4]">
-            {result.query}
-          </div>
-          <div className="mt-4 text-[18px] text-[#6B7280]">
-            {copy.generatedOn}: {generatedAt}
-          </div>
-        </div>
-
-        <div className="mb-8 rounded-[32px] border border-[#E5E7EB] bg-[#F9FAFB] p-8">
-          <div className="flex items-start justify-between gap-8">
-            <div className="min-w-0 flex-1">
-              <div className="text-[18px] font-semibold text-[#6B7280]">
-                {copy.summary}
-              </div>
-              <div className="mt-4 text-[24px] leading-[1.9] text-[#374151]">
-                {result.summary}
-              </div>
-            </div>
-
-            <div className="shrink-0 rounded-[28px] bg-white px-8 py-6 text-center shadow-sm border border-[#E5E7EB] min-w-[220px]">
-              <div className="text-[16px] font-semibold text-[#6B7280]">
-                {copy.opportunityScore}
-              </div>
-              <div className="mt-2 flex items-end justify-center gap-2">
-                <span className="text-[72px] font-bold leading-none text-[#111827]">
-                  {result.opportunityScore}
-                </span>
-                <span className="mb-2 text-[28px] font-semibold text-[#6B7280]">/100</span>
-              </div>
-              <div className="mt-4 inline-flex rounded-full bg-[#ECFDF3] px-5 py-2 text-[16px] font-semibold text-[#027A48]">
-                {safeLabel}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-8 grid grid-cols-2 gap-6">
-          <PdfSection title={copy.targetMarket}>
-            <div className="text-[22px] leading-[1.8] text-[#374151]">{safeMarket}</div>
-          </PdfSection>
-          <PdfSection title={copy.inputTargetCustomer}>
-            <div className="text-[22px] leading-[1.8] text-[#374151]">{safeCustomer}</div>
-          </PdfSection>
-        </div>
-
-        <div className="mb-8">
-          <PdfSection title={copy.whyThisOpportunity}>
-            <div className="text-[22px] leading-[1.95] text-[#374151]">{result.whyThisOpportunity}</div>
-          </PdfSection>
-        </div>
-
-        <div className="mb-8">
-          <PdfSection title={copy.whyThisScore}>
-            <div className="mb-6 flex items-center gap-3">
-              <span className="rounded-full bg-[#111827] px-5 py-2 text-[15px] font-semibold text-white">
-                {copy.overallScore}: {result.opportunityScore}/100
-              </span>
-              <span className="rounded-full bg-[#ECFDF3] px-5 py-2 text-[15px] font-semibold text-[#027A48]">
-                {safeLabel}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              {scoreBreakdownRows.map((item) => (
-                <div key={item.key} className="rounded-[24px] border border-[#E5E7EB] bg-[#FAFAFB] p-5">
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="text-[18px] font-semibold text-[#111827]">{item.label}</div>
-                    <div className={`rounded-full px-3 py-1.5 text-[13px] font-semibold ${getBreakdownColor(item.score)}`}>
-                      {item.score}/100
-                    </div>
-                  </div>
-                  <div className="mt-4 h-3 overflow-hidden rounded-full bg-[#E5E7EB]">
-                    <div className="h-full rounded-full bg-[#111827]" style={{ width: `${item.score}%` }} />
-                  </div>
-                  <div className="mt-4 text-[16px] leading-[1.9] text-[#4B5563]">{item.note}</div>
-                </div>
-              ))}
-            </div>
-          </PdfSection>
-        </div>
-
-        <div className="mb-8 grid grid-cols-3 gap-6">
-          <PdfSection title={copy.marketDemand}>
-            <div className="text-[28px] font-bold text-[#111827]">{result.marketDemand.title}</div>
-            <div className="mt-4 text-[18px] leading-[1.9] text-[#4B5563]">{result.marketDemand.description}</div>
-          </PdfSection>
-          <PdfSection title={copy.competition}>
-            <div className="text-[28px] font-bold text-[#111827]">{result.competition.title}</div>
-            <div className="mt-4 text-[18px] leading-[1.9] text-[#4B5563]">{result.competition.description}</div>
-          </PdfSection>
-          <PdfSection title={copy.targetCustomers}>
-            <div className="text-[28px] font-bold text-[#111827]">{result.targetCustomers.title}</div>
-            <div className="mt-4 text-[18px] leading-[1.9] text-[#4B5563]">{result.targetCustomers.description}</div>
-          </PdfSection>
-        </div>
-
-        <div className="mb-8 grid grid-cols-12 gap-6">
-          <div className="col-span-5">
-            <PdfSection title={copy.suggestedMvp}>
-              <div className="text-[30px] font-bold text-[#111827]">{result.suggestedMvp.title}</div>
-              <div className="mt-4 text-[20px] leading-[1.8] text-[#374151]">{result.suggestedMvp.description}</div>
-              <div className="mt-6 flex flex-wrap gap-3">
-                {result.suggestedMvp.features.map((feature) => (
-                  <span
-                    key={feature}
-                    className="rounded-full bg-[#F3F4F6] px-4 py-2 text-[16px] font-medium text-[#374151]"
-                  >
-                    {feature}
-                  </span>
-                ))}
-              </div>
-            </PdfSection>
-          </div>
-          <div className="col-span-3">
-            <PdfSection title={copy.revenueModel}>
-              <div className="text-[28px] font-bold text-[#111827]">{result.revenueModel.title}</div>
-              <div className="mt-3 text-[24px] font-semibold text-[#111827]">{result.revenueModel.price}</div>
-              <div className="mt-4 text-[18px] leading-[1.9] text-[#4B5563]">{result.revenueModel.description}</div>
-            </PdfSection>
-          </div>
-          <div className="col-span-4">
-            <PdfSection title={copy.nextSteps}>
-              <ul className="space-y-3 text-[18px] leading-[1.9] text-[#374151]">
-                {result.nextSteps.map((step) => (
-                  <li key={step}>• {step}</li>
-                ))}
-              </ul>
-            </PdfSection>
-          </div>
-        </div>
-
-        <div className="mb-8 grid grid-cols-2 gap-6">
-          <PdfSection title={copy.bestFirstCustomer}>
-            <div className="text-[28px] font-semibold text-[#111827]">{result.bestFirstCustomer.title}</div>
-            <div className="mt-4 text-[18px] leading-[1.9] text-[#4B5563]">{result.bestFirstCustomer.description}</div>
-          </PdfSection>
-          <PdfSection title={copy.firstOffer}>
-            <div className="text-[28px] font-semibold text-[#111827]">{result.firstOffer.title}</div>
-            <div className="mt-3 text-[24px] font-semibold text-[#111827]">{result.firstOffer.priceIdea}</div>
-            <div className="mt-4 text-[18px] leading-[1.9] text-[#4B5563]">{result.firstOffer.description}</div>
-          </PdfSection>
-        </div>
-
-        <div className="grid grid-cols-3 gap-6">
-          <PdfSection title={copy.painPoints}>
-            <ul className="space-y-3 text-[18px] leading-[1.9] text-[#4B5563]">
-              {result.painPoints.map((point) => (
-                <li key={point}>• {point}</li>
-              ))}
-            </ul>
-          </PdfSection>
-          <PdfSection title={copy.opportunityAngle}>
-            <div className="text-[18px] leading-[1.9] text-[#4B5563]">{result.opportunityAngle}</div>
-          </PdfSection>
-          <PdfSection title={copy.goToMarket}>
-            <div className="text-[18px] leading-[1.9] text-[#4B5563]">{result.goToMarket}</div>
-          </PdfSection>
-        </div>
-
-        <div className="mt-8">
-          <PdfSection title={copy.risks}>
-            <ul className="space-y-3 text-[18px] leading-[1.9] text-[#4B5563]">
-              {result.risks.map((risk) => (
-                <li key={risk}>• {risk}</li>
-              ))}
-            </ul>
-          </PdfSection>
-        </div>
-
-        {result.initialFeasibility ? (
-          <div className="mt-8 space-y-8">
-            <PdfSection title={feasibilityCopy.reportHeader}>
-              <div className="mb-5 flex items-center gap-3">
-                <span className="rounded-full bg-[#111827] px-5 py-2 text-[15px] font-semibold text-white">
-                  {feasibilityCopy.verdict}
-                </span>
-                <span className="rounded-full bg-[#ECFDF3] px-5 py-2 text-[15px] font-semibold text-[#027A48]">
-                  {result.initialFeasibility.verdictLabel}
-                </span>
-              </div>
-              <div className="text-[20px] leading-[1.9] text-[#374151]">
-                {result.initialFeasibility.verdictSummary}
-              </div>
-            </PdfSection>
-
-            <div className="grid grid-cols-2 gap-6">
-              <PdfSection title={feasibilityCopy.assumptions}>
-                <ul className="space-y-3 text-[18px] leading-[1.9] text-[#4B5563]">
-                  {result.initialFeasibility.keyAssumptions.map((item) => (
-                    <li key={item}>• {item}</li>
-                  ))}
-                </ul>
-              </PdfSection>
-
-              <PdfSection title={feasibilityCopy.breakEven}>
-                <div className="rounded-[20px] border border-[#E5E7EB] bg-[#FAFAFB] px-5 py-4 text-[18px] font-semibold text-[#111827]">
-                  {result.initialFeasibility.breakEvenTimeline}
-                </div>
-                <div className="mt-4 text-[18px] leading-[1.9] text-[#4B5563]">
-                  {result.initialFeasibility.breakEvenSummary}
-                </div>
-              </PdfSection>
-            </div>
-
-            <div className="grid grid-cols-2 gap-6">
-              <PdfSection title={feasibilityCopy.startupCosts}>
-                <div className="mb-4 rounded-[20px] border border-[#E5E7EB] bg-[#FAFAFB] px-5 py-4 text-[18px] font-semibold text-[#111827]">
-                  {feasibilityCopy.startupTotal}: {result.initialFeasibility.startupCosts.totalRange}
-                </div>
-                <div className="space-y-4">
-                  {result.initialFeasibility.startupCosts.items.map((item) => (
-                    <div key={`${item.item}-${item.estimate}`} className="rounded-[20px] border border-[#E5E7EB] bg-white p-4">
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="text-[18px] font-semibold text-[#111827]">{item.item}</div>
-                        <div className="rounded-full bg-[#F3F4F6] px-3 py-1.5 text-[13px] font-semibold text-[#111827]">{item.estimate}</div>
-                      </div>
-                      <div className="mt-3 text-[16px] leading-[1.8] text-[#6B7280]">{item.note}</div>
-                    </div>
-                  ))}
-                </div>
-              </PdfSection>
-
-              <PdfSection title={feasibilityCopy.monthlyCosts}>
-                <div className="mb-4 rounded-[20px] border border-[#E5E7EB] bg-[#FAFAFB] px-5 py-4 text-[18px] font-semibold text-[#111827]">
-                  {feasibilityCopy.monthlyTotal}: {result.initialFeasibility.monthlyCosts.totalRange}
-                </div>
-                <div className="space-y-4">
-                  {result.initialFeasibility.monthlyCosts.items.map((item) => (
-                    <div key={`${item.item}-${item.estimate}`} className="rounded-[20px] border border-[#E5E7EB] bg-white p-4">
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="text-[18px] font-semibold text-[#111827]">{item.item}</div>
-                        <div className="rounded-full bg-[#F3F4F6] px-3 py-1.5 text-[13px] font-semibold text-[#111827]">{item.estimate}</div>
-                      </div>
-                      <div className="mt-3 text-[16px] leading-[1.8] text-[#6B7280]">{item.note}</div>
-                    </div>
-                  ))}
-                </div>
-              </PdfSection>
-            </div>
-
-            <div className="grid grid-cols-3 gap-6">
-              {result.initialFeasibility.revenueScenarios.map((scenario) => (
-                <PdfSection key={`${scenario.scenario}-${scenario.monthlyRevenue}`} title={scenario.scenario}>
-                  <div className="rounded-[20px] border border-[#E5E7EB] bg-[#FAFAFB] px-5 py-4 text-[18px] font-semibold text-[#111827]">
-                    {scenario.monthlyRevenue}
-                  </div>
-                  <div className="mt-4 text-[16px] leading-[1.8] text-[#6B7280]">{scenario.note}</div>
-                </PdfSection>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-2 gap-6">
-              <PdfSection title={feasibilityCopy.risks}>
-                <ul className="space-y-3 text-[18px] leading-[1.9] text-[#4B5563]">
-                  {result.initialFeasibility.financialRisks.map((item) => (
-                    <li key={item}>• {item}</li>
-                  ))}
-                </ul>
-              </PdfSection>
-
-              <PdfSection title={feasibilityCopy.action}>
-                <div className="text-[18px] leading-[1.9] text-[#4B5563]">
-                  {result.initialFeasibility.recommendedAction}
-                </div>
-                <div className="mt-6 rounded-[20px] border border-[#E5E7EB] bg-[#FAFAFB] p-4">
-                  <div className="text-[16px] font-semibold text-[#111827]">{feasibilityCopy.disclaimer}</div>
-                  <div className="mt-2 text-[16px] leading-[1.8] text-[#6B7280]">
-                    {result.initialFeasibility.disclaimer}
-                  </div>
-                </div>
-              </PdfSection>
-            </div>
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
 
 export default function ResultsPage() {
   const router = useRouter();
@@ -1489,7 +1141,19 @@ export default function ResultsPage() {
     return () => {
       isActive = false;
     };
-  }, [query, market, customer, reportIdParam, requestNonce, uiLang]);
+  }, [
+    query,
+    market,
+    customer,
+    reportIdParam,
+    requestNonce,
+    uiLang,
+    router,
+    copy.failedToAnalyzeOpportunity,
+    copy.genericLoadingError,
+    copy.notSpecified,
+    copy.unableToLoad,
+  ]);
 
   useEffect(() => {
     if (!loading) return;
