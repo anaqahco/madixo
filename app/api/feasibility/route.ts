@@ -1,6 +1,5 @@
 import OpenAI from 'openai';
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
 import { updateReportResultInDb } from '@/lib/madixo-db';
 import {
   initialFeasibilitySchema,
@@ -10,7 +9,6 @@ import {
   type MoneyCurrency,
 } from '@/lib/madixo-feasibility';
 import type { AnalysisResult } from '@/lib/madixo-reports';
-import { parsePlan } from '@/lib/madixo-plans';
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -45,45 +43,6 @@ function getTrimmedString(value: unknown): string | null {
 }
 
 
-function readPlanFromUserMetadata(user: unknown) {
-  if (!user || typeof user !== 'object') {
-    return 'free' as const;
-  }
-
-  const rawMetadata = (user as { user_metadata?: unknown }).user_metadata;
-  const metadata =
-    rawMetadata && typeof rawMetadata === 'object' && !Array.isArray(rawMetadata)
-      ? (rawMetadata as Record<string, unknown>)
-      : {};
-
-  return parsePlan(
-    typeof metadata.madixo_plan === 'string' ? metadata.madixo_plan : null
-  ) ?? 'free';
-}
-
-async function getAuthenticatedPlanForFeasibility() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  if (!user) {
-    return {
-      user: null,
-      plan: 'free' as const,
-    };
-  }
-
-  return {
-    user,
-    plan: readPlanFromUserMetadata(user),
-  };
-}
 
 const ARABIC_WRITING_RULES = `
 - اكتب بالعربية الفصحى البسيطة والمباشرة.
