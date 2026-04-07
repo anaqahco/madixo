@@ -392,7 +392,7 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [preferredLanguage, setPreferredLanguage] = useState<UiLanguage>('en');
+  const [preferredLanguage, setPreferredLanguage] = useState<UiLanguage>(() => getClientUiLanguage('en'));
   const [showSlowNotice, setShowSlowNotice] = useState(false);
   const requestIdRef = useRef(0);
 
@@ -400,9 +400,6 @@ export default function ReportsPage() {
   const pathname = usePathname();
   const lastAutoRefreshAtRef = useRef(0);
 
-  useEffect(() => {
-    setPreferredLanguage(getClientUiLanguage('en'));
-  }, []);
 
   useEffect(() => {
     fetchCurrentPlanClient().then((payload) => {
