@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import SiteHeader from '@/components/site-header';
 import MixedText from '@/components/mixed-text';
 import PlanUpgradeNotice from '@/components/plan-upgrade-notice';
@@ -761,7 +761,7 @@ function PdfSection({
   children,
 }: {
   title: string;
-  children: any;
+  children: ReactNode;
 }) {
   return (
     <section className="rounded-[28px] border border-[#E5E7EB] bg-white shadow-sm">
