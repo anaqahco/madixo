@@ -30,6 +30,21 @@ type FeasibilityRequestBody = {
 };
 
 
+type JsonRecord = Record<string, unknown>;
+
+function isRecord(value: unknown): value is JsonRecord {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function getRecordArray(value: unknown): JsonRecord[] {
+  return Array.isArray(value) ? value.filter(isRecord) : [];
+}
+
+function getTrimmedString(value: unknown): string | null {
+  return typeof value === 'string' && value.trim() ? value.trim() : null;
+}
+
+
 function readPlanFromUserMetadata(user: unknown) {
   if (!user || typeof user !== 'object') {
     return 'free' as const;
@@ -300,84 +315,85 @@ async function requestFeasibility(params: {
   });
 }
 
-function extractParsedFromPart(part: any): unknown | null {
-  if (!part || typeof part !== 'object') return null;
+function extractParsedFromPart(part: unknown): unknown | null {
+  if (!isRecord(part)) return null;
 
-  if (part.parsed && typeof part.parsed === 'object') {
+  if (isRecord(part.parsed)) {
     return part.parsed;
   }
 
-  if (part.json && typeof part.json === 'object') {
+  if (isRecord(part.json)) {
     return part.json;
   }
 
-  if (part.arguments && typeof part.arguments === 'object') {
+  if (isRecord(part.arguments)) {
     return part.arguments;
   }
 
   return null;
 }
 
-function extractParsedFromItem(item: any): unknown | null {
-  if (!item || typeof item !== 'object') return null;
+function extractParsedFromItem(item: unknown): unknown | null {
+  if (!isRecord(item)) return null;
 
-  if (item.parsed && typeof item.parsed === 'object') {
+  if (isRecord(item.parsed)) {
     return item.parsed;
   }
 
-  if (Array.isArray(item.content)) {
-    for (const part of item.content) {
-      const parsed = extractParsedFromPart(part);
-      if (parsed) {
-        return parsed;
-      }
+  for (const part of getRecordArray(item.content)) {
+    const parsed = extractParsedFromPart(part);
+    if (parsed) {
+      return parsed;
     }
   }
 
   return null;
 }
 
-function extractTextFromOutputItem(item: any): string[] {
-  if (!item || typeof item !== 'object') {
+function extractTextFromOutputItem(item: unknown): string[] {
+  if (!isRecord(item)) {
     return [];
   }
 
-  if (Array.isArray(item.content)) {
-    return item.content.flatMap((part: any) => {
-      if (!part || typeof part !== 'object') return [];
-
-      if (typeof part.text === 'string' && part.text.trim()) {
-        return [part.text.trim()];
+  const content = getRecordArray(item.content);
+  if (content.length) {
+    return content.flatMap((part) => {
+      const text = getTrimmedString(part.text);
+      if (text) {
+        return [text];
       }
 
-      if (typeof part.output_text === 'string' && part.output_text.trim()) {
-        return [part.output_text.trim()];
+      const outputText = getTrimmedString(part.output_text);
+      if (outputText) {
+        return [outputText];
       }
 
-      if (typeof part.value === 'string' && part.value.trim()) {
-        return [part.value.trim()];
+      const value = getTrimmedString(part.value);
+      if (value) {
+        return [value];
       }
 
       return [];
     });
   }
 
-  if (typeof item.text === 'string' && item.text.trim()) {
-    return [item.text.trim()];
-  }
-
-  return [];
+  const text = getTrimmedString(item.text);
+  return text ? [text] : [];
 }
 
-function getRawResponseText(response: any): string {
-  if (typeof response?.output_text === 'string' && response.output_text.trim()) {
-    return response.output_text.trim();
+function getRawResponseText(response: unknown): string {
+  if (!isRecord(response)) {
+    return '';
   }
 
-  if (Array.isArray(response?.output)) {
-    const collected = response.output.flatMap((item: any) =>
-      extractTextFromOutputItem(item)
-    );
+  const outputText = getTrimmedString(response.output_text);
+  if (outputText) {
+    return outputText;
+  }
+
+  const output = getRecordArray(response.output);
+  if (output.length) {
+    const collected = output.flatMap((item) => extractTextFromOutputItem(item));
 
     if (collected.length) {
       return collected.join('\n').trim();
@@ -414,16 +430,15 @@ function extractJsonCandidate(value: string) {
   return stripped;
 }
 
-function parseStudyFromResponse(response: any): InitialFeasibilityStudy | null {
-  const directParsed = response?.output_parsed;
-  if (directParsed && typeof directParsed === 'object') {
-    return normalizeInitialFeasibilityStudy(directParsed);
+function parseStudyFromResponse(response: unknown): InitialFeasibilityStudy | null {
+  if (isRecord(response) && isRecord(response.output_parsed)) {
+    return normalizeInitialFeasibilityStudy(response.output_parsed);
   }
 
-  if (Array.isArray(response?.output)) {
-    for (const item of response.output) {
+  if (isRecord(response)) {
+    for (const item of getRecordArray(response.output)) {
       const parsed = extractParsedFromItem(item);
-      if (parsed && typeof parsed === 'object') {
+      if (isRecord(parsed)) {
         return normalizeInitialFeasibilityStudy(parsed);
       }
     }
@@ -853,13 +868,15 @@ function buildLocalFallbackStudy(params: {
   );
 }
 
-function getFailureMessage(response: any, uiLang: UiLanguage) {
-  const status = typeof response?.status === 'string' ? response.status : '';
-  const errorMessage =
-    typeof response?.error?.message === 'string' ? response.error.message : '';
+function getFailureMessage(response: unknown, uiLang: UiLanguage) {
+  if (isRecord(response)) {
+    const status = getTrimmedString(response.status) ?? '';
+    const error = isRecord(response.error) ? response.error : null;
+    const errorMessage = error ? getTrimmedString(error.message) ?? '' : '';
 
-  if (status === 'failed' && errorMessage) {
-    return errorMessage;
+    if (status === 'failed' && errorMessage) {
+      return errorMessage;
+    }
   }
 
   return uiLang === 'ar'
@@ -876,7 +893,7 @@ async function generateStudyWithFallback(params: {
   result: AnalysisResult;
 }) {
   const first = await requestFeasibility({ ...params, compact: false });
-  const firstParsed = parseStudyFromResponse(first as any);
+  const firstParsed = parseStudyFromResponse(first);
 
   if (firstParsed) {
     return {
@@ -891,7 +908,7 @@ async function generateStudyWithFallback(params: {
   }
 
   const second = await requestFeasibility({ ...params, compact: true });
-  const secondParsed = parseStudyFromResponse(second as any);
+  const secondParsed = parseStudyFromResponse(second);
 
   if (secondParsed) {
     return {
@@ -912,8 +929,8 @@ async function generateStudyWithFallback(params: {
     compactFallbackUsed: true,
     localFallbackUsed: true,
     fallbackReason:
-      getFailureMessage(second as any, params.uiLang) ||
-      getFailureMessage(first as any, params.uiLang),
+      getFailureMessage(second, params.uiLang) ||
+      getFailureMessage(first, params.uiLang),
   };
 }
 
