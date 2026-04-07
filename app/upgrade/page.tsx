@@ -89,7 +89,7 @@ function MadixoLogo() {
 }
 
 export default function UpgradePage() {
-  const [uiLang, setUiLang] = useState<UiLanguage>(() => getClientUiLanguage('ar'));
+  const [uiLang, setUiLang] = useState<UiLanguage>(() => getClientUiLanguage('en'));
   const searchParams = useSearchParams();
 
 
