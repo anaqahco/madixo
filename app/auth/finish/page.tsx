@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import AuthShellHeader from '@/components/auth-shell-header';
 import { createClient } from '@/lib/supabase/client';
-import { getClientUiLanguage, type UiLanguage } from '@/lib/ui-language';
+import { getClientUiLanguage } from '@/lib/ui-language';
 
 type StatusKey = 'finalizing' | 'redirecting' | 'error';
 
@@ -44,7 +44,7 @@ const COPY = {
 
 export default function AuthFinishPage() {
   const searchParams = useSearchParams();
-  const [preferredLanguage, setPreferredLanguage] = useState<UiLanguage>('en');
+  const preferredLanguage = getClientUiLanguage('en');
   const [status, setStatus] = useState<StatusKey>('finalizing');
 
   const nextPath = useMemo(() => {
@@ -52,9 +52,6 @@ export default function AuthFinishPage() {
     return raw.startsWith('/') ? raw : DEFAULT_NEXT;
   }, [searchParams]);
 
-  useEffect(() => {
-    setPreferredLanguage(getClientUiLanguage('en'));
-  }, []);
 
   const copy = COPY[preferredLanguage];
   const message = copy.messages[status];
