@@ -1,8 +1,11 @@
+import type { User } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { MADIXO_PLAN_COOKIE } from '@/lib/madixo-plan-store';
 
-function getUserDisplayName(user: Record<string, any> | null) {
+type SessionUser = Pick<User, 'email' | 'user_metadata' | 'app_metadata'>;
+
+function getUserDisplayName(user: SessionUser | null) {
   if (!user) return '';
 
   const metadata = (user.user_metadata || {}) as Record<string, unknown>;
@@ -17,7 +20,7 @@ function getUserDisplayName(user: Record<string, any> | null) {
   return typeof candidate === 'string' ? candidate.trim() : '';
 }
 
-function getUserAvatar(user: Record<string, any> | null) {
+function getUserAvatar(user: SessionUser | null) {
   if (!user) return '';
 
   const metadata = (user.user_metadata || {}) as Record<string, unknown>;
@@ -26,7 +29,7 @@ function getUserAvatar(user: Record<string, any> | null) {
   return typeof candidate === 'string' ? candidate.trim() : '';
 }
 
-function getProvider(user: Record<string, any> | null) {
+function getProvider(user: SessionUser | null) {
   if (!user) return 'email';
 
   const providers = user.app_metadata?.providers;
@@ -80,10 +83,10 @@ export async function GET() {
         ok: true,
         sessionState: 'user',
         userSummary: {
-          name: getUserDisplayName(user as unknown as Record<string, any>),
+          name: getUserDisplayName(user),
           email: user.email || '',
-          avatarUrl: getUserAvatar(user as unknown as Record<string, any>),
-          provider: getProvider(user as unknown as Record<string, any>),
+          avatarUrl: getUserAvatar(user),
+          provider: getProvider(user),
         },
       },
       {
