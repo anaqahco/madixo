@@ -1,0 +1,1391 @@
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { jsPDF } from 'jspdf';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { type AnalysisResult } from '../../lib/madixo-reports';
+import { saveResultReportAction } from './actions';
+
+const LOADING_STAGES = [
+  {
+    title: 'Understanding the idea',
+    description:
+      'Reading the business concept, target market, and target customer.',
+  },
+  {
+    title: 'Evaluating the opportunity',
+    description:
+      'Reviewing demand, competition, positioning, and buyer urgency.',
+  },
+  {
+    title: 'Preparing the report',
+    description:
+      'Building the score, summary, MVP direction, and next-step recommendations.',
+  },
+] as const;
+
+type BreakdownKey = keyof AnalysisResult['scoreBreakdown'];
+
+const SCORE_BREAKDOWN_ITEMS: Array<{
+  key: BreakdownKey;
+  label: string;
+}> = [
+  { key: 'demand', label: 'Demand' },
+  { key: 'abilityToWin', label: 'Ability to Win' },
+  { key: 'monetization', label: 'Monetization' },
+  { key: 'speedToMvp', label: 'Speed to MVP' },
+  { key: 'distribution', label: 'Distribution' },
+];
+
+function MadixoLogo() {
+  return (
+    <Image
+      src="/brand/madixo-logo.png"
+      alt="Madixo"
+      width={210}
+      height={54}
+      priority
+      className="h-auto w-[175px] md:w-[210px]"
+    />
+  );
+}
+
+function LoadingProgressRing({ progress }: { progress: number }) {
+  return (
+    <div className="relative h-40 w-40 md:h-48 md:w-48">
+      <div
+        className="absolute inset-0 rounded-full transition-all duration-500"
+        style={{
+          background: `conic-gradient(#0F172A ${progress * 3.6}deg, #E5E7EB 0deg)`,
+        }}
+      />
+      <div className="absolute inset-[10px] rounded-full bg-white shadow-inner md:inset-[12px]" />
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+        <div className="text-4xl font-bold leading-none md:text-5xl">
+          {progress}%
+        </div>
+        <div className="mt-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
+          Processing
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LoadingStageItem({
+  stepNumber,
+  title,
+  description,
+  state,
+}: {
+  stepNumber: number;
+  title: string;
+  description: string;
+  state: 'done' | 'active' | 'upcoming';
+}) {
+  const isDone = state === 'done';
+  const isActive = state === 'active';
+
+  return (
+    <div
+      className={`rounded-2xl border px-4 py-4 transition-all duration-300 ${
+        isDone
+          ? 'border-[#B7E4CE] bg-[#EAF7EF]'
+          : isActive
+          ? 'border-[#111827] bg-white shadow-sm'
+          : 'border-[#E5E7EB] bg-white opacity-80'
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        <div
+          className={`mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+            isDone
+              ? 'bg-[#0B8A4A] text-white'
+              : isActive
+              ? 'animate-pulse bg-[#111827] text-white'
+              : 'bg-[#F3F4F6] text-[#6B7280]'
+          }`}
+        >
+          {isDone ? '✓' : stepNumber}
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-sm font-semibold text-[#111827] md:text-base">
+              {title}
+            </p>
+
+            <span
+              className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                isDone
+                  ? 'bg-white text-[#0B8A4A]'
+                  : isActive
+                  ? 'bg-[#111827] text-white'
+                  : 'bg-[#F3F4F6] text-[#6B7280]'
+              }`}
+            >
+              {isDone ? 'Done' : isActive ? 'In progress' : 'Queued'}
+            </span>
+          </div>
+
+          <p className="mt-2 text-sm leading-6 text-[#6B7280]">{description}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScoreBreakdownCard({
+  label,
+  score,
+  note,
+}: {
+  label: string;
+  score: number;
+  note: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-[#E5E7EB] bg-[#FAFAFB] p-4">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-semibold text-[#111827]">{label}</p>
+        <span
+          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getBreakdownColor(
+            score
+          )}`}
+        >
+          {score}/100
+        </span>
+      </div>
+
+      <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-[#E5E7EB]">
+        <div
+          className="h-full rounded-full bg-[#111827] transition-all duration-500"
+          style={{ width: `${score}%` }}
+        />
+      </div>
+
+      <p className="mt-4 text-sm leading-7 text-[#4B5563]">{note}</p>
+    </div>
+  );
+}
+
+function loadImageAsDataUrl(
+  src: string
+): Promise<{ dataUrl: string; width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    const img = new window.Image();
+    img.crossOrigin = 'anonymous';
+
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Canvas context is not available.'));
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0);
+
+      resolve({
+        dataUrl: canvas.toDataURL('image/png'),
+        width: img.naturalWidth,
+        height: img.naturalHeight,
+      });
+    };
+
+    img.onerror = () => {
+      reject(new Error('Failed to load Madixo logo.'));
+    };
+
+    img.src = src;
+  });
+}
+
+function toPdfFileName(value: string) {
+  const cleaned = value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+
+  return cleaned || 'madixo-report';
+}
+
+function sanitizePdfText(text: string) {
+  return (text || '')
+    .normalize('NFKC')
+    .replace(/\u00A0/g, ' ')
+    .replace(/[\u2010-\u2015]/g, '-')
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/\u2022/g, '-')
+    .replace(/\u2265/g, '>=')
+    .replace(/\u2264/g, '<=')
+    .replace(/\u00AD/g, '')
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, ' ')
+    .replace(/[^\x20-\x7E\n]/g, ' ')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+function sanitizePdfArray(items: string[]) {
+  return items.map((item) => sanitizePdfText(item));
+}
+
+function labelFromScore(score: number) {
+  if (score >= 75) return 'High Potential';
+  if (score >= 60) return 'Promising Niche';
+  if (score >= 40) return 'Moderate Opportunity';
+  return 'Needs Validation';
+}
+
+function getShortOpportunityLabel(score: number, label: string) {
+  const cleaned = label?.trim() || '';
+  const tooLong = cleaned.length > 28 || cleaned.split(/\s+/).length > 4;
+
+  if (!cleaned || tooLong) {
+    return labelFromScore(score);
+  }
+
+  return cleaned;
+}
+
+function getBreakdownColor(score: number) {
+  if (score >= 75) return 'bg-[#ECFDF3] text-[#027A48]';
+  if (score >= 60) return 'bg-[#EFF6FF] text-[#1D4ED8]';
+  if (score >= 40) return 'bg-[#FFF7ED] text-[#C2410C]';
+  return 'bg-[#FEF2F2] text-[#B42318]';
+}
+
+export default function ResultsPage() {
+  const searchParams = useSearchParams();
+
+  const query = useMemo(
+    () => searchParams.get('q')?.trim() || 'AI tools for restaurants',
+    [searchParams]
+  );
+
+  const market = useMemo(
+    () => searchParams.get('market')?.trim() || '',
+    [searchParams]
+  );
+
+  const customer = useMemo(
+    () => searchParams.get('customer')?.trim() || '',
+    [searchParams]
+  );
+
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
+  const [requestNonce, setRequestNonce] = useState(0);
+  const [loadingProgress, setLoadingProgress] = useState(6);
+  const [loadingStageIndex, setLoadingStageIndex] = useState(0);
+
+  useEffect(() => {
+    let isActive = true;
+
+    const runAnalysis = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        setResult(null);
+        setLoadingProgress(6);
+        setLoadingStageIndex(0);
+
+        const response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query,
+            market,
+            customer,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+          throw new Error(data.error || 'Failed to analyze opportunity.');
+        }
+
+        if (!isActive) return;
+
+        setLoadingStageIndex(2);
+        setLoadingProgress(100);
+
+        window.setTimeout(() => {
+          if (!isActive) return;
+          setResult(data.result);
+          setLoading(false);
+        }, 420);
+      } catch (err) {
+        if (!isActive) return;
+
+        setLoadingProgress(100);
+
+        const message =
+          err instanceof Error
+            ? err.message
+            : 'Something went wrong while loading the analysis.';
+
+        window.setTimeout(() => {
+          if (!isActive) return;
+          setError(message);
+          setLoading(false);
+        }, 260);
+      }
+    };
+
+    runAnalysis();
+
+    return () => {
+      isActive = false;
+    };
+  }, [query, market, customer, requestNonce]);
+
+  useEffect(() => {
+    if (!loading) return;
+
+    const startedAt = Date.now();
+
+    const interval = window.setInterval(() => {
+      const elapsedSeconds = (Date.now() - startedAt) / 1000;
+
+      let targetProgress = 6;
+
+      if (elapsedSeconds < 6) {
+        targetProgress = 6 + elapsedSeconds * 4;
+      } else if (elapsedSeconds < 16) {
+        targetProgress = 30 + (elapsedSeconds - 6) * 2;
+      } else if (elapsedSeconds < 30) {
+        targetProgress = 50 + (elapsedSeconds - 16) * 1.2;
+      } else if (elapsedSeconds < 50) {
+        targetProgress = 66 + (elapsedSeconds - 30) * 0.7;
+      } else if (elapsedSeconds < 80) {
+        targetProgress = 80 + (elapsedSeconds - 50) * 0.23;
+      } else if (elapsedSeconds < 120) {
+        targetProgress = 87 + (elapsedSeconds - 80) * 0.1;
+      } else if (elapsedSeconds < 180) {
+        targetProgress = 91 + (elapsedSeconds - 120) * 0.03;
+      } else {
+        targetProgress = 93;
+      }
+
+      const next = Math.min(93, Math.floor(targetProgress));
+
+      setLoadingProgress((current) => {
+        if (current >= 93) return current;
+        return Math.max(current, next);
+      });
+    }, 1000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [loading, requestNonce]);
+
+  useEffect(() => {
+    if (loadingProgress >= 72) {
+      setLoadingStageIndex(2);
+    } else if (loadingProgress >= 34) {
+      setLoadingStageIndex(1);
+    } else {
+      setLoadingStageIndex(0);
+    }
+  }, [loadingProgress]);
+
+  const safeLabel = useMemo(() => {
+    if (!result) return '';
+    return getShortOpportunityLabel(
+      result.opportunityScore,
+      result.opportunityLabel
+    );
+  }, [result]);
+
+  const scoreBreakdownRows = useMemo(() => {
+    if (!result) return [];
+
+    return SCORE_BREAKDOWN_ITEMS.map((item) => ({
+      ...item,
+      ...result.scoreBreakdown[item.key],
+    }));
+  }, [result]);
+
+  const reportText = useMemo(() => {
+    if (!result) return '';
+
+    const scoreBreakdownText = SCORE_BREAKDOWN_ITEMS.map((item) => {
+      const breakdown = result.scoreBreakdown[item.key];
+      return `- ${item.label}: ${breakdown.score}/100 — ${breakdown.note}`;
+    }).join('\n');
+
+    return `MADIXO OPPORTUNITY REPORT
+
+Business Idea:
+${result.query}
+
+Target Market:
+${market || 'Not specified'}
+
+Input Target Customer:
+${customer || 'Not specified'}
+
+Why This Opportunity:
+${result.whyThisOpportunity}
+
+Opportunity Score:
+${result.opportunityScore}/100 - ${safeLabel}
+
+Why This Score:
+${scoreBreakdownText}
+
+Summary:
+${result.summary}
+
+Market Demand:
+${result.marketDemand.title}
+${result.marketDemand.description}
+
+Competition:
+${result.competition.title}
+${result.competition.description}
+
+Target Customers:
+${result.targetCustomers.title}
+${result.targetCustomers.description}
+
+Suggested MVP:
+${result.suggestedMvp.title}
+${result.suggestedMvp.description}
+
+MVP Features:
+- ${result.suggestedMvp.features.join('\n- ')}
+
+Revenue Model:
+${result.revenueModel.title}
+${result.revenueModel.price}
+${result.revenueModel.description}
+
+Next Steps:
+- ${result.nextSteps.join('\n- ')}
+
+Best First Customer:
+${result.bestFirstCustomer.title}
+${result.bestFirstCustomer.description}
+
+First Offer:
+${result.firstOffer.title}
+${result.firstOffer.priceIdea}
+${result.firstOffer.description}
+
+Pain Points:
+- ${result.painPoints.join('\n- ')}
+
+Opportunity Angle:
+${result.opportunityAngle}
+
+Go-To-Market:
+${result.goToMarket}
+
+Risks:
+- ${result.risks.join('\n- ')}`;
+  }, [result, market, customer, safeLabel]);
+
+  const handleCopyReport = async () => {
+    if (!reportText) return;
+
+    try {
+      await navigator.clipboard.writeText(reportText);
+      setCopied(true);
+
+      window.setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch {
+      setError('Failed to copy report.');
+    }
+  };
+
+  const handleSaveReport = () => {
+    if (!result) return;
+
+    const savedReport = createSavedReport({
+      query: result.query,
+      market: market || 'Not specified',
+      customer: customer || 'Not specified',
+      result,
+    });
+
+    saveReportToLocal(savedReport);
+    setSaved(true);
+
+    window.setTimeout(() => {
+      setSaved(false);
+    }, 2000);
+  };
+
+  const handleRetry = () => {
+    setCopied(false);
+    setSaved(false);
+    setPdfLoading(false);
+    setError('');
+    setResult(null);
+    setRequestNonce((prev) => prev + 1);
+  };
+
+  const handleExportPdf = async () => {
+    if (!result) return;
+
+    try {
+      setPdfLoading(true);
+      setError('');
+
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'pt',
+        format: 'a4',
+      });
+
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const marginX = 48;
+      const bottomMargin = 42;
+      const contentWidth = pageWidth - marginX * 2;
+
+      const now = new Date();
+      const generatedAt = `${String(now.getDate()).padStart(2, '0')}/${String(
+        now.getMonth() + 1
+      ).padStart(2, '0')}/${now.getFullYear()} - ${String(
+        now.getHours()
+      ).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+      let y = 54;
+
+      const drawPageHeader = () => {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(107, 114, 128);
+        doc.text('Madixo Opportunity Report', marginX, 24);
+
+        doc.setDrawColor(229, 231, 235);
+        doc.line(marginX, 34, pageWidth - marginX, 34);
+      };
+
+      const startNewPage = () => {
+        doc.addPage();
+        drawPageHeader();
+        y = 56;
+      };
+
+      const ensureSpace = (neededHeight = 24) => {
+        if (y + neededHeight > pageHeight - bottomMargin) {
+          startNewPage();
+        }
+      };
+
+      const addWrappedText = (
+        text: string,
+        options?: {
+          fontSize?: number;
+          color?: [number, number, number];
+          x?: number;
+          width?: number;
+          lineHeight?: number;
+          align?: 'left' | 'center' | 'right';
+          bold?: boolean;
+        }
+      ) => {
+        const fontSize = options?.fontSize ?? 11;
+        const color = options?.color ?? [75, 85, 99];
+        const x = options?.x ?? marginX;
+        const width = options?.width ?? contentWidth;
+        const lineHeight = options?.lineHeight ?? 17;
+        const align = options?.align ?? 'left';
+        const bold = options?.bold ?? false;
+
+        const safeText = sanitizePdfText(text);
+
+        doc.setFont('helvetica', bold ? 'bold' : 'normal');
+        doc.setFontSize(fontSize);
+        doc.setTextColor(color[0], color[1], color[2]);
+
+        const lines = doc.splitTextToSize(safeText, width) as string[];
+
+        for (const line of lines) {
+          ensureSpace(lineHeight);
+          doc.text(line, x, y, { align });
+          y += lineHeight;
+        }
+      };
+
+      const addSection = (
+        title: string,
+        paragraphs?: string[],
+        bullets?: string[]
+      ) => {
+        ensureSpace(56);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(15);
+        doc.setTextColor(15, 23, 42);
+        doc.text(sanitizePdfText(title), marginX, y);
+        y += 12;
+
+        doc.setDrawColor(229, 231, 235);
+        doc.line(marginX, y, pageWidth - marginX, y);
+        y += 18;
+
+        if (paragraphs?.length) {
+          for (const paragraph of paragraphs) {
+            if (!paragraph.trim()) continue;
+            addWrappedText(paragraph, {
+              fontSize: 11,
+              color: [75, 85, 99],
+              lineHeight: 17,
+            });
+            y += 6;
+          }
+        }
+
+        if (bullets?.length) {
+          for (const item of bullets) {
+            const safeItem = sanitizePdfText(item);
+            const wrapped = doc.splitTextToSize(
+              safeItem,
+              contentWidth - 18
+            ) as string[];
+
+            for (let i = 0; i < wrapped.length; i++) {
+              ensureSpace(16);
+
+              doc.setFont('helvetica', 'normal');
+              doc.setFontSize(11);
+              doc.setTextColor(75, 85, 99);
+
+              if (i === 0) {
+                doc.text('-', marginX, y);
+              }
+
+              doc.text(wrapped[i], marginX + 14, y);
+              y += 16;
+            }
+
+            y += 4;
+          }
+        }
+
+        y += 10;
+      };
+
+      drawPageHeader();
+
+      try {
+        const logo = await loadImageAsDataUrl('/brand/madixo-logo.png');
+
+        const logoWidth = 145;
+        const logoHeight = (logo.height / logo.width) * logoWidth;
+        const logoX = (pageWidth - logoWidth) / 2;
+
+        doc.addImage(logo.dataUrl, 'PNG', logoX, y, logoWidth, logoHeight);
+        y += logoHeight + 22;
+      } catch {
+        // continue without logo if loading fails
+      }
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(30);
+      doc.setTextColor(15, 23, 42);
+      doc.text('MADIXO OPPORTUNITY REPORT', pageWidth / 2, y, {
+        align: 'center',
+      });
+      y += 28;
+
+      addWrappedText(result.query, {
+        fontSize: 13,
+        color: [75, 85, 99],
+        x: pageWidth / 2,
+        width: 390,
+        lineHeight: 20,
+        align: 'center',
+      });
+      y += 8;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(107, 114, 128);
+      doc.text(`Generated on ${generatedAt}`, pageWidth / 2, y, {
+        align: 'center',
+      });
+      y += 26;
+
+      ensureSpace(150);
+
+      doc.setFillColor(243, 244, 246);
+      doc.roundedRect(marginX, y, contentWidth, 108, 22, 22, 'F');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.setTextColor(107, 114, 128);
+      doc.text('Opportunity Score', marginX + 20, y + 26);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(38);
+      doc.setTextColor(15, 23, 42);
+      doc.text(String(result.opportunityScore), marginX + 20, y + 66);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(16);
+      doc.setTextColor(107, 114, 128);
+      doc.text('/100', marginX + 86, y + 66);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.setTextColor(2, 122, 72);
+      doc.text(sanitizePdfText(safeLabel), marginX + 20, y + 92);
+
+      const summaryX = marginX + 190;
+      const summaryWidth = contentWidth - 212;
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.setTextColor(107, 114, 128);
+      doc.text('Summary', summaryX, y + 26);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(55, 65, 81);
+
+      const summaryLines = doc.splitTextToSize(
+        sanitizePdfText(result.summary),
+        summaryWidth
+      ) as string[];
+
+      let summaryY = y + 48;
+
+      for (const line of summaryLines.slice(0, 4)) {
+        doc.text(line, summaryX, summaryY);
+        summaryY += 16;
+      }
+
+      y += 136;
+
+      addSection('Business Idea', [sanitizePdfText(result.query)]);
+      addSection('Target Market', [sanitizePdfText(market || 'Not specified')]);
+      addSection('Input Target Customer', [
+        sanitizePdfText(customer || 'Not specified'),
+      ]);
+      addSection('Why This Opportunity', [
+        sanitizePdfText(result.whyThisOpportunity),
+      ]);
+
+      addSection(
+        'Why This Score',
+        [],
+        sanitizePdfArray(
+          SCORE_BREAKDOWN_ITEMS.map((item) => {
+            const breakdown = result.scoreBreakdown[item.key];
+            return `${item.label}: ${breakdown.score}/100 — ${breakdown.note}`;
+          })
+        )
+      );
+
+      addSection(
+        'Market Demand',
+        sanitizePdfArray([
+          result.marketDemand.title,
+          result.marketDemand.description,
+        ])
+      );
+
+      addSection(
+        'Competition',
+        sanitizePdfArray([
+          result.competition.title,
+          result.competition.description,
+        ])
+      );
+
+      addSection(
+        'Target Customers',
+        sanitizePdfArray([
+          result.targetCustomers.title,
+          result.targetCustomers.description,
+        ])
+      );
+
+      addSection(
+        'Best First Customer',
+        sanitizePdfArray([
+          result.bestFirstCustomer.title,
+          result.bestFirstCustomer.description,
+        ])
+      );
+
+      addSection(
+        'Suggested MVP',
+        sanitizePdfArray([
+          result.suggestedMvp.title,
+          result.suggestedMvp.description,
+        ]),
+        sanitizePdfArray(result.suggestedMvp.features)
+      );
+
+      addSection(
+        'First Offer',
+        sanitizePdfArray([
+          result.firstOffer.title,
+          result.firstOffer.priceIdea,
+          result.firstOffer.description,
+        ])
+      );
+
+      addSection(
+        'Revenue Model',
+        sanitizePdfArray([
+          result.revenueModel.title,
+          result.revenueModel.price,
+          result.revenueModel.description,
+        ])
+      );
+
+      addSection('Next Steps', [], sanitizePdfArray(result.nextSteps));
+      addSection('Pain Points', [], sanitizePdfArray(result.painPoints));
+      addSection('Opportunity Angle', [
+        sanitizePdfText(result.opportunityAngle),
+      ]);
+      addSection('Go-To-Market', [sanitizePdfText(result.goToMarket)]);
+      addSection('Risks', [], sanitizePdfArray(result.risks));
+
+      const totalPages = doc.getNumberOfPages();
+
+      for (let page = 1; page <= totalPages; page++) {
+        doc.setPage(page);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(107, 114, 128);
+        doc.text(
+          `Page ${page} of ${totalPages}`,
+          pageWidth - marginX,
+          pageHeight - 18,
+          { align: 'right' }
+        );
+      }
+
+      doc.save(`madixo-report-${toPdfFileName(result.query)}.pdf`);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to generate PDF report.'
+      );
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#FAFAFB] px-6 py-16 text-[#111827]">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-8 flex justify-center md:justify-start">
+            <MadixoLogo />
+          </div>
+
+          <div className="mb-10">
+            <Link
+              href="/"
+              className="inline-block rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
+            >
+              ← New Scan
+            </Link>
+          </div>
+
+          <div className="rounded-[32px] border border-[#E5E7EB] bg-white px-6 py-8 shadow-sm md:px-10 md:py-12">
+            <div className="mx-auto max-w-5xl">
+              <div className="text-center">
+                <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
+                  Live Analysis
+                </div>
+
+                <h1 className="mt-6 text-4xl font-bold tracking-tight md:text-7xl">
+                  Analyzing Opportunity
+                </h1>
+
+                <p className="mt-4 text-lg text-[#4B5563] md:text-2xl">
+                  {query}
+                </p>
+              </div>
+
+              <div className="mt-10 grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-center">
+                <div className="flex justify-center">
+                  <LoadingProgressRing progress={loadingProgress} />
+                </div>
+
+                <div>
+                  <div className="rounded-3xl bg-[#F9FAFB] p-5">
+                    <div className="flex items-center justify-between gap-3 text-sm font-semibold text-[#6B7280]">
+                      <span>Madixo Analysis Engine</span>
+                      <span>{loadingProgress}%</span>
+                    </div>
+
+                    <div className="mt-3 h-3 overflow-hidden rounded-full bg-[#E5E7EB]">
+                      <div
+                        className="h-full rounded-full bg-[#111827] transition-all duration-500"
+                        style={{ width: `${loadingProgress}%` }}
+                      />
+                    </div>
+
+                    <p className="mt-4 text-sm leading-7 text-[#6B7280]">
+                      {loadingProgress >= 88
+                        ? 'Madixo is finalizing your report and validating the final response.'
+                        : 'Madixo is evaluating demand, competition, positioning, and first-offer logic for your opportunity.'}
+                    </p>
+                  </div>
+
+                  <div className="mt-5 space-y-3">
+                    {LOADING_STAGES.map((stage, index) => (
+                      <LoadingStageItem
+                        key={stage.title}
+                        stepNumber={index + 1}
+                        title={stage.title}
+                        description={stage.description}
+                        state={
+                          index < loadingStageIndex
+                            ? 'done'
+                            : index === loadingStageIndex
+                            ? 'active'
+                            : 'upcoming'
+                        }
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 text-center text-sm text-[#6B7280]">
+                Preparing a clean founder-ready opportunity report.
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (error || !result) {
+    return (
+      <main className="min-h-screen bg-[#FAFAFB] px-6 py-16 text-[#111827]">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-8 flex justify-center md:justify-start">
+            <MadixoLogo />
+          </div>
+
+          <div className="mb-10 flex flex-wrap items-center gap-3">
+            <Link
+              href="/"
+              className="inline-block rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
+            >
+              ← New Scan
+            </Link>
+
+            <button
+              onClick={handleRetry}
+              className="rounded-full bg-[#111827] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+            >
+              Try Again
+            </button>
+          </div>
+
+          <div className="rounded-[32px] border border-red-200 bg-white px-8 py-12 text-center shadow-sm md:px-12">
+            <div className="mx-auto max-w-3xl">
+              <div className="inline-flex items-center rounded-full border border-red-200 bg-red-50 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-red-600">
+                Analysis Error
+              </div>
+
+              <h1 className="mt-6 text-3xl font-bold md:text-5xl">
+                Analysis failed
+              </h1>
+
+              <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-red-600 md:text-xl">
+                {error || 'Unable to load the opportunity analysis.'}
+              </p>
+
+              <p className="mt-6 text-sm text-[#6B7280]">
+                You can retry the same analysis or return to start a new scan.
+              </p>
+
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                <button
+                  onClick={handleRetry}
+                  className="rounded-full bg-[#111827] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                >
+                  Retry Analysis
+                </button>
+
+                <Link
+                  href="/"
+                  className="inline-block rounded-full border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
+                >
+                  Back to New Scan
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-[#FAFAFB] px-6 py-16 text-[#111827]">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 flex justify-center md:justify-start">
+          <MadixoLogo />
+        </div>
+
+        <div className="mb-10 flex flex-wrap items-center gap-3">
+          <Link
+            href="/"
+            className="inline-block rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
+          >
+            ← New Scan
+          </Link>
+
+          <button
+            onClick={handleCopyReport}
+            className="rounded-full bg-black px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+          >
+            {copied ? 'Copied!' : 'Copy Report'}
+          </button>
+
+          <button
+            onClick={handleSaveReport}
+            className="rounded-full border border-[#111827] bg-white px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB]"
+          >
+            {saved ? 'Saved!' : 'Save Report'}
+          </button>
+
+          <Link
+            href="/reports"
+            className="inline-block rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB]"
+          >
+            My Reports
+          </Link>
+
+          <Link
+            href="/compare"
+            className="inline-block rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB]"
+          >
+            Compare Reports
+          </Link>
+
+          <button
+            onClick={handleExportPdf}
+            disabled={pdfLoading}
+            className="rounded-full border border-[#111827] bg-white px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {pdfLoading ? 'Preparing PDF...' : 'Export PDF'}
+          </button>
+        </div>
+
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl font-bold md:text-6xl">
+            Opportunity Analysis
+          </h1>
+          <p className="mt-4 text-xl font-medium text-[#4B5563]">
+            {result.query}
+          </p>
+        </div>
+
+        <div className="mb-8 grid gap-6 md:grid-cols-2">
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Target Market
+            </div>
+            <div className="p-6">
+              <p className="text-lg leading-8 text-[#4B5563]">
+                {market || 'Not specified'}
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Input Target Customer
+            </div>
+            <div className="p-6">
+              <p className="text-lg leading-8 text-[#4B5563]">
+                {customer || 'Not specified'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-8 rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+          <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            Why This Opportunity
+          </div>
+          <div className="p-6">
+            <p className="text-lg leading-8 text-[#4B5563]">
+              {result.whyThisOpportunity}
+            </p>
+          </div>
+        </div>
+
+        <div className="mb-8 rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+          <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            Why This Score
+          </div>
+          <div className="p-6">
+            <div className="mb-5 flex flex-wrap items-center gap-3">
+              <span className="rounded-full bg-[#111827] px-4 py-2 text-sm font-semibold text-white">
+                Overall Score: {result.opportunityScore}/100
+              </span>
+              <span className="rounded-full bg-[#ECFDF3] px-4 py-2 text-sm font-semibold text-[#027A48]">
+                {safeLabel}
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {scoreBreakdownRows.slice(0, 3).map((item) => (
+                  <ScoreBreakdownCard
+                    key={item.key}
+                    label={item.label}
+                    score={item.score}
+                    note={item.note}
+                  />
+                ))}
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2 md:max-w-[66.666%]">
+                {scoreBreakdownRows.slice(3).map((item) => (
+                  <ScoreBreakdownCard
+                    key={item.key}
+                    label={item.label}
+                    score={item.score}
+                    note={item.note}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-4">
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm md:col-span-1">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Opportunity Score
+            </div>
+            <div className="p-6">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-end gap-2">
+                  <span className="text-6xl font-bold leading-none">
+                    {result.opportunityScore}
+                  </span>
+                  <span className="mb-1 text-2xl font-semibold text-[#6B7280]">
+                    /100
+                  </span>
+                </div>
+                <span className="rounded-full bg-[#ECFDF3] px-3 py-1 text-sm font-semibold text-[#027A48]">
+                  {safeLabel}
+                </span>
+              </div>
+              <div className="my-4 h-px bg-[#E5E7EB]" />
+              <p className="text-lg text-[#4B5563]">{result.summary}</p>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Market Demand
+            </div>
+            <div className="p-6">
+              <h3 className="text-3xl font-semibold">
+                {result.marketDemand.title}
+              </h3>
+              <p className="mt-4 text-lg leading-8 text-[#4B5563]">
+                {result.marketDemand.description}
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Competition
+            </div>
+            <div className="p-6">
+              <h3 className="text-3xl font-semibold">
+                {result.competition.title}
+              </h3>
+              <p className="mt-4 text-lg leading-8 text-[#4B5563]">
+                {result.competition.description}
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Target Customers
+            </div>
+            <div className="p-6">
+              <h3 className="text-3xl font-semibold">
+                {result.targetCustomers.title}
+              </h3>
+              <p className="mt-4 text-lg leading-8 text-[#4B5563]">
+                {result.targetCustomers.description}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 grid gap-6 md:grid-cols-12">
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm md:col-span-5">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Suggested MVP
+            </div>
+            <div className="p-6">
+              <h3 className="text-3xl font-bold">
+                {result.suggestedMvp.title}
+              </h3>
+              <p className="mt-4 text-2xl text-[#374151]">
+                {result.suggestedMvp.description}
+              </p>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                {result.suggestedMvp.features.map((feature) => (
+                  <span
+                    key={feature}
+                    className="rounded-full bg-[#F3F4F6] px-4 py-2 text-lg font-medium text-[#374151]"
+                  >
+                    {feature}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm md:col-span-3">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Revenue Model
+            </div>
+            <div className="p-6">
+              <h3 className="text-3xl font-bold">{result.revenueModel.title}</h3>
+              <p className="mt-3 text-2xl font-semibold">
+                {result.revenueModel.price}
+              </p>
+              <p className="mt-4 text-lg leading-8 text-[#6B7280]">
+                {result.revenueModel.description}
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm md:col-span-4">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Next Steps
+            </div>
+            <div className="p-6">
+              <div className="space-y-4 text-lg font-medium text-[#374151]">
+                {result.nextSteps.map((step) => (
+                  <p key={step}>{step}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Best First Customer
+            </div>
+            <div className="p-6">
+              <h3 className="text-3xl font-semibold">
+                {result.bestFirstCustomer.title}
+              </h3>
+              <p className="mt-4 text-lg leading-8 text-[#4B5563]">
+                {result.bestFirstCustomer.description}
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              First Offer
+            </div>
+            <div className="p-6">
+              <h3 className="text-3xl font-semibold">{result.firstOffer.title}</h3>
+              <p className="mt-3 text-2xl font-semibold text-[#111827]">
+                {result.firstOffer.priceIdea}
+              </p>
+              <p className="mt-4 text-lg leading-8 text-[#4B5563]">
+                {result.firstOffer.description}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 grid gap-6 md:grid-cols-4">
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Pain Points
+            </div>
+            <div className="p-6">
+              <div className="space-y-3 text-lg text-[#4B5563]">
+                {result.painPoints.map((point) => (
+                  <p key={point}>{point}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Opportunity Angle
+            </div>
+            <div className="p-6">
+              <p className="text-lg leading-8 text-[#4B5563]">
+                {result.opportunityAngle}
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Go-To-Market
+            </div>
+            <div className="p-6">
+              <p className="text-lg leading-8 text-[#4B5563]">
+                {result.goToMarket}
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+              Risks
+            </div>
+            <div className="p-6">
+              <div className="space-y-3 text-lg text-[#4B5563]">
+                {result.risks.map((risk) => (
+                  <p key={risk}>{risk}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

@@ -1,0 +1,665 @@
+export type BlogLanguage = 'ar' | 'en';
+
+export type LocalizedText = {
+  ar: string;
+  en: string;
+};
+
+export type ContentCategory =
+  | 'idea-validation'
+  | 'feasibility'
+  | 'market-research'
+  | 'positioning'
+  | 'madixo-guides';
+
+export type BlogBlock =
+  | { type: 'paragraph'; text: LocalizedText }
+  | { type: 'heading'; text: LocalizedText }
+  | { type: 'list'; items: LocalizedText[] };
+
+export type BlogPost = {
+  slug: string;
+  category: ContentCategory;
+  title: LocalizedText;
+  excerpt: LocalizedText;
+  seoDescription: LocalizedText;
+  coverEyebrow: LocalizedText;
+  keywords: string[];
+  publishedAt: string;
+  updatedAt: string;
+  readingTimeMinutes: number;
+  featured: boolean;
+  body: BlogBlock[];
+  relatedUseCases?: string[];
+  relatedComparisons?: string[];
+};
+
+export type UseCasePage = {
+  slug: string;
+  title: LocalizedText;
+  summary: LocalizedText;
+  seoDescription: LocalizedText;
+  industry: LocalizedText;
+  bestFor: LocalizedText[];
+  useMadixoFor: LocalizedText[];
+  workflow: LocalizedText[];
+  expectedOutcome: LocalizedText;
+  relatedPosts?: string[];
+};
+
+export type ComparisonPage = {
+  slug: string;
+  title: LocalizedText;
+  summary: LocalizedText;
+  seoDescription: LocalizedText;
+  compareAgainst: LocalizedText;
+  bestWhen: LocalizedText[];
+  whyMadixo: LocalizedText[];
+  notFor: LocalizedText[];
+  relatedPosts?: string[];
+};
+
+export function localizeText(value: LocalizedText, language: BlogLanguage) {
+  return value[language];
+}
+
+export function formatContentDate(value: string, language: BlogLanguage) {
+  return new Intl.DateTimeFormat(language === 'ar' ? 'ar-SA' : 'en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(value));
+}
+
+export function categoryLabel(category: ContentCategory, language: BlogLanguage) {
+  const labels: Record<ContentCategory, LocalizedText> = {
+    'idea-validation': { ar: 'اختبار الفكرة', en: 'Idea Validation' },
+    feasibility: { ar: 'دراسة الجدوى', en: 'Feasibility' },
+    'market-research': { ar: 'فهم السوق', en: 'Market Research' },
+    positioning: { ar: 'تموضع المنتج', en: 'Positioning' },
+    'madixo-guides': { ar: 'استخدام Madixo', en: 'Using Madixo' },
+  };
+
+  return labels[category][language];
+}
+
+export const BLOG_CATEGORIES: ContentCategory[] = [
+  'idea-validation',
+  'feasibility',
+  'market-research',
+  'positioning',
+  'madixo-guides',
+];
+
+export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: 'how-to-validate-a-business-idea-before-building',
+    category: 'idea-validation',
+    title: {
+      ar: 'كيف تختبر فكرة مشروع قبل أن تبدأ في البناء',
+      en: 'How to Validate a Business Idea Before You Start Building',
+    },
+    excerpt: {
+      ar: 'طريقة عملية لتقييم الفكرة قبل صرف الوقت والمال: هل المشكلة حقيقية، وهل السوق واضح، وهل توجد إشارة دفع أو اهتمام كافٍ؟',
+      en: 'A practical way to evaluate an idea before spending time and money: is the problem real, is the market clear, and is there enough buying intent?',
+    },
+    seoDescription: {
+      ar: 'تعرف على طريقة عملية لاختبار فكرة مشروع قبل البناء، من وضوح المشكلة إلى إشارات السوق الأولى، وكيف يساعدك Madixo على ذلك.',
+      en: 'Learn a practical process for validating a business idea before building, from problem clarity to early market signals, and how Madixo supports it.',
+    },
+    coverEyebrow: { ar: 'اختبار الفكرة', en: 'Idea Validation' },
+    keywords: ['اختبار فكرة مشروع', 'business idea validation', 'startup idea'],
+    publishedAt: '2026-03-30',
+    updatedAt: '2026-03-30',
+    readingTimeMinutes: 6,
+    featured: true,
+    relatedUseCases: ['madixo-for-first-time-founders'],
+    relatedComparisons: ['madixo-vs-asking-chatgpt-only'],
+    body: [
+      {
+        type: 'paragraph',
+        text: {
+          ar: 'الانتقال السريع من الفكرة إلى التنفيذ الكامل غالبًا يستهلك وقتًا ومالًا قبل أن تتأكد أصلًا أن هناك مشكلة حقيقية وسوقًا واضحًا. ما تحتاجه أولًا ليس منتجًا كاملاً، بل قرارًا أوضح.',
+          en: 'Moving too quickly from an idea into full execution often burns time and money before you even confirm there is a real problem and a clear market. What you need first is not a full product, but a clearer decision.',
+        },
+      },
+      {
+        type: 'heading',
+        text: { ar: 'ابدأ بثلاثة أسئلة', en: 'Start with three questions' },
+      },
+      {
+        type: 'list',
+        items: [
+          {
+            ar: 'ما المشكلة التي تحاول حلها، وهل هي متكررة فعلًا؟',
+            en: 'What problem are you solving, and does it happen repeatedly?',
+          },
+          {
+            ar: 'من هو العميل الأول الواضح الذي يشعر بهذه المشكلة الآن؟',
+            en: 'Who is the first clear customer that feels this problem now?',
+          },
+          {
+            ar: 'هل يمكنك الوصول إليه واختبار رد فعله بدون بناء كامل؟',
+            en: 'Can you reach that customer and test the response without full execution?',
+          },
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: {
+          ar: 'في هذه المرحلة لا تبحث عن مجاملة أو إعجاب عام. ابحث عن إشارات سلوكية: طلب توضيح، سؤال عن السعر، مقارنة بحل بديل، أو استعداد لتجربة شيء بسيط.',
+          en: 'At this stage, do not look for compliments or general enthusiasm. Look for behavioral signals: asking for clarification, asking about price, comparing you to an alternative, or willingness to try something simple.',
+        },
+      },
+      {
+        type: 'paragraph',
+        text: {
+          ar: 'هنا يفيد Madixo لأنه يبدأ بتحليل الفرصة نفسها، ثم يحولها إلى دراسة جدوى أولية ومساحة تحقق وتوثيق أدلة حتى لا يبقى القرار قائمًا على الانطباع فقط.',
+          en: 'This is where Madixo helps because it starts with opportunity analysis itself, then extends into early feasibility and validation so the decision does not rely on gut feeling alone.',
+        },
+      },
+    ],
+  },
+  {
+    slug: 'difference-between-opportunity-analysis-and-feasibility-study',
+    category: 'feasibility',
+    title: {
+      ar: 'ما الفرق بين تحليل الفرصة ودراسة الجدوى الأولية',
+      en: 'What Is the Difference Between Opportunity Analysis and an Early Feasibility Study',
+    },
+    excerpt: {
+      ar: 'تحليل الفرصة يجيب: هل هذه فرصة تستحق النظر؟ ودراسة الجدوى الأولية تضيف: هل تبدو مجدية ماليًا في البداية؟',
+      en: 'Opportunity analysis answers: is this worth exploring? An early feasibility study adds: does it look financially workable at the start?',
+    },
+    seoDescription: {
+      ar: 'تعرف على الفرق العملي بين تحليل الفرصة ودراسة الجدوى الأولية، ولماذا يحتاج المؤسس الاثنين قبل اتخاذ قرار التنفيذ.',
+      en: 'Understand the practical difference between opportunity analysis and an early feasibility study, and why founders often need both before execution.',
+    },
+    coverEyebrow: { ar: 'دراسة الجدوى', en: 'Feasibility' },
+    keywords: ['دراسة جدوى أولية', 'opportunity analysis', 'feasibility study'],
+    publishedAt: '2026-03-30',
+    updatedAt: '2026-03-30',
+    readingTimeMinutes: 5,
+    featured: true,
+    relatedUseCases: ['madixo-for-service-businesses'],
+    relatedComparisons: ['madixo-vs-feasibility-template-spreadsheets'],
+    body: [
+      {
+        type: 'paragraph',
+        text: {
+          ar: 'تحليل الفرصة ليس هو دراسة الجدوى. الأول يركز على جاذبية السوق والمشكلة والعميل والمدخل. الثاني يركز على القراءة المالية الأولية إذا قررت أن تقترب أكثر من التنفيذ.',
+          en: 'Opportunity analysis is not the same as feasibility study. The first focuses on market attractiveness, problem clarity, the customer, and the entry point. The second focuses on the early financial picture if you move closer to execution.',
+        },
+      },
+      {
+        type: 'list',
+        items: [
+          {
+            ar: 'تحليل الفرصة: الطلب، المنافسة، الربحية، أفضل عميل أول، المخاطر.',
+            en: 'Opportunity analysis: demand, competition, monetization, best first customer, and risks.',
+          },
+          {
+            ar: 'دراسة الجدوى الأولية: تكاليف البداية، التكاليف الشهرية، سيناريوهات الإيراد، ونظرة أولية لنقطة التعادل.',
+            en: 'Early feasibility: startup costs, monthly costs, revenue scenarios, and an early break-even view.',
+          },
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: {
+          ar: 'القرار الأقوى يأتي عندما تجمع بين الاثنين. قد تبدو الفكرة جذابة من ناحية السوق لكن أرقامها الأولية ضعيفة، أو العكس.',
+          en: 'The stronger decision comes when you combine both. An idea may look attractive from a market perspective while its early numbers look weak, or the opposite.',
+        },
+      },
+    ],
+  },
+  {
+    slug: 'how-to-know-if-market-demand-is-real',
+    category: 'market-research',
+    title: {
+      ar: 'كيف تعرف أن الطلب في السوق حقيقي وليس مجرد انطباع',
+      en: 'How to Tell Whether Market Demand Is Real and Not Just an Impression',
+    },
+    excerpt: {
+      ar: 'الطلب الحقيقي يظهر في السلوك: أسئلة متكررة، اهتمام بالسعر، مقارنة بالبدائل، ومحاولات واضحة للحل.',
+      en: 'Real demand shows up in behavior: repeated questions, price interest, comparisons with alternatives, and visible attempts to solve the problem.',
+    },
+    seoDescription: {
+      ar: 'تعرف على الإشارات العملية التي تدل على أن الطلب حقيقي في السوق، وكيف تميز بين الفضول العابر والاهتمام الجاد.',
+      en: 'Learn the practical signals that show real market demand and how to separate casual curiosity from serious interest.',
+    },
+    coverEyebrow: { ar: 'فهم السوق', en: 'Market Research' },
+    keywords: ['market demand', 'real demand', 'سوق', 'طلب'],
+    publishedAt: '2026-03-30',
+    updatedAt: '2026-03-30',
+    readingTimeMinutes: 5,
+    featured: false,
+    relatedUseCases: ['madixo-for-agencies-and-consultants'],
+    relatedComparisons: ['madixo-vs-generic-market-research-notes'],
+    body: [
+      {
+        type: 'paragraph',
+        text: {
+          ar: 'الخطأ الشائع هو اعتبار أي تفاعل إيجابي دليلًا على وجود طلب. لكن السوق لا يثبت نفسه بالكلام الجميل فقط، بل بما يفعله الناس فعلاً.',
+          en: 'A common mistake is treating any positive reaction as proof of demand. But markets do not prove themselves through nice words alone, they show themselves through behavior.',
+        },
+      },
+      {
+        type: 'list',
+        items: [
+          { ar: 'يسألون عن السعر أو طريقة البدء.', en: 'They ask about price or how to begin.' },
+          { ar: 'يقارنونك بحل آخر أو بديل يدفعون له بالفعل.', en: 'They compare you with another solution they already pay for.' },
+          { ar: 'يذكرون مشكلة متكررة بصياغات متشابهة.', en: 'They describe a recurring problem in similar words.' },
+          { ar: 'يطلبون أن تتابع معهم أو تعرض شيئًا أوضح.', en: 'They ask you to follow up or show a more concrete offer.' },
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: {
+          ar: 'لهذا السبب تسجيل ملاحظات السوق مهم. إذا جمعت هذه الإشارات في مكان واحد، يصبح القرار أهدأ وأدق من الاعتماد على الذاكرة أو الانطباع.',
+          en: 'That is why saving market notes matters. Once you collect these signals in one place, the decision becomes calmer and more accurate than relying on memory or impression.',
+        },
+      },
+    ],
+  },
+  {
+    slug: 'how-to-document-market-notes-that-improve-decisions',
+    category: 'madixo-guides',
+    title: {
+      ar: 'كيف توثق ملاحظات السوق بطريقة تحسن القرار',
+      en: 'How to Document Market Notes in a Way That Improves Decisions',
+    },
+    excerpt: {
+      ar: 'توثيق ملاحظات السوق ليس مجرد حفظ تعليقات. الهدف هو بناء صورة أوضح لما يتكرر وما يستحق التعديل.',
+      en: 'Documenting market notes is not just saving comments. The goal is to build a clearer picture of what repeats and what deserves adjustment.',
+    },
+    seoDescription: {
+      ar: 'تعرف على طريقة عملية لتوثيق ملاحظات السوق والمقابلات والاعتراضات، بحيث تساعدك فعلًا على اتخاذ قرار أفضل.',
+      en: 'Learn a practical method for documenting market notes, interviews, and objections so they actually improve your next decision.',
+    },
+    coverEyebrow: { ar: 'استخدام Madixo', en: 'Using Madixo' },
+    keywords: ['market notes', 'evidence', 'madixo guide'],
+    publishedAt: '2026-03-30',
+    updatedAt: '2026-03-30',
+    readingTimeMinutes: 4,
+    featured: false,
+    relatedUseCases: ['madixo-for-first-time-founders'],
+    relatedComparisons: ['madixo-vs-generic-market-research-notes'],
+    body: [
+      {
+        type: 'paragraph',
+        text: {
+          ar: 'إذا كانت ملاحظات السوق مبعثرة بين واتساب والملاحظات الذهنية والمحادثات، فإن القرار سيتشتت معها. التوثيق الجيد يجعل التكرار واضحًا، ويحول التعلّم إلى حركة عملية.',
+          en: 'If market notes are scattered across WhatsApp, memory, and casual conversations, the decision becomes scattered too. Good documentation makes repetition visible and turns learning into action.',
+        },
+      },
+      {
+        type: 'list',
+        items: [
+          { ar: 'احفظ ما قيل أو حدث فعلًا، لا تفسيرك فقط.', en: 'Save what was actually said or happened, not just your interpretation.' },
+          { ar: 'اجعل العنوان قصيرًا وواضحًا.', en: 'Keep the title short and clear.' },
+          { ar: 'أضف المصدر وقوة الإشارة.', en: 'Add the source and signal strength.' },
+          { ar: 'أعد بناء رؤية القرار بعد تراكم عدة ملاحظات.', en: 'Rebuild the decision view after several notes accumulate.' },
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'when-to-use-madixo-instead-of-asking-chatgpt-only',
+    category: 'madixo-guides',
+    title: {
+      ar: 'متى تستخدم Madixo بدل الاكتفاء بسؤال ChatGPT فقط',
+      en: 'When to Use Madixo Instead of Asking ChatGPT Only',
+    },
+    excerpt: {
+      ar: 'سؤال ChatGPT قد يعطيك بداية جيدة، لكن Madixo يصبح أقوى عندما تحتاج مسار قرار وتوثيق أدلة وتدرجًا واضحًا من التحليل إلى التنفيذ.',
+      en: 'Asking ChatGPT can be a good starting point, but Madixo becomes stronger when you need a decision workflow, evidence capture, and a clear path from analysis to action.',
+    },
+    seoDescription: {
+      ar: 'تعرف على الفرق بين سؤال ChatGPT بشكل عام وبين استخدام Madixo عندما تحتاج تحليل فرصة ودراسة جدوى أولية ومساحة تحقق وقرار أوضح.',
+      en: 'Understand the difference between using ChatGPT generically and using Madixo when you need opportunity analysis, early feasibility, validation, and a clearer decision.',
+    },
+    coverEyebrow: { ar: 'استخدام Madixo', en: 'Using Madixo' },
+    keywords: ['Madixo vs ChatGPT', 'business idea analysis', 'idea validation tool'],
+    publishedAt: '2026-03-30',
+    updatedAt: '2026-03-30',
+    readingTimeMinutes: 5,
+    featured: true,
+    relatedUseCases: ['madixo-for-first-time-founders'],
+    relatedComparisons: ['madixo-vs-asking-chatgpt-only'],
+    body: [
+      {
+        type: 'paragraph',
+        text: {
+          ar: 'ChatGPT ممتاز للبدايات السريعة: أفكار أولية، زوايا تفكير، وصياغة عامة. لكن عندما تحتاج إلى سير عمل يتدرج من تحليل الفرصة إلى الجدوى الأولية إلى التحقق وتوثيق ما تتعلمه، تصبح الحاجة إلى أداة متخصصة أوضح.',
+          en: 'ChatGPT is excellent for quick starts: early ideas, broad thinking angles, and general phrasing. But when you need a workflow that moves from opportunity analysis to early feasibility to validation and evidence capture, the need for a specialized product becomes clearer.',
+        },
+      },
+      {
+        type: 'list',
+        items: [
+          { ar: 'استخدم ChatGPT إذا كنت في مرحلة استكشاف مبكرة جدًا.', en: 'Use ChatGPT when you are at a very early exploration stage.' },
+          { ar: 'استخدم Madixo إذا أردت تحليلًا منظمًا ومسار قرار واضحًا.', en: 'Use Madixo when you want structured analysis and a clear decision workflow.' },
+          { ar: 'استخدم Madixo إذا كنت تريد حفظ التقارير، ودراسة الجدوى، وملاحظات السوق في مكان واحد.', en: 'Use Madixo if you want saved reports, feasibility, and market notes in one place.' },
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'how-to-choose-your-best-first-customer',
+    category: 'positioning',
+    title: {
+      ar: 'كيف تختار أفضل عميل أول للفكرة الجديدة',
+      en: 'How to Choose the Best First Customer for a New Idea',
+    },
+    excerpt: {
+      ar: 'أفضل عميل أول ليس أكبر شريحة في السوق، بل أوضح شريحة تعاني المشكلة ويمكن الوصول إليها بسرعة.',
+      en: 'The best first customer is not the biggest market segment. It is the clearest one with the problem and the fastest path to reach.',
+    },
+    seoDescription: {
+      ar: 'تعرف على طريقة عملية لاختيار أفضل عميل أول لفكرتك الجديدة، ولماذا هذه الخطوة تؤثر في سرعة التحقق والقرار.',
+      en: 'Learn a practical method for choosing the best first customer for a new idea and why that step shapes validation speed and decision quality.',
+    },
+    coverEyebrow: { ar: 'تموضع المنتج', en: 'Positioning' },
+    keywords: ['best first customer', 'positioning', 'target customer'],
+    publishedAt: '2026-03-30',
+    updatedAt: '2026-03-30',
+    readingTimeMinutes: 4,
+    featured: false,
+    relatedUseCases: ['madixo-for-service-businesses'],
+    relatedComparisons: ['madixo-vs-feasibility-template-spreadsheets'],
+    body: [
+      {
+        type: 'paragraph',
+        text: {
+          ar: 'من أكبر أسباب ضياع الجهد في البداية أن تكون الشريحة واسعة جدًا. كلما ضاقت الشريحة الأولى وأصبحت أوضح، صار الاختبار أسرع والرسالة أقوى والتعلم أدق.',
+          en: 'One of the biggest reasons early effort gets wasted is choosing a segment that is too broad. The narrower and clearer the first segment is, the faster the test and the stronger the message become.',
+        },
+      },
+      {
+        type: 'list',
+        items: [
+          { ar: 'اختر شريحة تشعر بالمشكلة الآن لا لاحقًا.', en: 'Choose a segment that feels the problem now, not later.' },
+          { ar: 'اختر شريحة يمكنك الوصول إليها مباشرة.', en: 'Choose a segment you can reach directly.' },
+          { ar: 'اختر شريحة تصف المشكلة بلغة واضحة ومتكررة.', en: 'Choose a segment that describes the problem in clear repeated language.' },
+        ],
+      },
+    ],
+  },
+];
+
+export const USE_CASES: UseCasePage[] = [
+  {
+    slug: 'madixo-for-first-time-founders',
+    title: { ar: 'Madixo للمؤسسين الجدد', en: 'Madixo for First-Time Founders' },
+    summary: {
+      ar: 'مناسب لمن لديه فكرة ويريد أن يعرف: هل تستحق التجربة؟ وما الخطوة التالية قبل صرف وقت ومال كبيرين؟',
+      en: 'Best for people with an idea who need to know whether it deserves testing and what to do next before spending serious time and money.',
+    },
+    seoDescription: {
+      ar: 'تعرف على كيف يساعد Madixo المؤسسين الجدد على تحليل الفكرة وإنشاء دراسة جدوى أولية وتوثيق ما يتعلمونه من السوق.',
+      en: 'See how Madixo helps first-time founders analyze ideas, generate early feasibility, and document what they learn from the market.',
+    },
+    industry: { ar: 'رواد الأعمال', en: 'Founders' },
+    bestFor: [
+      { ar: 'من لديه أكثر من فكرة ويريد فرزها', en: 'People comparing more than one idea' },
+      { ar: 'من لا يريد البدء بالحدس فقط', en: 'People who do not want to start from instinct alone' },
+      { ar: 'من يريد مسارًا أوضح من التحليل إلى القرار', en: 'People who want a clearer path from analysis to decision' },
+    ],
+    useMadixoFor: [
+      { ar: 'تحليل الفرصة بسرعة', en: 'Analyze the opportunity quickly' },
+      { ar: 'إنشاء دراسة جدوى أولية', en: 'Generate an early feasibility view' },
+      { ar: 'تسجيل ملاحظات السوق', en: 'Capture market notes' },
+      { ar: 'تحديد الخطوة التالية', en: 'Define the next move' },
+    ],
+    workflow: [
+      { ar: 'ابدأ بتحليل الفرصة', en: 'Start with opportunity analysis' },
+      { ar: 'أضف دراسة جدوى أولية إذا بدت الفرصة واعدة', en: 'Add early feasibility if the opportunity looks promising' },
+      { ar: 'ادخل إلى مساحة التحقق وسجّل ما يحدث في السوق', en: 'Move into validation and log what happens in the market' },
+      { ar: 'حدّث القرار وأنشئ أفضل خطوة الآن', en: 'Update the decision and generate the best next step' },
+    ],
+    expectedOutcome: {
+      ar: 'قرار أوضح حول الاستمرار أو التعديل أو التوقف بدل الوقوع في تنفيذ مبكر وغير محسوب.',
+      en: 'A clearer decision on whether to continue, adjust, or stop instead of drifting into early unstructured execution.',
+    },
+    relatedPosts: ['how-to-validate-a-business-idea-before-building', 'when-to-use-madixo-instead-of-asking-chatgpt-only'],
+  },
+  {
+    slug: 'madixo-for-service-businesses',
+    title: { ar: 'Madixo للمشاريع الخدمية', en: 'Madixo for Service Businesses' },
+    summary: {
+      ar: 'مفيد جدًا للأعمال الخدمية التي تحتاج اختبار الطلب والعرض والسعر قبل التوسع أو التوظيف أو بناء نظام كامل.',
+      en: 'A strong fit for service businesses that need to test demand, offer shape, and pricing before scaling, hiring, or building a full system.',
+    },
+    seoDescription: {
+      ar: 'اكتشف كيف يساعد Madixo المشاريع الخدمية على اختبار العرض والسعر والطلب وتحسين القرار قبل التوسع.',
+      en: 'See how Madixo helps service businesses test offer, pricing, and demand before scaling.',
+    },
+    industry: { ar: 'مشاريع خدمية', en: 'Service Businesses' },
+    bestFor: [
+      { ar: 'الوكالات الصغيرة', en: 'Small agencies' },
+      { ar: 'الخدمات المحلية', en: 'Local service businesses' },
+      { ar: 'الخدمات الرقمية والاستشارية', en: 'Digital and consulting services' },
+    ],
+    useMadixoFor: [
+      { ar: 'اختيار أفضل عميل أول', en: 'Choose the best first customer' },
+      { ar: 'صياغة العرض الأول', en: 'Shape the first offer' },
+      { ar: 'تقدير الجدوى الأولية', en: 'Estimate early feasibility' },
+      { ar: 'بناء اختبار قصير قبل التوسع', en: 'Build a short validation test before scaling' },
+    ],
+    workflow: [
+      { ar: 'حلل الفرصة والطلب والمنافسة', en: 'Analyze the opportunity, demand, and competition' },
+      { ar: 'أنشئ دراسة جدوى أولية لتكلفة البداية والهامش التقريبي', en: 'Generate early feasibility for startup cost and rough margin' },
+      { ar: 'اختبر الرسالة والعرض والسعر مع السوق', en: 'Test the message, offer, and price with the market' },
+      { ar: 'سجل نتائجك وعدّل الخطوة التالية', en: 'Save the outcomes and adjust the next move' },
+    ],
+    expectedOutcome: {
+      ar: 'خفض مخاطرة التوسع المبكر وبناء عرض أوضح وسعر أقرب للواقع.',
+      en: 'Lower the risk of scaling too early and build a clearer offer with more realistic pricing.',
+    },
+    relatedPosts: ['difference-between-opportunity-analysis-and-feasibility-study', 'how-to-choose-your-best-first-customer'],
+  },
+  {
+    slug: 'madixo-for-agencies-and-consultants',
+    title: { ar: 'Madixo للوكالات والمستشارين', en: 'Madixo for Agencies and Consultants' },
+    summary: {
+      ar: 'يمكن استخدام Madixo داخليًا لفحص أفكار الخدمات الجديدة أو مع العملاء لإعطائهم مسار قرار أوضح.',
+      en: 'Madixo can be used internally to assess new service ideas or with clients to give them a clearer decision path.',
+    },
+    seoDescription: {
+      ar: 'تعرف على كيف تستفيد الوكالات والمستشارون من Madixo في تحليل الفرص وبناء قرارات أوضح لأنفسهم أو لعملائهم.',
+      en: 'Learn how agencies and consultants can use Madixo to analyze opportunities and build clearer decisions for themselves or their clients.',
+    },
+    industry: { ar: 'وكالات واستشارات', en: 'Agencies and Consulting' },
+    bestFor: [
+      { ar: 'وكالات تريد تقييم عروض جديدة', en: 'Agencies evaluating new offers' },
+      { ar: 'مستشارون يقدمون دراسات أولية للعملاء', en: 'Consultants preparing early assessments for clients' },
+      { ar: 'فرق تريد توحيد طريقة التفكير', en: 'Teams that want a more consistent decision workflow' },
+    ],
+    useMadixoFor: [
+      { ar: 'تحليل أفكار داخلية جديدة', en: 'Analyze internal new ideas' },
+      { ar: 'إعطاء العميل تقريرًا أوضح', en: 'Give the client a clearer report' },
+      { ar: 'بناء مساحة تحقق بدل التوصيات العامة فقط', en: 'Build a validation workspace instead of generic advice' },
+      { ar: 'تقديم مخرجات قابلة للمراجعة', en: 'Deliver outputs that are easier to review' },
+    ],
+    workflow: [
+      { ar: 'حلل فكرة العميل أو العرض الجديد', en: 'Analyze the client idea or the new offer' },
+      { ar: 'أضف الجدوى الأولية عند الحاجة', en: 'Add early feasibility when relevant' },
+      { ar: 'خطط للتجربة وسجل الأدلة', en: 'Plan the validation and capture evidence' },
+      { ar: 'حدّد الاتجاه التالي بوضوح', en: 'Clarify the next direction' },
+    ],
+    expectedOutcome: {
+      ar: 'عملية أكثر مهنية من مجرد تقرير جامد أو ملاحظات متفرقة.',
+      en: 'A more professional process than a static report or scattered notes.',
+    },
+    relatedPosts: ['how-to-document-market-notes-that-improve-decisions'],
+  },
+  {
+    slug: 'madixo-for-ecommerce-and-product-ideas',
+    title: { ar: 'Madixo لأفكار المنتجات والتجارة الإلكترونية', en: 'Madixo for Product Ideas and Ecommerce' },
+    summary: {
+      ar: 'إذا كنت تفكر في منتج أو براند أو متجر إلكتروني، يساعدك Madixo على فرز الفكرة وقراءة الجدوى الأولية وتحديد أفضل بداية.',
+      en: 'If you are exploring a product, a brand, or an ecommerce idea, Madixo helps you sort the idea, read early feasibility, and define the best starting point.',
+    },
+    seoDescription: {
+      ar: 'اكتشف كيف يستخدم Madixo مع أفكار المنتجات والبراندات والمتاجر الإلكترونية قبل البدء بالتوريد أو التصنيع أو التوسع.',
+      en: 'See how Madixo can be used with product, brand, and ecommerce ideas before sourcing, manufacturing, or scaling.',
+    },
+    industry: { ar: 'تجارة إلكترونية ومنتجات', en: 'Ecommerce and Products' },
+    bestFor: [
+      { ar: 'البراندات الناشئة', en: 'Early-stage brands' },
+      { ar: 'أفكار المنتجات الجديدة', en: 'New product ideas' },
+      { ar: 'متاجر تبحث عن خطوط جديدة', en: 'Stores exploring new lines' },
+    ],
+    useMadixoFor: [
+      { ar: 'فحص وضوح المشكلة أو الرغبة', en: 'Check whether the desire or problem is clear' },
+      { ar: 'قراءة الجدوى الأولية للهامش والتكلفة', en: 'Read early feasibility for margin and cost' },
+      { ar: 'اختيار الشريحة الأولى', en: 'Choose the first segment' },
+      { ar: 'بناء تجربة سوق قبل الالتزام الكبير', en: 'Build a market test before a bigger commitment' },
+    ],
+    workflow: [
+      { ar: 'حلل السوق والمنافسة والعرض', en: 'Analyze the market, competition, and offer' },
+      { ar: 'أنشئ دراسة جدوى أولية للتكلفة والسيناريوهات', en: 'Generate early feasibility for cost and scenarios' },
+      { ar: 'خطط لاختبار قصير مع السوق', en: 'Plan a short validation with the market' },
+      { ar: 'عدل الاتجاه بناءً على الأدلة', en: 'Adjust direction based on evidence' },
+    ],
+    expectedOutcome: {
+      ar: 'تقليل احتمال الالتزام المبكر في منتج أو مخزون قبل أن تتأكد من وضوح الاتجاه.',
+      en: 'Reduce the chance of overcommitting to a product or inventory before the direction is clear.',
+    },
+    relatedPosts: ['difference-between-opportunity-analysis-and-feasibility-study', 'how-to-know-if-market-demand-is-real'],
+  },
+];
+
+export const COMPARISONS: ComparisonPage[] = [
+  {
+    slug: 'madixo-vs-asking-chatgpt-only',
+    title: { ar: 'Madixo مقابل الاكتفاء بسؤال ChatGPT فقط', en: 'Madixo vs Asking ChatGPT Only' },
+    summary: {
+      ar: 'ChatGPT مفيد للبداية، لكن Madixo أقوى عندما تحتاج تحليلًا منظمًا ومسار تحقق وتوثيق أدلة وقرارًا لاحقًا.',
+      en: 'ChatGPT is useful for getting started, but Madixo is stronger when you need structured analysis, validation, evidence capture, and a later decision.',
+    },
+    seoDescription: {
+      ar: 'قارن بين Madixo وبين الاكتفاء بسؤال ChatGPT فقط عند تقييم فكرة مشروع واتخاذ قرار أوضح.',
+      en: 'Compare Madixo with asking ChatGPT only when evaluating a business idea and making a clearer decision.',
+    },
+    compareAgainst: { ar: 'الاكتفاء بسؤال ChatGPT', en: 'Asking ChatGPT only' },
+    bestWhen: [
+      { ar: 'تريد تحليلًا منظمًا لا إجابة واحدة فقط', en: 'You want structured analysis rather than a single answer' },
+      { ar: 'تحتاج حفظ التقارير ودراسة الجدوى وملاحظات السوق', en: 'You need saved reports, feasibility, and market notes' },
+      { ar: 'تريد خطوة تالية مبنية على الأدلة', en: 'You want a next move driven by evidence' },
+    ],
+    whyMadixo: [
+      { ar: 'مسار متدرج من التحليل إلى التحقق', en: 'A staged workflow from analysis to validation' },
+      { ar: 'حفظ التقارير ودراسة الجدوى والقرارات', en: 'Saved reports, feasibility, and decisions' },
+      { ar: 'مخرجات PDF قابلة للمشاركة', en: 'Shareable PDF exports' },
+      { ar: 'رؤية قرار وخطوة تالية', en: 'Decision view and best next step' },
+    ],
+    notFor: [
+      { ar: 'من يريد فقط عصفًا ذهنيًا سريعًا دون حفظ أو متابعة', en: 'People who only want fast brainstorming without persistence' },
+    ],
+    relatedPosts: ['when-to-use-madixo-instead-of-asking-chatgpt-only'],
+  },
+  {
+    slug: 'madixo-vs-feasibility-template-spreadsheets',
+    title: { ar: 'Madixo مقابل قوالب الجداول التقليدية للجدوى', en: 'Madixo vs Traditional Feasibility Spreadsheet Templates' },
+    summary: {
+      ar: 'القوالب التقليدية تفيد في إدخال الأرقام، لكن Madixo يربط بين تحليل الفرصة والجدوى الأولية والتحقق بدل أن يعزل كل شيء في ملف واحد صامت.',
+      en: 'Traditional templates help with entering numbers, but Madixo connects opportunity analysis, early feasibility, and validation instead of isolating everything in one silent file.',
+    },
+    seoDescription: {
+      ar: 'قارن بين Madixo وبين قوالب الجداول التقليدية لدراسة الجدوى، ومتى يكون كل خيار مناسبًا.',
+      en: 'Compare Madixo with traditional feasibility spreadsheet templates and see when each approach makes sense.',
+    },
+    compareAgainst: { ar: 'قوالب الجداول التقليدية', en: 'Spreadsheet templates' },
+    bestWhen: [
+      { ar: 'تريد ربط الأرقام بالسوق لا بالجداول فقط', en: 'You want numbers connected to market learning, not only to sheets' },
+      { ar: 'تريد مسارًا يبدأ من الفكرة لا من الجدول مباشرة', en: 'You want a workflow that starts from the idea, not from the spreadsheet' },
+      { ar: 'تريد تحويل النتيجة إلى تجربة وقرار', en: 'You want to turn the result into validation and decision' },
+    ],
+    whyMadixo: [
+      { ar: 'تحليل فرصة قبل الجدوى', en: 'Opportunity analysis before feasibility' },
+      { ar: 'دراسة جدوى أولية بصياغة أوضح للمؤسس', en: 'Early feasibility with clearer founder-facing outputs' },
+      { ar: 'الانتقال إلى التحقق وتسجيل الأدلة', en: 'A direct move into validation and evidence capture' },
+    ],
+    notFor: [
+      { ar: 'من يريد نموذجًا محاسبيًا نهائيًا شديد التفصيل', en: 'People looking for a final highly detailed accounting model' },
+    ],
+    relatedPosts: ['difference-between-opportunity-analysis-and-feasibility-study'],
+  },
+  {
+    slug: 'madixo-vs-generic-market-research-notes',
+    title: { ar: 'Madixo مقابل ملاحظات أبحاث السوق العامة', en: 'Madixo vs Generic Market Research Notes' },
+    summary: {
+      ar: 'الملاحظات العامة مفيدة، لكن Madixo أقوى عندما تريد تحويل الملاحظات إلى رؤية قرار وخطوة عملية تالية.',
+      en: 'General notes are useful, but Madixo becomes stronger when you want to turn them into a decision view and a next action.',
+    },
+    seoDescription: {
+      ar: 'تعرف على الفرق بين ملاحظات أبحاث السوق العامة وبين استخدام Madixo لتجميع الأدلة وتحويلها إلى قرار أوضح.',
+      en: 'Understand the difference between generic market research notes and using Madixo to turn evidence into a clearer decision.',
+    },
+    compareAgainst: { ar: 'ملاحظات أبحاث السوق العامة', en: 'Generic market research notes' },
+    bestWhen: [
+      { ar: 'تريد حفظ الأدلة بطريقة منظمة', en: 'You want evidence stored in a structured way' },
+      { ar: 'تريد رؤية ما الذي تكرر وما الذي يستحق التعديل', en: 'You want to see what repeated and what deserves change' },
+      { ar: 'تريد خطوة عملية لاحقة لا مجرد أرشيف ملاحظات', en: 'You want a next move, not only an archive of notes' },
+    ],
+    whyMadixo: [
+      { ar: 'تسجيل ملاحظات السوق مع مصدر وقوة إشارة', en: 'Market notes with source and signal strength' },
+      { ar: 'خلاصة أدلة مبنية على ما تراكم', en: 'Evidence synthesis based on accumulated notes' },
+      { ar: 'قرار حالي وخطوة الآن', en: 'Current decision and best step now' },
+    ],
+    notFor: [
+      { ar: 'من يريد فقط مكانًا خامًا لتجميع النصوص دون تحليل لاحق', en: 'People who only need a raw place to store text without later analysis' },
+    ],
+    relatedPosts: ['how-to-document-market-notes-that-improve-decisions'],
+  },
+];
+
+export function getAllBlogPosts() {
+  return [...BLOG_POSTS].sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt));
+}
+
+export function getFeaturedBlogPosts() {
+  return getAllBlogPosts().filter((post) => post.featured);
+}
+
+export function getBlogPostBySlug(slug: string) {
+  return BLOG_POSTS.find((post) => post.slug === slug) ?? null;
+}
+
+export function getBlogPostsByCategory(category: ContentCategory | 'all') {
+  if (category === 'all') return getAllBlogPosts();
+  return getAllBlogPosts().filter((post) => post.category === category);
+}
+
+export function getUseCases() {
+  return [...USE_CASES];
+}
+
+export function getUseCaseBySlug(slug: string) {
+  return USE_CASES.find((item) => item.slug === slug) ?? null;
+}
+
+export function getComparisons() {
+  return [...COMPARISONS];
+}
+
+export function getComparisonBySlug(slug: string) {
+  return COMPARISONS.find((item) => item.slug === slug) ?? null;
+}
+
+export function getPostsBySlugs(slugs: string[] = []) {
+  const set = new Set(slugs);
+  return getAllBlogPosts().filter((post) => set.has(post.slug));
+}
+
+export function getUseCasesBySlugs(slugs: string[] = []) {
+  const set = new Set(slugs);
+  return getUseCases().filter((item) => set.has(item.slug));
+}
+
+export function getComparisonsBySlugs(slugs: string[] = []) {
+  const set = new Set(slugs);
+  return getComparisons().filter((item) => set.has(item.slug));
+}
