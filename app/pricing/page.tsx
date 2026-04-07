@@ -600,7 +600,7 @@ function getReasonText(reason: string | null, language: UiLanguage) {
 }
 
 export default function PricingPage() {
-  const [uiLang, setUiLang] = useState<UiLanguage>(() => getClientUiLanguage('ar'));
+  const [uiLang, setUiLang] = useState<UiLanguage>(() => getClientUiLanguage('en'));
   const [currentPlan, setCurrentPlan] = useState<PlanKey>('free');
   const [planUsage, setPlanUsage] = useState<PlanUsage | null>(null);
   const [billing, setBilling] = useState<BillingInfo | null>(null);
