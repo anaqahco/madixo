@@ -1,5 +1,3 @@
-import React from 'react';
-
 type UiLanguage = 'ar' | 'en';
 
 type PdfCopy = Record<string, string>;
@@ -22,6 +20,7 @@ type MadixoReportPdfProps = {
   generatedAt: string;
 };
 
-export default function MadixoReportPdf(_: MadixoReportPdfProps) {
+export default function MadixoReportPdf(props: MadixoReportPdfProps) {
+  void props;
   return null;
 }
