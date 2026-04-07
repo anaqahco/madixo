@@ -41,6 +41,11 @@ export function getClientUiLanguage(fallback: UiLanguage = 'en'): UiLanguage {
     return cookieValue;
   }
 
+  const documentLanguage = document.documentElement.lang;
+  if (isUiLanguage(documentLanguage)) {
+    return documentLanguage;
+  }
+
   if (typeof navigator !== 'undefined' && navigator.language.toLowerCase().startsWith('ar')) {
     return 'ar';
   }
