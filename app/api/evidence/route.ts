@@ -232,11 +232,9 @@ export async function DELETE(request: Request) {
   try {
     const body = (await request.json()) as {
       id?: unknown;
-      uiLang?: unknown;
     };
 
     const id = trimText(body.id);
-    const uiLang = normalizeUiLanguage(body.uiLang, 'en');
 
     if (!id) {
       return NextResponse.json(
