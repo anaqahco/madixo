@@ -3,7 +3,10 @@ import { BLOG_POSTS, USE_CASES, COMPARISONS } from '@/lib/blog';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') || 'https://madixo.ai';
+    (process.env.APP_URL ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      'https://madixo.ai').replace(/\/$/, '');
 
   const staticPages: MetadataRoute.Sitemap = [
     {
