@@ -58,33 +58,42 @@ function getSynthesisInstructions(uiLang: UiLanguage, secondPass = false) {
     : 'You are Madixo, a realistic and conservative system that turns market notes into clearer understanding and calmer decisions. Use only the current notes. Do not invent objections, desires, or demand. Output only JSON that matches the schema, with no extra explanation.';
 }
 
-function extractParsedFromPart(part: any): unknown | null {
-  if (!part || typeof part !== 'object') return null;
 
-  if (part.parsed && typeof part.parsed === 'object') {
-    return part.parsed;
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === 'object'
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function extractParsedFromPart(part: unknown): unknown | null {
+  const partRecord = asRecord(part);
+  if (!partRecord) return null;
+
+  if (partRecord.parsed && typeof partRecord.parsed === 'object') {
+    return partRecord.parsed;
   }
 
-  if (part.json && typeof part.json === 'object') {
-    return part.json;
+  if (partRecord.json && typeof partRecord.json === 'object') {
+    return partRecord.json;
   }
 
-  if (part.arguments && typeof part.arguments === 'object') {
-    return part.arguments;
+  if (partRecord.arguments && typeof partRecord.arguments === 'object') {
+    return partRecord.arguments;
   }
 
   return null;
 }
 
-function extractParsedFromItem(item: any): unknown | null {
-  if (!item || typeof item !== 'object') return null;
+function extractParsedFromItem(item: unknown): unknown | null {
+  const itemRecord = asRecord(item);
+  if (!itemRecord) return null;
 
-  if (item.parsed && typeof item.parsed === 'object') {
-    return item.parsed;
+  if (itemRecord.parsed && typeof itemRecord.parsed === 'object') {
+    return itemRecord.parsed;
   }
 
-  if (Array.isArray(item.content)) {
-    for (const part of item.content) {
+  if (Array.isArray(itemRecord.content)) {
+    for (const part of itemRecord.content) {
       const parsed = extractParsedFromPart(part);
       if (parsed) {
         return parsed;
@@ -96,17 +105,18 @@ function extractParsedFromItem(item: any): unknown | null {
 }
 
 function extractStructuredOutput(
-  response: any,
+  response: unknown,
   uiLang: UiLanguage
 ): EvidenceSynthesis | null {
-  const directParsed = response?.output_parsed;
+  const responseRecord = asRecord(response);
+  const directParsed = responseRecord?.output_parsed;
   const normalizedDirect = normalizeEvidenceSynthesis(directParsed, uiLang);
   if (normalizedDirect) {
     return normalizedDirect;
   }
 
-  if (Array.isArray(response?.output)) {
-    for (const item of response.output) {
+  if (Array.isArray(responseRecord?.output)) {
+    for (const item of responseRecord.output) {
       const parsed = extractParsedFromItem(item);
       const normalized = normalizeEvidenceSynthesis(parsed, uiLang);
       if (normalized) {
@@ -118,45 +128,49 @@ function extractStructuredOutput(
   return null;
 }
 
-function extractTextFromOutputItem(item: any): string[] {
-  if (!item || typeof item !== 'object') {
+function extractTextFromOutputItem(item: unknown): string[] {
+  const itemRecord = asRecord(item);
+  if (!itemRecord) {
     return [];
   }
 
-  if (Array.isArray(item.content)) {
-    return item.content.flatMap((part: any) => {
-      if (!part || typeof part !== 'object') return [];
+  if (Array.isArray(itemRecord.content)) {
+    return itemRecord.content.flatMap((part) => {
+      const partRecord = asRecord(part);
+      if (!partRecord) return [];
 
-      if (typeof part.text === 'string' && part.text.trim()) {
-        return [part.text.trim()];
+      if (typeof partRecord.text === 'string' && partRecord.text.trim()) {
+        return [partRecord.text.trim()];
       }
 
-      if (typeof part.output_text === 'string' && part.output_text.trim()) {
-        return [part.output_text.trim()];
+      if (typeof partRecord.output_text === 'string' && partRecord.output_text.trim()) {
+        return [partRecord.output_text.trim()];
       }
 
-      if (typeof part.value === 'string' && part.value.trim()) {
-        return [part.value.trim()];
+      if (typeof partRecord.value === 'string' && partRecord.value.trim()) {
+        return [partRecord.value.trim()];
       }
 
       return [];
     });
   }
 
-  if (typeof item.text === 'string' && item.text.trim()) {
-    return [item.text.trim()];
+  if (typeof itemRecord.text === 'string' && itemRecord.text.trim()) {
+    return [itemRecord.text.trim()];
   }
 
   return [];
 }
 
-function getRawResponseText(response: any): string {
-  if (typeof response?.output_text === 'string' && response.output_text.trim()) {
-    return response.output_text.trim();
+function getRawResponseText(response: unknown): string {
+  const responseRecord = asRecord(response);
+
+  if (typeof responseRecord?.output_text === 'string' && responseRecord.output_text.trim()) {
+    return responseRecord.output_text.trim();
   }
 
-  if (Array.isArray(response?.output)) {
-    const collected = response.output.flatMap((item: any) =>
+  if (Array.isArray(responseRecord?.output)) {
+    const collected = responseRecord.output.flatMap((item) =>
       extractTextFromOutputItem(item)
     );
 
