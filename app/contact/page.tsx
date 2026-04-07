@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SiteHeader from '@/components/site-header';
 import SiteFooter from '@/components/site-footer';
 import { getClientUiLanguage, type UiLanguage } from '@/lib/ui-language';
@@ -63,11 +63,7 @@ const COPY = {
 } as const;
 
 export default function ContactPage() {
-  const [uiLang, setUiLang] = useState<UiLanguage>('en');
-
-  useEffect(() => {
-    setUiLang(getClientUiLanguage('en'));
-  }, []);
+  const [uiLang, setUiLang] = useState<UiLanguage>(() => getClientUiLanguage('en'));
 
   const copy = COPY[uiLang];
 
