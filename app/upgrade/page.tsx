@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import SiteHeader from '@/components/site-header';
 import {
@@ -89,12 +89,9 @@ function MadixoLogo() {
 }
 
 export default function UpgradePage() {
-  const [uiLang, setUiLang] = useState<UiLanguage>('ar');
+  const [uiLang, setUiLang] = useState<UiLanguage>(() => getClientUiLanguage('ar'));
   const searchParams = useSearchParams();
 
-  useEffect(() => {
-    setUiLang(getClientUiLanguage('ar'));
-  }, []);
 
   const copy = COPY[uiLang];
   const freeLimits = getPlanLimitsSummary('free', uiLang);
