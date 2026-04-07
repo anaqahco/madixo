@@ -600,7 +600,7 @@ function getReasonText(reason: string | null, language: UiLanguage) {
 }
 
 export default function PricingPage() {
-  const [uiLang, setUiLang] = useState<UiLanguage>('ar');
+  const [uiLang, setUiLang] = useState<UiLanguage>(() => getClientUiLanguage('ar'));
   const [currentPlan, setCurrentPlan] = useState<PlanKey>('free');
   const [planUsage, setPlanUsage] = useState<PlanUsage | null>(null);
   const [billing, setBilling] = useState<BillingInfo | null>(null);
@@ -610,7 +610,6 @@ export default function PricingPage() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    setUiLang(getClientUiLanguage('ar'));
     fetchCurrentPlanClient().then((payload) => {
       setCurrentPlan(payload.plan);
       setPlanUsage(payload.usage ?? null);
