@@ -14,7 +14,11 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://madixo.ai';
+const siteUrl =
+  process.env.APP_URL ||
+  process.env.NEXT_PUBLIC_APP_URL ||
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  'https://madixo.ai';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -66,9 +70,9 @@ export const metadata: Metadata = {
     follow: true,
   },
   icons: {
-    icon: '/icon.png',
+    icon: '/favicon.ico',
     shortcut: '/favicon.ico',
-    apple: '/icon.png',
+    apple: '/favicon.ico',
   },
 };
 
