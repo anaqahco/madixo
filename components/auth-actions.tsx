@@ -431,6 +431,7 @@ export default function AuthActions({ uiLang }: Props) {
         }`}
       >
         {avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={avatarUrl}
             alt={name || email || 'User avatar'}
