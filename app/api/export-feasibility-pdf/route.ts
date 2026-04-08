@@ -9,50 +9,87 @@ export const dynamic = 'force-dynamic';
 
 type UiLang = 'ar' | 'en';
 
-type CostItem = {
-  item?: unknown;
-  estimate?: unknown;
-  note?: unknown;
-};
+interface ScoreBreakdownRow {
+  key?: string;
+  label: string;
+  score: number;
+  note: string;
+}
 
-type RevenueScenario = {
-  scenario?: unknown;
-  monthlyRevenue?: unknown;
-  note?: unknown;
-};
+interface SimpleBlock {
+  title: string;
+  description: string;
+}
 
-type FeasibilityStudy = {
-  verdictLabel?: unknown;
-  verdictSummary?: unknown;
-  keyAssumptions?: unknown;
-  startupCosts?: {
-    totalRange?: unknown;
-    items?: unknown;
-  } | null;
-  monthlyCosts?: {
-    totalRange?: unknown;
-    items?: unknown;
-  } | null;
-  revenueScenarios?: unknown;
-  breakEvenTimeline?: unknown;
-  breakEvenSummary?: unknown;
-  financialRisks?: unknown;
-  recommendedAction?: unknown;
-  disclaimer?: unknown;
-};
+interface SuggestedMvpBlock extends SimpleBlock {
+  features: string[];
+}
 
-type ExportPayload = {
-  uiLang?: UiLang;
-  safeMarket?: string;
-  generatedAt?: string;
-  copy?: Record<string, unknown>;
-  feasibility?: FeasibilityStudy;
-  result?: {
-    query?: unknown;
-    opportunityLabel?: unknown;
-    initialFeasibility?: FeasibilityStudy;
-  } | null;
-};
+interface RevenueModelBlock extends SimpleBlock {
+  price: string;
+}
+
+interface FirstOfferBlock extends SimpleBlock {
+  priceIdea: string;
+}
+
+interface AnalysisResult {
+  query: string;
+  opportunityScore: number;
+  opportunityLabel: string;
+  summary: string;
+  whyThisOpportunity: string;
+  marketDemand: SimpleBlock;
+  competition: SimpleBlock;
+  targetCustomers: SimpleBlock;
+  suggestedMvp: SuggestedMvpBlock;
+  revenueModel: RevenueModelBlock;
+  nextSteps: string[];
+  bestFirstCustomer: SimpleBlock;
+  firstOffer: FirstOfferBlock;
+  painPoints: string[];
+  opportunityAngle: string;
+  goToMarket: string;
+  risks: string[];
+}
+
+interface CopyPayload {
+  reportHeader: string;
+  businessIdea: string;
+  targetMarket: string;
+  inputTargetCustomer: string;
+  whyThisOpportunity: string;
+  opportunityScore: string;
+  whyThisScore: string;
+  summary: string;
+  marketDemand: string;
+  competition: string;
+  targetCustomers: string;
+  suggestedMvp: string;
+  mvpFeatures: string;
+  revenueModel: string;
+  nextSteps: string;
+  bestFirstCustomer: string;
+  firstOffer: string;
+  painPoints: string;
+  opportunityAngle: string;
+  goToMarket: string;
+  risks: string;
+  generatedOn: string;
+  overallScore: string;
+  notSpecified: string;
+}
+
+interface ExportPayload {
+  result: AnalysisResult;
+  uiLang: UiLang;
+  safeMarket: string;
+  safeCustomer: string;
+  safeLabel: string;
+  scoreBreakdownRows: ScoreBreakdownRow[];
+  generatedAt: string;
+  copy: CopyPayload;
+}
 
 function escapeHtml(value: string) {
   return value
@@ -63,65 +100,113 @@ function escapeHtml(value: string) {
     .replace(/'/g, '&#39;');
 }
 
-function safeText(value: unknown, fallback = '') {
+function normalizeText(value: unknown, fallback = '') {
   return typeof value === 'string' && value.trim() ? value.trim() : fallback;
 }
 
-function cleanText(value: unknown, fallback = '') {
-  return safeText(value, fallback)
+function cleanTypography(value: string) {
+  return value
     .replace(/[\u200e\u200f]/g, '')
     .replace(/\s+/g, ' ')
+    .replace(/\s+([،,.!:؛؟])/g, '$1')
     .trim();
 }
 
-function safeStringArray(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
-  return value.map((item) => cleanText(item)).filter(Boolean);
-}
-
-function safeCostItems(
-  value: unknown,
-): Array<{ item: string; estimate: string; note: string }> {
-  if (!Array.isArray(value)) return [];
+function fixArabicArtifacts(value: string) {
   return value
-    .map((raw) => {
-      const obj = (raw ?? {}) as CostItem;
-      return {
-        item: cleanText(obj.item),
-        estimate: cleanText(obj.estimate),
-        note: cleanText(obj.note),
-      };
-    })
-    .filter((item) => item.item || item.estimate || item.note);
+    .replace(/اأ/g, 'أ')
+    .replace(/اإ/g, 'إ')
+    .replace(/العمالء/g, 'العملاء')
+    .replace(/األولية/g, 'الأولية')
+    .replace(/اإليرادات/g, 'الإيرادات')
+    .replace(/اإلطالق/g, 'الإطلاق')
+    .replace(/األسنان/g, 'الأسنان');
 }
 
-function safeRevenueScenarios(
-  value: unknown,
-): Array<{ scenario: string; monthlyRevenue: string; note: string }> {
-  if (!Array.isArray(value)) return [];
-  return value
-    .map((raw) => {
-      const obj = (raw ?? {}) as RevenueScenario;
-      return {
-        scenario: cleanText(obj.scenario),
-        monthlyRevenue: cleanText(obj.monthlyRevenue),
-        note: cleanText(obj.note),
-      };
-    })
-    .filter((item) => item.scenario || item.monthlyRevenue || item.note);
+function tidy(value: unknown, fallback = '') {
+  const base = normalizeText(value, fallback);
+  return fixArabicArtifacts(cleanTypography(base));
 }
 
-function renderBulletList(items: string[], isArabic: boolean) {
+function uniqueSubtitle(title: string, subtitle?: string) {
+  const safeTitle = tidy(title).replace(/[\s:؛،.-]+/g, '');
+  const safeSubtitle = tidy(subtitle || '').replace(/[\s:؛،.-]+/g, '');
+
+  if (!safeSubtitle) return '';
+  if (safeSubtitle === safeTitle) return '';
+
+  const genericArabic = new Set([
+    'حجمالطلب',
+    'المنافسة',
+    'العملاءالمستهدفون',
+    'أفضلعميلأول',
+    'المنتجالمبدئي',
+    'العرضالأول',
+    'نموذجالإيراد',
+    'نموذجالإيرادات',
+  ]);
+  const genericEnglish = new Set([
+    'marketsize',
+    'competition',
+    'targetcustomers',
+    'bestfirstcustomer',
+    'mvp',
+    'firstoffer',
+    'revenuemodel',
+  ]);
+
+  if (
+    genericArabic.has(safeSubtitle) ||
+    genericEnglish.has(safeSubtitle.toLowerCase())
+  ) {
+    return '';
+  }
+
+  return tidy(subtitle);
+}
+
+function scoreTone(score: number) {
+  if (score >= 75) return '#067647';
+  if (score >= 60) return '#155EEF';
+  if (score >= 40) return '#C4320A';
+  return '#B42318';
+}
+
+function renderBulletList(items: string[], isArabic: boolean, dense = false) {
   if (!items.length) return '<p class="muted">-</p>';
 
-  return `<ul class="bullet-list ${isArabic ? 'rtl-list' : 'ltr-list'}">${items
-    .map((item) => `<li>${escapeHtml(item)}</li>`)
+  return `<ul class="bullet-list ${dense ? 'dense-list' : ''} ${
+    isArabic ? 'rtl-list' : 'ltr-list'
+  }">${items
+    .map((item) => `<li>${escapeHtml(tidy(item))}</li>`)
     .join('')}</ul>`;
 }
 
+function renderScoreCards(rows: ScoreBreakdownRow[]) {
+  if (!rows.length) return '<p class="muted">-</p>';
+
+  return `<div class="score-grid">${rows
+    .map((row) => {
+      const score = Math.max(0, Math.min(100, Math.round(Number(row.score) || 0)));
+      const width = Math.max(8, Math.min(100, score));
+
+      return `
+        <div class="score-card">
+          <div class="score-card-top">
+            <div class="score-chip">${score}/100</div>
+            <div class="score-card-title">${escapeHtml(tidy(row.label))}</div>
+          </div>
+          <div class="meter"><span style="width:${width}%"></span></div>
+          <div class="score-note">${escapeHtml(tidy(row.note))}</div>
+        </div>
+      `;
+    })
+    .join('')}</div>`;
+}
+
 function renderCard(title: string, bodyHtml: string, subtitle = '', className = '') {
-  const safeTitle = cleanText(title);
-  const safeSubtitle = cleanText(subtitle);
+  const safeTitle = tidy(title);
+  const safeSubtitle = uniqueSubtitle(title, subtitle);
 
   return `
     <section class="section-card ${className}">
@@ -140,68 +225,10 @@ function renderCard(title: string, bodyHtml: string, subtitle = '', className = 
 function renderSimpleInfoCard(title: string, value: string) {
   return `
     <section class="info-card">
-      <div class="info-title">${escapeHtml(cleanText(title))}</div>
+      <div class="info-title">${escapeHtml(tidy(title))}</div>
       <div class="section-rule compact"></div>
-      <div class="info-value">${escapeHtml(cleanText(value || '-'))}</div>
+      <div class="info-value">${escapeHtml(tidy(value))}</div>
     </section>
-  `;
-}
-
-function renderCostColumn(
-  title: string,
-  totalLabel: string,
-  totalRange: string,
-  items: Array<{ item: string; estimate: string; note: string }>,
-) {
-  return `
-    <section class="section-card section-cost-column">
-      <h2>${escapeHtml(cleanText(title))}</h2>
-      <div class="section-rule"></div>
-      <div class="pill total-pill">${escapeHtml(cleanText(totalLabel))}: ${escapeHtml(
-        cleanText(totalRange || '-'),
-      )}</div>
-      <div class="stack">
-        ${
-          items.length
-            ? items
-                .map(
-                  (item) => `
-                    <div class="sub-card">
-                      <div class="sub-card-top">
-                        <div class="pill small-pill">${escapeHtml(item.estimate || '-')}</div>
-                        <div class="sub-card-title">${escapeHtml(item.item || '-')}</div>
-                      </div>
-                      <div class="sub-card-note">${escapeHtml(item.note || '-')}</div>
-                    </div>
-                  `,
-                )
-                .join('')
-            : `<div class="sub-card"><div class="sub-card-note">-</div></div>`
-        }
-      </div>
-    </section>
-  `;
-}
-
-function renderScenarioCards(
-  items: Array<{ scenario: string; monthlyRevenue: string; note: string }>,
-) {
-  if (!items.length) return '<p class="muted">-</p>';
-
-  return `
-    <div class="scenario-grid">
-      ${items
-        .map(
-          (item) => `
-            <div class="scenario-card">
-              <div class="scenario-title">${escapeHtml(item.scenario || '-')}</div>
-              <div class="pill total-pill">${escapeHtml(item.monthlyRevenue || '-')}</div>
-              <div class="scenario-note">${escapeHtml(item.note || '-')}</div>
-            </div>
-          `,
-        )
-        .join('')}
-    </div>
   `;
 }
 
@@ -238,16 +265,49 @@ function formatGeneratedAt(uiLang: UiLang) {
   }).format(now);
 }
 
-async function loadFontFaceCss() {
+async function readFontBase64(fileName: string) {
   try {
-    const fontPath = path.join(process.cwd(), 'public', 'fonts', 'Cairo-Regular.ttf');
+    const fontPath = path.join(process.cwd(), 'public', 'fonts', fileName);
     const file = await readFile(fontPath);
-    const base64 = file.toString('base64');
+    return file.toString('base64');
+  } catch {
+    return null;
+  }
+}
 
-    return `
+async function registerArabicFonts() {
+  const fontApi = chromium as unknown as {
+    font?: (input: string) => Promise<string | undefined>;
+  };
+
+  if (!fontApi.font) return;
+
+  const fontFiles = ['Cairo-Regular.ttf', 'Cairo-Bold.ttf'];
+
+  for (const fileName of fontFiles) {
+    const absolutePath = path.join(process.cwd(), 'public', 'fonts', fileName);
+    try {
+      await readFile(absolutePath);
+      await fontApi.font(absolutePath);
+    } catch {
+      // ignore missing font files so PDF generation still works in English
+    }
+  }
+}
+
+async function loadFontFaceCss() {
+  const regular = await readFontBase64('Cairo-Regular.ttf');
+  const bold = (await readFontBase64('Cairo-Bold.ttf')) ?? regular;
+
+  if (!regular) {
+    console.error('[pdf-font] Missing /public/fonts/Cairo-Regular.ttf');
+    return '';
+  }
+
+  return `
       @font-face {
         font-family: 'MadixoArabic';
-        src: url(data:font/ttf;base64,${base64}) format('truetype');
+        src: url(data:font/ttf;base64,${regular}) format('truetype');
         font-weight: 400;
         font-style: normal;
         font-display: block;
@@ -255,16 +315,12 @@ async function loadFontFaceCss() {
 
       @font-face {
         font-family: 'MadixoArabic';
-        src: url(data:font/ttf;base64,${base64}) format('truetype');
+        src: url(data:font/ttf;base64,${bold}) format('truetype');
         font-weight: 700;
         font-style: normal;
         font-display: block;
       }
     `;
-  } catch (error) {
-    console.error('[pdf-font] Failed to load Cairo-Regular.ttf', error);
-    return '';
-  }
 }
 
 async function waitForPageFonts(page: Page) {
@@ -317,126 +373,136 @@ export async function POST(request: Request) {
 
   try {
     const payload = (await request.json()) as ExportPayload;
-    const uiLang: UiLang = payload.uiLang === 'en' ? 'en' : 'ar';
-    const isArabic = uiLang === 'ar';
+    const isArabic = payload.uiLang === 'ar';
+    const result = payload.result;
+    const copy = payload.copy;
 
-    const copy = {
-      pageCaption: isArabic ? 'دراسة الجدوى الأولية' : 'Initial feasibility study',
-      heroEyebrow: 'MADIXO FEASIBILITY REPORT',
-      heroTitle: isArabic ? 'دراسة الجدوى الأولية' : 'Initial feasibility study',
-      heroSubtitle: isArabic
-        ? 'قراءة أولية عملية قبل التنفيذ الكامل.'
-        : 'A practical first-pass feasibility read before full execution.',
-      generatedOn: isArabic ? 'تم الإنشاء في' : 'Generated on',
-      marketLabel: isArabic ? 'السوق المستهدف' : 'Target market',
-      verdict: isArabic ? 'حكم Madixo الأولي' : 'Madixo initial verdict',
-      assumptions: isArabic ? 'الافتراضات الأساسية' : 'Key assumptions',
-      breakEven: isArabic ? 'نظرة نقطة التعادل' : 'Break-even view',
-      startupCosts: isArabic ? 'تكاليف البداية' : 'Startup costs',
-      monthlyCosts: isArabic ? 'التكاليف الشهرية' : 'Monthly costs',
-      startupTotal: isArabic ? 'النطاق التقديري للبداية' : 'Estimated startup range',
-      monthlyTotal: isArabic ? 'النطاق التقديري الشهري' : 'Estimated monthly range',
-      revenueScenarios: isArabic ? 'سيناريوهات الإيراد' : 'Revenue scenarios',
-      financialRisks: isArabic ? 'المخاطر المالية' : 'Financial risks',
-      recommendedAction: isArabic ? 'أفضل خطوة مقترحة' : 'Recommended action',
-      disclaimer: isArabic ? 'ملاحظة مهمة' : 'Important note',
-      notAvailable: isArabic ? 'غير متوفر' : 'Not available',
-    };
-
-    const feasibility = payload.feasibility ?? payload.result?.initialFeasibility;
-    if (!feasibility) {
-      return NextResponse.json(
-        {
-          error: isArabic
-            ? 'لا توجد دراسة جدوى لتصديرها.'
-            : 'No feasibility study to export.',
-        },
-        { status: 400 },
-      );
-    }
-
-    const query = cleanText(payload.result?.query, copy.notAvailable);
-    const safeMarket = cleanText(payload.safeMarket, copy.notAvailable);
-    const generatedAt = cleanText(payload.generatedAt, formatGeneratedAt(uiLang));
-
-    const verdictLabel = cleanText(feasibility.verdictLabel, copy.notAvailable);
-    const verdictSummary = cleanText(feasibility.verdictSummary, copy.notAvailable);
-    const keyAssumptions = safeStringArray(feasibility.keyAssumptions);
-    const breakEvenTimeline = cleanText(feasibility.breakEvenTimeline, copy.notAvailable);
-    const breakEvenSummary = cleanText(feasibility.breakEvenSummary, copy.notAvailable);
-    const startupTotalRange = cleanText(
-      feasibility.startupCosts?.totalRange,
-      copy.notAvailable,
+    const generatedAt = tidy(payload.generatedAt || formatGeneratedAt(payload.uiLang));
+    const safeMarket = tidy(payload.safeMarket || copy.notSpecified);
+    const safeCustomer = tidy(payload.safeCustomer || copy.notSpecified);
+    const safeLabel = tidy(payload.safeLabel || result.opportunityLabel);
+    const scoreRows = Array.isArray(payload.scoreBreakdownRows)
+      ? payload.scoreBreakdownRows
+      : [];
+    const score = Math.max(
+      0,
+      Math.min(100, Math.round(Number(result.opportunityScore) || 0)),
     );
-    const startupItems = safeCostItems(feasibility.startupCosts?.items);
-    const monthlyTotalRange = cleanText(
-      feasibility.monthlyCosts?.totalRange,
-      copy.notAvailable,
-    );
-    const monthlyItems = safeCostItems(feasibility.monthlyCosts?.items);
-    const revenueScenarios = safeRevenueScenarios(feasibility.revenueScenarios);
-    const financialRisks = safeStringArray(feasibility.financialRisks);
-    const recommendedAction = cleanText(
-      feasibility.recommendedAction,
-      copy.notAvailable,
-    );
-    const disclaimer = cleanText(feasibility.disclaimer, copy.notAvailable);
+    const labelColor = scoreTone(score);
+
+    const pageCaption = isArabic ? 'تقرير الفرصة' : 'Opportunity report';
+    const heroTitle = isArabic ? 'تحليل الفرصة' : 'Opportunity Analysis';
+    const heroEyebrow = 'MADIXO OPPORTUNITY REPORT';
+    const scoreHeading = isArabic ? 'درجة الفرصة' : 'Opportunity score';
+    const summaryHeading = isArabic ? 'الخلاصة' : 'Summary';
+    const overviewHeading = isArabic ? 'نظرة عامة' : 'Overview';
+    const whyScoreHeading = isArabic ? 'لماذا هذه الدرجة' : 'Why this score';
 
     const page1 = `
       <section class="hero-card">
         <div class="hero-copy">
-          <div class="eyebrow">${escapeHtml(copy.heroEyebrow)}</div>
-          <h1>${escapeHtml(copy.heroTitle)}</h1>
-          <div class="hero-idea">${escapeHtml(query)}</div>
-          <div class="hero-subtitle">${escapeHtml(copy.heroSubtitle)}</div>
+          <div class="eyebrow">${escapeHtml(heroEyebrow)}</div>
+          <h1>${escapeHtml(heroTitle)}</h1>
+          <div class="hero-idea">${escapeHtml(tidy(result.query))}</div>
           <div class="hero-meta">${escapeHtml(copy.generatedOn)} ${escapeHtml(generatedAt)}</div>
         </div>
         <div class="hero-side">
-          <span class="pill label-pill">${escapeHtml(verdictLabel)}</span>
+          <span class="pill label-pill">${escapeHtml(safeLabel)}</span>
         </div>
       </section>
 
-      <div class="overview-grid single-row-gap">
-        ${renderSimpleInfoCard(copy.marketLabel, safeMarket)}
-        ${renderSimpleInfoCard(copy.breakEven, breakEvenTimeline)}
+      <div class="top-grid">
+        <section class="section-card score-summary-card">
+          <div class="mini-grid">
+            <div class="score-box">
+              <div class="mini-title">${escapeHtml(scoreHeading)}</div>
+              <div class="section-rule compact"></div>
+              <div class="score-row">
+                <div class="score-number">${score}</div>
+                <div class="score-scale">/100</div>
+              </div>
+              <div class="score-label" style="color:${labelColor}">${escapeHtml(safeLabel)}</div>
+            </div>
+            <div class="summary-box">
+              <div class="mini-title">${escapeHtml(summaryHeading)}</div>
+              <div class="section-rule compact"></div>
+              <p>${escapeHtml(tidy(result.summary))}</p>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <div class="hero-grid">
-        ${renderCard(
-          copy.verdict,
-          `<p>${escapeHtml(verdictSummary)}</p>`,
-        )}
-        ${renderCard(
-          copy.breakEven,
-          `<p>${escapeHtml(breakEvenSummary)}</p>`,
-        )}
-      </div>
+      <section class="section-wrap">
+        <div class="section-heading">${escapeHtml(overviewHeading)}</div>
+        <div class="overview-grid">
+          ${renderSimpleInfoCard(copy.businessIdea, result.query)}
+          ${renderSimpleInfoCard(copy.targetMarket, safeMarket)}
+          ${renderSimpleInfoCard(copy.inputTargetCustomer, safeCustomer)}
+        </div>
+      </section>
 
-      ${renderCard(copy.assumptions, renderBulletList(keyAssumptions, isArabic))}
+      ${renderCard(
+        copy.whyThisOpportunity,
+        `<p>${escapeHtml(tidy(result.whyThisOpportunity))}</p>`,
+      )}
     `;
 
     const page2 = `
-      <div class="two-column-grid">
-        ${renderCostColumn(
-          copy.startupCosts,
-          copy.startupTotal,
-          startupTotalRange,
-          startupItems,
-        )}
-        ${renderCostColumn(
-          copy.monthlyCosts,
-          copy.monthlyTotal,
-          monthlyTotalRange,
-          monthlyItems,
-        )}
-      </div>
+      ${renderCard(whyScoreHeading, renderScoreCards(scoreRows))}
+      ${renderCard(
+        copy.marketDemand,
+        `<p>${escapeHtml(tidy(result.marketDemand.description))}</p>`,
+        result.marketDemand.title,
+      )}
+      ${renderCard(
+        copy.competition,
+        `<p>${escapeHtml(tidy(result.competition.description))}</p>`,
+        result.competition.title,
+      )}
+      ${renderCard(
+        copy.targetCustomers,
+        `<p>${escapeHtml(tidy(result.targetCustomers.description))}</p>`,
+        result.targetCustomers.title,
+      )}
     `;
 
     const page3 = `
-      ${renderCard(copy.revenueScenarios, renderScenarioCards(revenueScenarios))}
-      ${renderCard(copy.financialRisks, renderBulletList(financialRisks, isArabic))}
-      ${renderCard(copy.recommendedAction, `<p>${escapeHtml(recommendedAction)}</p>`)}
-      ${renderCard(copy.disclaimer, `<p>${escapeHtml(disclaimer)}</p>`)}
+      ${renderCard(
+        copy.bestFirstCustomer,
+        `<p>${escapeHtml(tidy(result.bestFirstCustomer.description))}</p>`,
+        result.bestFirstCustomer.title,
+      )}
+      ${renderCard(
+        copy.suggestedMvp,
+        `<p>${escapeHtml(tidy(result.suggestedMvp.description))}</p>${renderBulletList(
+          result.suggestedMvp.features,
+          isArabic,
+          true,
+        )}`,
+        result.suggestedMvp.title,
+      )}
+      <div class="duo-grid">
+        ${renderCard(
+          copy.firstOffer,
+          `<p>${escapeHtml(`${tidy(result.firstOffer.priceIdea)} - ${tidy(result.firstOffer.description)}`)}</p>`,
+          result.firstOffer.title,
+          'tight-card',
+        )}
+        ${renderCard(
+          copy.revenueModel,
+          `<p>${escapeHtml(`${tidy(result.revenueModel.price)} - ${tidy(result.revenueModel.description)}`)}</p>`,
+          result.revenueModel.title,
+          'tight-card',
+        )}
+      </div>
+      ${renderCard(copy.nextSteps, renderBulletList(result.nextSteps, isArabic, true))}
+    `;
+
+    const page4 = `
+      ${renderCard(copy.painPoints, renderBulletList(result.painPoints, isArabic, true))}
+      ${renderCard(copy.opportunityAngle, `<p>${escapeHtml(tidy(result.opportunityAngle))}</p>`)}
+      ${renderCard(copy.goToMarket, `<p>${escapeHtml(tidy(result.goToMarket))}</p>`)}
+      ${renderCard(copy.risks, renderBulletList(result.risks, isArabic, true))}
     `;
 
     const fontCss = await loadFontFaceCss();
@@ -472,7 +538,7 @@ export async function POST(request: Request) {
       color: var(--text);
       font-family: ${
         isArabic
-          ? "'MadixoArabic', Arial, sans-serif"
+          ? "'MadixoArabic', 'Cairo', 'Noto Sans Arabic', 'DejaVu Sans', Arial, sans-serif"
           : 'Inter, Arial, sans-serif'
       };
       -webkit-print-color-adjust: exact;
@@ -541,6 +607,7 @@ export async function POST(request: Request) {
     }
 
     .hero-copy { text-align: ${isArabic ? 'right' : 'left'}; }
+
     .hero-side {
       display: flex;
       justify-content: center;
@@ -558,7 +625,7 @@ export async function POST(request: Request) {
 
     .hero-copy h1 {
       margin: 0 0 6px;
-      font-size: 32px;
+      font-size: 34px;
       line-height: 1.15;
       color: var(--brand);
     }
@@ -570,14 +637,10 @@ export async function POST(request: Request) {
       margin-bottom: 8px;
     }
 
-    .hero-subtitle {
-      color: #344054;
-      margin-bottom: 8px;
-    }
-
     .hero-meta {
       color: var(--muted);
       font-size: 12.5px;
+      margin-top: 4px;
     }
 
     .pill {
@@ -594,35 +657,97 @@ export async function POST(request: Request) {
     }
 
     .label-pill {
-      min-width: 92px;
-      max-width: 148px;
+      min-width: 86px;
+      max-width: 132px;
       text-align: center;
     }
 
-    .total-pill {
-      background: #edf3fb;
-      border-color: #d4deeb;
-      color: var(--text);
+    .top-grid {
       margin-bottom: 10px;
     }
 
-    .small-pill {
-      background: #edf3fb;
-      border-color: #d4deeb;
-      color: var(--text);
-      padding: 6px 10px;
-      font-size: 12px;
+    .score-summary-card {
+      background: var(--card-soft);
+      padding: 16px 18px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: ${isArabic ? '1fr 210px' : '210px 1fr'};
+      gap: 16px;
+      align-items: stretch;
+      direction: ${isArabic ? 'rtl' : 'ltr'};
+    }
+
+    .mini-title,
+    .section-heading {
+      color: var(--brand);
+      font-size: 15px;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    .section-heading {
+      margin: 0 0 8px;
+      text-align: ${isArabic ? 'right' : 'left'};
+    }
+
+    .section-wrap {
+      margin-bottom: 10px;
+    }
+
+    .score-box,
+    .summary-box {
+      text-align: ${isArabic ? 'right' : 'left'};
+    }
+
+    .section-rule {
+      height: 1px;
+      background: var(--line);
+      margin: 7px 0 9px;
+    }
+
+    .section-rule.compact {
+      margin: 7px 0 9px;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      direction: ltr;
+      justify-content: ${isArabic ? 'flex-end' : 'flex-start'};
+    }
+
+    .score-number {
+      font-size: 60px;
+      line-height: 1;
+      font-weight: 700;
+      color: var(--brand);
+    }
+
+    .score-scale {
+      font-size: 16px;
+      color: var(--muted);
+    }
+
+    .score-label {
+      margin-top: 6px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .summary-box p,
+    .section-body p {
+      margin: 0;
+      color: #344054;
+      white-space: pre-wrap;
     }
 
     .overview-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .single-row-gap {
-      margin-bottom: 10px;
     }
 
     .info-card {
@@ -644,14 +769,6 @@ export async function POST(request: Request) {
       text-align: ${isArabic ? 'right' : 'left'};
     }
 
-    .hero-grid,
-    .two-column-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
     .section-card {
       background: var(--card);
       padding: 16px 18px;
@@ -660,22 +777,16 @@ export async function POST(request: Request) {
       page-break-inside: avoid;
     }
 
+    .tight-card {
+      margin-bottom: 0;
+    }
+
     .section-card h2 {
       margin: 0;
       font-size: 16px;
-      line-height: 1.3;
       color: var(--brand);
       text-align: ${isArabic ? 'right' : 'left'};
-    }
-
-    .section-rule {
-      height: 1px;
-      background: var(--line);
-      margin: 7px 0 9px;
-    }
-
-    .section-rule.compact {
-      margin: 7px 0 9px;
+      line-height: 1.3;
     }
 
     .section-subtitle {
@@ -686,77 +797,84 @@ export async function POST(request: Request) {
       text-align: ${isArabic ? 'right' : 'left'};
     }
 
-    .section-body p {
-      margin: 0;
-      white-space: pre-wrap;
-      color: #344054;
-    }
-
-    .muted { color: var(--muted); }
-
     .bullet-list {
       margin: 0;
       padding-${isArabic ? 'right' : 'left'}: 18px;
+      color: #344054;
     }
 
-    .bullet-list li { margin-bottom: 6px; }
+    .bullet-list li { margin-bottom: 5px; }
+    .dense-list li { margin-bottom: 4px; line-height: 1.55; }
+    .muted { color: var(--muted); }
 
-    .stack {
+    .score-grid {
       display: grid;
-      gap: 10px;
-    }
-
-    .sub-card {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 12px;
-      background: var(--card-soft);
-    }
-
-    .sub-card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 8px;
-      direction: ${isArabic ? 'rtl' : 'ltr'};
-    }
-
-    .sub-card-title {
-      font-weight: 700;
-      color: var(--text);
-      text-align: ${isArabic ? 'right' : 'left'};
-      flex: 1;
-      line-height: 1.35;
-    }
-
-    .sub-card-note,
-    .scenario-note {
-      color: var(--muted);
-      font-size: 12.5px;
-      line-height: 1.55;
-    }
-
-    .scenario-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
 
-    .scenario-card {
+    .score-card {
       border: 1px solid var(--line);
       border-radius: 18px;
-      padding: 14px;
-      background: var(--card-soft);
-      text-align: center;
+      padding: 12px;
+      background: #f2f6ff;
     }
 
-    .scenario-title {
-      font-size: 17px;
-      font-weight: 800;
+    .score-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      direction: ${isArabic ? 'rtl' : 'ltr'};
+      margin-bottom: 8px;
+    }
+
+    .score-chip {
+      border: 1px solid #dce3ed;
+      background: #f4f7fb;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .score-card-title {
       color: var(--brand);
+      font-size: 14px;
+      font-weight: 700;
+      flex: 1;
+      text-align: ${isArabic ? 'right' : 'left'};
+      line-height: 1.3;
+    }
+
+    .meter {
+      height: 9px;
+      border-radius: 999px;
+      background: #e8edf5;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .meter span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #0b1736 0%, #2456d3 100%);
+      border-radius: 999px;
+    }
+
+    .score-note {
+      color: var(--muted);
+      font-size: 11.5px;
+      line-height: 1.55;
+    }
+
+    .duo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
       margin-bottom: 10px;
-      line-height: 1.25;
     }
 
     .footer {
@@ -775,25 +893,33 @@ export async function POST(request: Request) {
 </head>
 <body>
   ${renderPageShell({
-    pageCaption: copy.pageCaption,
+    pageCaption,
     logoDataUrl,
     bodyHtml: page1,
-    footerText: isArabic ? 'الصفحة 1 من 3' : 'Page 1 of 3',
+    footerText: isArabic ? 'الصفحة 1 من 4' : 'Page 1 of 4',
   })}
   ${renderPageShell({
-    pageCaption: copy.pageCaption,
+    pageCaption,
     logoDataUrl,
     bodyHtml: page2,
-    footerText: isArabic ? 'الصفحة 2 من 3' : 'Page 2 of 3',
+    footerText: isArabic ? 'الصفحة 2 من 4' : 'Page 2 of 4',
   })}
   ${renderPageShell({
-    pageCaption: copy.pageCaption,
+    pageCaption,
     logoDataUrl,
     bodyHtml: page3,
-    footerText: isArabic ? 'الصفحة 3 من 3' : 'Page 3 of 3',
+    footerText: isArabic ? 'الصفحة 3 من 4' : 'Page 3 of 4',
+  })}
+  ${renderPageShell({
+    pageCaption,
+    logoDataUrl,
+    bodyHtml: page4,
+    footerText: isArabic ? 'الصفحة 4 من 4' : 'Page 4 of 4',
   })}
 </body>
 </html>`;
+
+    await registerArabicFonts();
 
     chromium.setGraphicsMode = false;
     browser = await playwright.launch({
@@ -816,7 +942,7 @@ export async function POST(request: Request) {
     return new NextResponse(new Uint8Array(pdfBuffer), {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename="madixo-feasibility.pdf"',
+        'Content-Disposition': 'attachment; filename="madixo-report.pdf"',
         'Cache-Control': 'no-store',
       },
     });
