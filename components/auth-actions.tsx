@@ -386,9 +386,8 @@ export default function AuthActions({ uiLang }: Props) {
   if (sessionState === 'guest') {
     return (
       <div
-        className={`flex flex-wrap items-center gap-2 ${
-          isArabic ? 'justify-end' : 'justify-start'
-        }`}
+        dir={isArabic ? 'rtl' : 'ltr'}
+        className="flex flex-wrap items-center gap-2 justify-start"
       >
         <Link href="/blog" className={`${pillBase} ${secondaryPill}`}>
           {copy.blog}
@@ -429,13 +428,14 @@ export default function AuthActions({ uiLang }: Props) {
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+      <div dir="ltr" className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
         <div
           className={`w-full md:max-w-[520px] md:flex-none ${
             isArabic ? 'md:order-2' : 'md:order-1'
           }`}
         >
           <div
+            dir="ltr"
             className={`flex items-center gap-3 rounded-[22px] border border-[#E5E7EB] bg-white px-4 py-4 shadow-sm ${
               isArabic ? 'flex-row-reverse text-right' : 'flex-row text-left'
             }`}
@@ -480,10 +480,9 @@ export default function AuthActions({ uiLang }: Props) {
         </div>
 
         <div
-          className={`flex flex-wrap items-center gap-2 md:flex-1 ${
-            isArabic
-              ? 'justify-end md:order-1 md:justify-start'
-              : 'justify-start md:order-2 md:justify-end'
+          dir={isArabic ? 'rtl' : 'ltr'}
+          className={`flex flex-wrap items-center gap-2 justify-start md:flex-1 ${
+            isArabic ? 'md:order-1' : 'md:order-2'
           }`}
         >
           <Link href="/blog" className={`${pillBase} ${secondaryPill}`}>
