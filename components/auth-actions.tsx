@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
+import { setClientUiLanguage } from '@/lib/ui-language';
 import type { UiLanguage } from '@/lib/ui-language';
 
 type Props = {
@@ -28,6 +29,7 @@ type AuthSnapshot = {
 
 const AUTH_SNAPSHOT_KEY = 'madixo_auth_snapshot_v1';
 const AUTH_SNAPSHOT_TTL_MS = 1000 * 60 * 60 * 24 * 3;
+const FLASH_NOTICE_KEY = 'madixo_flash_notice_v1';
 
 const COPY = {
   en: {
@@ -46,6 +48,7 @@ const COPY = {
     providerEmail: 'Email',
     providerOther: 'Account',
     signingOut: 'Signing out...',
+    signedOut: 'You have been signed out successfully.',
   },
   ar: {
     blog: 'المدونة',
@@ -63,6 +66,7 @@ const COPY = {
     providerEmail: 'البريد الإلكتروني',
     providerOther: 'الحساب',
     signingOut: 'جارٍ تسجيل الخروج...',
+    signedOut: 'تم تسجيل الخروج بنجاح.',
   },
 } as const;
 
@@ -374,8 +378,21 @@ export default function AuthActions({ uiLang }: Props) {
       clearSupabaseBrowserStorage();
       writeAuthSnapshot(null);
 
-      const target = `/login?mode=login&next=${encodeURIComponent(nextPath)}`;
-      window.location.replace(target);
+      try {
+        setClientUiLanguage(uiLang);
+        window.sessionStorage.setItem(
+          FLASH_NOTICE_KEY,
+          JSON.stringify({
+            type: 'success',
+            message: copy.signedOut,
+            savedAt: Date.now(),
+          })
+        );
+      } catch {
+        // ignore storage failures
+      }
+
+      window.location.replace('/');
     }
   };
 
