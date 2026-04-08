@@ -171,6 +171,7 @@ const UI_COPY = {
     closingTitle: 'Ready to explore your next opportunity?',
     closingDescription:
       'Start with analysis, then add early feasibility, testing, evidence, and a clearer next move with Madixo.',
+    signedOutNotice: 'You have been signed out successfully.',
   },
   ar: {
     dir: 'rtl',
@@ -302,6 +303,7 @@ const UI_COPY = {
     closingTitle: 'هل أنت جاهز لاكتشاف فرصتك القادمة؟',
     closingDescription:
       'ابدأ بتحليل الفكرة، ثم أضف دراسة جدوى أولية وتجربة ونتائج وقرار أوضح مع Madixo.',
+    signedOutNotice: 'تم تسجيل الخروج بنجاح.',
   },
 } as const;
 
@@ -674,10 +676,38 @@ export default function HomePage() {
 
 
   useEffect(() => {
+    const noticeFromQuery = searchParams.get('notice')?.trim() || '';
     const messageFromQuery = searchParams.get('message')?.trim() || '';
+
+    const clearFlashParamsFromUrl = () => {
+      try {
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.delete('notice');
+        nextUrl.searchParams.delete('message');
+        const nextSearch = nextUrl.searchParams.toString();
+        const nextHref = `${nextUrl.pathname}${nextSearch ? `?${nextSearch}` : ''}${nextUrl.hash}`;
+        window.history.replaceState({}, '', nextHref);
+      } catch {
+        // ignore URL state failures
+      }
+    };
+
+    if (noticeFromQuery === 'signed_out') {
+      setFlashNotice(copy.signedOutNotice);
+
+      try {
+        window.sessionStorage.removeItem(FLASH_NOTICE_KEY);
+      } catch {
+        // ignore storage failures
+      }
+
+      clearFlashParamsFromUrl();
+      return;
+    }
 
     if (messageFromQuery) {
       setFlashNotice(messageFromQuery);
+      clearFlashParamsFromUrl();
       return;
     }
 
@@ -708,7 +738,7 @@ export default function HomePage() {
     } catch {
       // ignore storage failures
     }
-  }, [searchParams]);
+  }, [copy.signedOutNotice, searchParams]);
 
   useEffect(() => {
     if (!flashNotice) return;
