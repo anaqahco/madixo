@@ -84,7 +84,7 @@ export default function AuthShellHeader({
 
           <div
             className={`flex flex-wrap items-center gap-2 ${
-              uiLang === 'ar' ? 'justify-end' : 'justify-start'
+              uiLang === 'ar' ? 'justify-start' : 'justify-end'
             }`}
           >
             <Link href="/" className={`${pillBase} ${secondaryPill}`}>
