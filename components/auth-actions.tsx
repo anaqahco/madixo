@@ -429,14 +429,10 @@ export default function AuthActions({ uiLang }: Props) {
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <div
-        className={`flex flex-col gap-3 md:items-center ${
-          isArabic ? 'md:flex-row-reverse' : 'md:flex-row'
-        }`}
-      >
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
         <div
           className={`w-full md:max-w-[520px] md:flex-none ${
-            isArabic ? 'md:ml-0 md:mr-auto' : 'md:mr-0 md:ml-auto'
+            isArabic ? 'md:order-2' : 'md:order-1'
           }`}
         >
           <div
@@ -484,8 +480,10 @@ export default function AuthActions({ uiLang }: Props) {
         </div>
 
         <div
-          className={`flex flex-wrap items-center gap-2 ${
-            isArabic ? 'justify-end md:justify-start' : 'justify-start md:justify-end'
+          className={`flex flex-wrap items-center gap-2 md:flex-1 ${
+            isArabic
+              ? 'justify-end md:order-1 md:justify-start'
+              : 'justify-start md:order-2 md:justify-end'
           }`}
         >
           <Link href="/blog" className={`${pillBase} ${secondaryPill}`}>
