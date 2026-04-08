@@ -563,17 +563,21 @@ export async function POST(request: Request) {
       background: var(--hero);
       padding: 18px;
       display: grid;
-      grid-template-columns: ${isArabic ? '150px 1fr' : '1fr 150px'};
+      grid-template-columns: 1fr 190px;
       gap: 18px;
       align-items: center;
       margin-bottom: 10px;
     }
 
-    .hero-copy { text-align: ${isArabic ? 'right' : 'left'}; }
+    .hero-copy {
+      text-align: ${isArabic ? 'right' : 'left'};
+      min-width: 0;
+    }
     .hero-side {
       display: flex;
       justify-content: center;
       align-items: center;
+      min-width: 0;
     }
 
     .eyebrow {
@@ -590,6 +594,9 @@ export async function POST(request: Request) {
       font-size: 32px;
       line-height: 1.15;
       color: var(--brand);
+      white-space: nowrap;
+      overflow-wrap: normal;
+      word-break: normal;
     }
 
     .hero-idea {
@@ -597,16 +604,23 @@ export async function POST(request: Request) {
       font-weight: 700;
       color: var(--brand);
       margin-bottom: 8px;
+      white-space: nowrap;
+      overflow-wrap: normal;
+      word-break: normal;
     }
 
     .hero-subtitle {
       color: #344054;
       margin-bottom: 8px;
+      white-space: nowrap;
+      overflow-wrap: normal;
+      word-break: normal;
     }
 
     .hero-meta {
       color: var(--muted);
       font-size: 12.5px;
+      white-space: nowrap;
     }
 
     .pill {
@@ -623,8 +637,8 @@ export async function POST(request: Request) {
     }
 
     .label-pill {
-      min-width: 92px;
-      max-width: 148px;
+      min-width: 110px;
+      max-width: 190px;
       text-align: center;
     }
 
