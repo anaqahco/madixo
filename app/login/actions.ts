@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { buildAbsoluteAppUrl } from '@/lib/app-url';
 
 type UiLanguage = 'ar' | 'en';
 
@@ -265,13 +266,13 @@ export async function signup(formData: FormData) {
     });
   }
 
-  const origin = headerStore.get('origin') || 'http://localhost:3000';
+  const callbackUrl = buildAbsoluteAppUrl(`/auth/callback?next=${encodeURIComponent(next)}`);
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      emailRedirectTo: callbackUrl,
       data: {
         language,
       },
@@ -312,7 +313,7 @@ export async function requestPasswordReset(formData: FormData) {
 
   const next = getSafeNext(formData.get('next'));
   const email = getSafeText(formData.get('email'));
-  const origin = headerStore.get('origin') || 'http://localhost:3000';
+  const callbackUrl = buildAbsoluteAppUrl(`/auth/callback?flow=recovery&next=${encodeURIComponent(next)}`);
 
   if (!email) {
     backToForgotPassword({
@@ -322,7 +323,7 @@ export async function requestPasswordReset(formData: FormData) {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?flow=recovery&next=${encodeURIComponent(next)}`,
+    redirectTo: callbackUrl,
   });
 
   if (error) {
