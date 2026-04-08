@@ -2,17 +2,18 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SiteHeader from '@/components/site-header';
 import SiteFooter from '@/components/site-footer';
+import { useUiLanguageState } from '@/components/ui-language-provider';
 import {
   BLOG_POSTS,
   COMPARISONS,
   USE_CASES,
   localizeText,
 } from '@/lib/blog';
-import { getClientUiLanguage, type UiLanguage } from '@/lib/ui-language';
+import { type UiLanguage } from '@/lib/ui-language';
 
 const EXAMPLES = {
   en: {
@@ -542,7 +543,7 @@ function validateStartForm(
 export default function HomePage() {
   const router = useRouter();
 
-  const [preferredLanguage, setPreferredLanguage] = useState<UiLanguage>(() => getClientUiLanguage('en'));
+  const [preferredLanguage, setPreferredLanguage] = useUiLanguageState();
   const [idea, setIdea] = useState('');
   const [market, setMarket] = useState('');
   const [customer, setCustomer] = useState('');
