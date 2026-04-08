@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { UiLanguage } from '@/lib/ui-language';
+import { getBrowserAppUrl } from '@/lib/app-url';
 
 type Props = {
   uiLang: UiLanguage;
@@ -83,9 +84,8 @@ export default function GoogleAuthButton({
       setCookie(OAUTH_FLOW_COOKIE, 'oauth', OAUTH_COOKIE_MAX_AGE);
 
       const supabase = createClient();
-      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(
-        nextPath
-      )}&flow=oauth`;
+      const appUrl = getBrowserAppUrl();
+      const redirectTo = `${appUrl}/auth/callback?next=${encodeURIComponent(nextPath)}&flow=oauth`;
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
