@@ -47,7 +47,6 @@ export default function AuthShellHeader({
   showAuthActions = true,
 }: Props) {
   const copy = COPY[uiLang];
-  const isArabic = uiLang === 'ar';
 
   const pillBase =
     'rounded-full border px-4 py-2 text-sm font-semibold transition';
@@ -58,77 +57,65 @@ export default function AuthShellHeader({
 
   return (
     <div className="mx-auto w-full max-w-6xl">
-      <div className="rounded-[28px] border border-[#E5E7EB] bg-white/90 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80 md:px-6 md:py-5">
-        <div
-          className={`flex flex-col gap-5 ${
-            isArabic ? 'md:flex-row' : 'md:flex-row-reverse'
-          } md:items-start md:gap-8`}
-        >
-          <div
-            className={`flex shrink-0 ${
-              isArabic ? 'md:justify-start' : 'md:justify-end'
-            } md:w-[220px] md:pt-4 lg:w-[260px]`}
-          >
-            <div className={`flex min-w-0 items-center gap-4 ${isArabic ? '' : 'md:flex-row-reverse'}`}>
-              <Link href="/" className="shrink-0" aria-label="Madixo home">
-                <MadixoLogo />
-              </Link>
+      <div
+        className={`flex flex-col gap-4 rounded-[28px] border border-[#E5E7EB] bg-white/90 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80 md:px-6 ${
+          uiLang === 'ar' ? 'md:flex-row' : 'md:flex-row-reverse'
+        } md:items-center md:justify-between`}
+      >
+        <div className="flex min-w-0 items-center gap-4">
+          <Link href="/" className="shrink-0" aria-label="Madixo home">
+            <MadixoLogo />
+          </Link>
 
-              <div className={`hidden min-w-0 md:block ${isArabic ? 'text-right' : 'text-left'}`}>
-                <p className="truncate text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
-                  MADIXO
-                </p>
-                <p className="truncate text-sm text-[#4B5563]">{copy.brandHint}</p>
-              </div>
-            </div>
+          <div className="hidden min-w-0 md:block">
+            <p className="truncate text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+              MADIXO
+            </p>
+            <p className="truncate text-sm text-[#4B5563]">{copy.brandHint}</p>
           </div>
+        </div>
+
+        <div
+          className={`flex flex-col gap-3 ${
+            uiLang === 'ar' ? 'md:items-end' : 'md:items-start'
+          }`}
+        >
+          <LanguageSwitcher value={uiLang} />
 
           <div
-            className={`flex min-w-0 flex-1 flex-col gap-3 ${
-              isArabic ? 'md:items-end' : 'md:items-start'
+            className={`flex flex-wrap items-center gap-2 ${
+              uiLang === 'ar' ? 'justify-start' : 'justify-end'
             }`}
           >
-            <div className={`flex w-full ${isArabic ? 'justify-end' : 'justify-start'}`}>
-              <LanguageSwitcher value={uiLang} />
-            </div>
+            <Link href="/" className={`${pillBase} ${secondaryPill}`}>
+              {copy.home}
+            </Link>
 
-            <div className={`w-full ${isArabic ? 'md:ml-auto' : 'md:mr-auto'} md:max-w-[700px]`}>
-              <div
-                className={`flex flex-wrap items-center gap-2 ${
-                  isArabic ? 'justify-end' : 'justify-start'
-                }`}
-              >
-                <Link href="/" className={`${pillBase} ${secondaryPill}`}>
-                  {copy.home}
+            <Link href="/pricing" className={`${pillBase} ${secondaryPill}`}>
+              {copy.pricing}
+            </Link>
+
+            <Link href="/blog" className={`${pillBase} ${secondaryPill}`}>
+              {copy.blog}
+            </Link>
+
+            {showAuthActions ? (
+              <>
+                <Link
+                  href="/login?mode=login&next=%2Freports"
+                  className={`${pillBase} ${secondaryPill}`}
+                >
+                  {copy.login}
                 </Link>
 
-                <Link href="/pricing" className={`${pillBase} ${secondaryPill}`}>
-                  {copy.pricing}
+                <Link
+                  href="/login?mode=signup&next=%2Freports"
+                  className={`${pillBase} ${primaryPill}`}
+                >
+                  {copy.signup}
                 </Link>
-
-                <Link href="/blog" className={`${pillBase} ${secondaryPill}`}>
-                  {copy.blog}
-                </Link>
-
-                {showAuthActions ? (
-                  <>
-                    <Link
-                      href="/login?mode=login&next=%2Freports"
-                      className={`${pillBase} ${secondaryPill}`}
-                    >
-                      {copy.login}
-                    </Link>
-
-                    <Link
-                      href="/login?mode=signup&next=%2Freports"
-                      className={`${pillBase} ${primaryPill}`}
-                    >
-                      {copy.signup}
-                    </Link>
-                  </>
-                ) : null}
-              </div>
-            </div>
+              </>
+            ) : null}
           </div>
         </div>
       </div>
