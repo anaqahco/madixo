@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { MADIXO_PLAN_COOKIE, syncPlanCookieFromUser } from '@/lib/madixo-plan-store';
 
@@ -6,6 +7,8 @@ type UiLanguage = 'ar' | 'en';
 type AuthFlow = 'oauth' | 'email' | 'recovery';
 
 const DEFAULT_NEXT = '/dashboard';
+const OAUTH_NEXT_COOKIE = 'madixo_oauth_next';
+const OAUTH_FLOW_COOKIE = 'madixo_oauth_flow';
 
 const COPY = {
   en: {
@@ -31,7 +34,7 @@ function detectLanguage(value: string | null): UiLanguage {
   return value.toLowerCase().includes('ar') ? 'ar' : 'en';
 }
 
-function getSafeNext(value: string | null) {
+function getSafeNext(value: string | null | undefined) {
   if (!value || !value.startsWith('/')) {
     return DEFAULT_NEXT;
   }
@@ -39,19 +42,40 @@ function getSafeNext(value: string | null) {
   return value;
 }
 
-function getFlow(value: string | null): AuthFlow {
+function getFlow(value: string | null | undefined): AuthFlow {
   if (value === 'oauth') return 'oauth';
   if (value === 'recovery') return 'recovery';
   return 'email';
 }
 
+function clearOAuthCookies(response: NextResponse) {
+  response.cookies.set(OAUTH_NEXT_COOKIE, '', {
+    path: '/',
+    httpOnly: false,
+    sameSite: 'lax',
+    maxAge: 0,
+  });
+
+  response.cookies.set(OAUTH_FLOW_COOKIE, '', {
+    path: '/',
+    httpOnly: false,
+    sameSite: 'lax',
+    maxAge: 0,
+  });
+}
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
+  const cookieStore = await cookies();
   const code = searchParams.get('code');
   const language = detectLanguage(request.headers.get('accept-language'));
   const copy = COPY[language];
-  const next = getSafeNext(searchParams.get('next'));
-  const flow = getFlow(searchParams.get('flow'));
+  const next = getSafeNext(
+    searchParams.get('next') ?? cookieStore.get(OAUTH_NEXT_COOKIE)?.value
+  );
+  const flow = getFlow(
+    searchParams.get('flow') ?? cookieStore.get(OAUTH_FLOW_COOKIE)?.value
+  );
 
   if (code) {
     const supabase = await createClient();
@@ -77,6 +101,7 @@ export async function GET(request: Request) {
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 30,
       });
+      clearOAuthCookies(response);
 
       return response;
     }
@@ -89,7 +114,9 @@ export async function GET(request: Request) {
         ? copy.recoveryError
         : copy.verificationError;
 
-  return NextResponse.redirect(
+  const response = NextResponse.redirect(
     `${origin}/auth/error?next=${encodeURIComponent(next)}&message=${encodeURIComponent(message)}`
   );
+  clearOAuthCookies(response);
+  return response;
 }
