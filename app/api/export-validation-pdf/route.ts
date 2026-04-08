@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import chromium from '@sparticuz/chromium';
-import { chromium as playwright } from 'playwright-core';
+import { chromium as playwright, type Page } from 'playwright-core';
 import { NextResponse } from 'next/server';
 import type { SavedMadixoReport } from '@/lib/madixo-reports';
 import {
@@ -233,11 +233,33 @@ async function loadFontFaceCss() {
         src: url(data:font/ttf;base64,${base64}) format('truetype');
         font-weight: 400;
         font-style: normal;
+        font-display: block;
+      }
+
+      @font-face {
+        font-family: 'MadixoArabic';
+        src: url(data:font/ttf;base64,${base64}) format('truetype');
+        font-weight: 700;
+        font-style: normal;
+        font-display: block;
       }
     `;
-  } catch {
+  } catch (error) {
+    console.error('[pdf-font] Failed to load Cairo-Regular.ttf', error);
     return '';
   }
+}
+
+async function waitForPageFonts(page: Page) {
+  await page.evaluate(async () => {
+    if ('fonts' in document) {
+      await (document as Document & {
+        fonts: FontFaceSet;
+      }).fonts.ready;
+    }
+  });
+
+  await page.waitForTimeout(180);
 }
 
 async function loadLogoDataUrl() {
@@ -909,6 +931,7 @@ export async function POST(request: Request) {
     });
 
     await page.setContent(html, { waitUntil: 'networkidle' });
+    await waitForPageFonts(page);
     await page.emulateMedia({ media: 'screen' });
 
     const pdfBuffer = await page.pdf({
