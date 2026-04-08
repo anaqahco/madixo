@@ -2,14 +2,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useUiLanguageState } from '@/components/ui-language-provider';
 import { useSearchParams } from 'next/navigation';
 import SiteHeader from '@/components/site-header';
-import {
-  getClientUiLanguage,
-  setClientUiLanguage,
-  type UiLanguage,
-} from '@/lib/ui-language';
+import { setClientUiLanguage, type UiLanguage } from '@/lib/ui-language';
 import { getPlanLimitsSummary, getUpgradeReasonText } from '@/lib/madixo-plans';
 
 const COPY = {
@@ -89,7 +86,7 @@ function MadixoLogo() {
 }
 
 export default function UpgradePage() {
-  const [uiLang, setUiLang] = useState<UiLanguage>(() => getClientUiLanguage('en'));
+  const [uiLang, setUiLang] = useUiLanguageState();
   const searchParams = useSearchParams();
 
 
