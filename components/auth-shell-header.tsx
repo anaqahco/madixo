@@ -37,7 +37,7 @@ function MadixoLogo() {
       width={210}
       height={54}
       priority
-      className="h-auto w-[175px] md:w-[210px]"
+      className="h-auto w-[170px] md:w-[190px]"
     />
   );
 }
@@ -58,26 +58,31 @@ export default function AuthShellHeader({
 
   return (
     <div className="mx-auto w-full max-w-6xl">
-      <div className="flex flex-col gap-4 rounded-[30px] border border-[#E5E7EB] bg-white/90 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80 md:flex-row md:items-start md:justify-between md:gap-6 md:px-6 md:py-5">
-        <div className="order-1 flex min-w-0 items-center gap-4 md:order-2 md:max-w-[320px] md:self-start">
-          <Link href="/" className="shrink-0" aria-label="Madixo home">
-            <MadixoLogo />
-          </Link>
+      <div className="rounded-[28px] border border-[#E5E7EB] bg-white/90 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80 md:px-6 md:py-5">
+        <div className="flex flex-col gap-4 md:gap-5">
+          <div className="flex items-center justify-between gap-4">
+            <div
+              className={`flex min-w-0 items-center gap-3 ${
+                isArabic ? 'order-1 text-right' : 'order-2 text-left'
+              }`}
+            >
+              <Link href="/" className="shrink-0" aria-label="Madixo home">
+                <MadixoLogo />
+              </Link>
 
-          <div className={`hidden min-w-0 md:block ${isArabic ? 'text-right' : 'text-left'}`}>
-            <p className="truncate text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
-              MADIXO
-            </p>
-            <p className="truncate text-sm text-[#4B5563]">{copy.brandHint}</p>
+              <div className="hidden min-w-0 md:block">
+                <p className="truncate text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                  MADIXO
+                </p>
+                <p className="truncate text-sm text-[#4B5563]">{copy.brandHint}</p>
+              </div>
+            </div>
+
+            <LanguageSwitcher
+              value={uiLang}
+              className={isArabic ? 'order-2' : 'order-1'}
+            />
           </div>
-        </div>
-
-        <div
-          className={`order-2 flex w-full flex-col gap-3 md:order-1 md:max-w-[760px] ${
-            isArabic ? 'md:items-end' : 'md:items-start'
-          }`}
-        >
-          <LanguageSwitcher value={uiLang} className={isArabic ? 'self-end' : 'self-start'} />
 
           <div
             className={`flex flex-wrap items-center gap-2 ${
