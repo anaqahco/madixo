@@ -265,16 +265,49 @@ function formatGeneratedAt(uiLang: UiLang) {
   }).format(now);
 }
 
-async function loadFontFaceCss() {
+async function readFontBase64(fileName: string) {
   try {
-    const fontPath = path.join(process.cwd(), 'public', 'fonts', 'Cairo-Regular.ttf');
+    const fontPath = path.join(process.cwd(), 'public', 'fonts', fileName);
     const file = await readFile(fontPath);
-    const base64 = file.toString('base64');
+    return file.toString('base64');
+  } catch {
+    return null;
+  }
+}
 
-    return `
+async function registerArabicFonts() {
+  const fontApi = chromium as unknown as {
+    font?: (input: string) => Promise<string | undefined>;
+  };
+
+  if (!fontApi.font) return;
+
+  const fontFiles = ['Cairo-Regular.ttf', 'Cairo-Bold.ttf'];
+
+  for (const fileName of fontFiles) {
+    const absolutePath = path.join(process.cwd(), 'public', 'fonts', fileName);
+    try {
+      await readFile(absolutePath);
+      await fontApi.font(absolutePath);
+    } catch {
+      // ignore missing font files so PDF generation still works in English
+    }
+  }
+}
+
+async function loadFontFaceCss() {
+  const regular = await readFontBase64('Cairo-Regular.ttf');
+  const bold = (await readFontBase64('Cairo-Bold.ttf')) ?? regular;
+
+  if (!regular) {
+    console.error('[pdf-font] Missing /public/fonts/Cairo-Regular.ttf');
+    return '';
+  }
+
+  return `
       @font-face {
         font-family: 'MadixoArabic';
-        src: url(data:font/ttf;base64,${base64}) format('truetype');
+        src: url(data:font/ttf;base64,${regular}) format('truetype');
         font-weight: 400;
         font-style: normal;
         font-display: block;
@@ -282,16 +315,12 @@ async function loadFontFaceCss() {
 
       @font-face {
         font-family: 'MadixoArabic';
-        src: url(data:font/ttf;base64,${base64}) format('truetype');
+        src: url(data:font/ttf;base64,${bold}) format('truetype');
         font-weight: 700;
         font-style: normal;
         font-display: block;
       }
     `;
-  } catch (error) {
-    console.error('[pdf-font] Failed to load Cairo-Regular.ttf', error);
-    return '';
-  }
 }
 
 async function waitForPageFonts(page: Page) {
@@ -509,7 +538,7 @@ export async function POST(request: Request) {
       color: var(--text);
       font-family: ${
         isArabic
-          ? "'MadixoArabic', Arial, sans-serif"
+          ? "'MadixoArabic', 'Cairo', 'Noto Sans Arabic', 'DejaVu Sans', Arial, sans-serif"
           : 'Inter, Arial, sans-serif'
       };
       -webkit-print-color-adjust: exact;
@@ -889,6 +918,8 @@ export async function POST(request: Request) {
   })}
 </body>
 </html>`;
+
+    await registerArabicFonts();
 
     chromium.setGraphicsMode = false;
     browser = await playwright.launch({
