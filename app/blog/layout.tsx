@@ -18,55 +18,55 @@ export default async function BlogLayout({
           blog: 'المقالات',
           useCases: 'حالات الاستخدام',
           comparisons: 'المقارنات',
-          pricing: 'الباقات',
-          results: 'ابدأ التحليل',
+          pricing: 'شاهد الباقات',
+          start: 'ابدأ التحليل',
         }
       : {
           blog: 'Articles',
           useCases: 'Use Cases',
           comparisons: 'Comparisons',
-          pricing: 'Plans',
-          results: 'Start Analysis',
+          pricing: 'See plans',
+          start: 'Start analysis',
         };
 
   return (
     <main className="min-h-screen bg-[#FAFAFB] text-[#111827]">
-      <section className="border-b border-[#E5E7EB] bg-white/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
-          <div className="flex flex-wrap items-center gap-2">
+      <section className="border-b border-[#E5E7EB] bg-white">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-8">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/"
+              className="rounded-full bg-[#111827] px-6 py-3 text-sm font-semibold text-white hover:opacity-90"
+            >
+              {copy.start}
+            </Link>
+            <Link
+              href="/pricing"
+              className="rounded-full border border-[#D9E2F0] bg-white px-6 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]"
+            >
+              {copy.pricing}
+            </Link>
+            <LanguageSwitcher value={uiLang} />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/blog"
-              className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-semibold text-[#374151] hover:bg-[#EEF3F9]"
+              className="rounded-full bg-[#111827] px-6 py-3 text-sm font-semibold text-white hover:opacity-90"
             >
               {copy.blog}
             </Link>
             <Link
               href="/use-cases"
-              className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-semibold text-[#374151] hover:bg-[#EEF3F9]"
+              className="rounded-full border border-[#D9E2F0] bg-white px-6 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]"
             >
               {copy.useCases}
             </Link>
             <Link
               href="/compare-to"
-              className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-semibold text-[#374151] hover:bg-[#EEF3F9]"
+              className="rounded-full border border-[#D9E2F0] bg-white px-6 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]"
             >
               {copy.comparisons}
-            </Link>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <LanguageSwitcher value={uiLang} />
-            <Link
-              href="/pricing"
-              className="rounded-full border border-[#D9E2F0] bg-white px-4 py-2 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]"
-            >
-              {copy.pricing}
-            </Link>
-            <Link
-              href="/"
-              className="rounded-full bg-[#111827] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
-            >
-              {copy.results}
             </Link>
           </div>
         </div>
