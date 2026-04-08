@@ -17,7 +17,6 @@ const COPY = {
     blog: 'Blog',
     login: 'Log In',
     signup: 'Create Account',
-    brandHint: 'Opportunity analysis workspace',
   },
   ar: {
     home: 'الرئيسية',
@@ -25,7 +24,6 @@ const COPY = {
     blog: 'المدونة',
     login: 'تسجيل الدخول',
     signup: 'إنشاء حساب',
-    brandHint: 'مساحة عمل لتحليل الفرص',
   },
 } as const;
 
@@ -47,6 +45,7 @@ export default function AuthShellHeader({
   showAuthActions = true,
 }: Props) {
   const copy = COPY[uiLang];
+  const isArabic = uiLang === 'ar';
 
   const pillBase =
     'rounded-full border px-4 py-2 text-sm font-semibold transition';
@@ -60,25 +59,20 @@ export default function AuthShellHeader({
       <div className="rounded-[28px] border border-[#E5E7EB] bg-white/90 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80 md:px-6 md:py-5">
         <div
           className={`flex items-center justify-between gap-4 ${
-            uiLang === 'ar' ? 'flex-row' : 'flex-row-reverse'
+            isArabic ? 'flex-row-reverse' : 'flex-row'
           }`}
         >
-          <div className="min-w-0 shrink-0">
-            <Link href="/" className="block" aria-label="Madixo home">
-              <MadixoLogo />
-            </Link>
-            <p className={`mt-1 text-sm text-[#6B7280] ${uiLang === 'ar' ? 'text-left' : 'text-right'}`}>
-              {copy.brandHint}
-            </p>
-          </div>
+          <Link href="/" className="shrink-0" aria-label="Madixo home">
+            <MadixoLogo />
+          </Link>
 
-          <LanguageSwitcher value={uiLang} />
+          <LanguageSwitcher value={uiLang} className="shrink-0" />
         </div>
 
-        <div className="mt-4 border-t border-[#F3F4F6] pt-4 md:mt-5 md:pt-5">
+        <div className="mt-5 border-t border-[#EEF2F7] pt-5">
           <div
             className={`flex flex-wrap items-center gap-2 ${
-              uiLang === 'ar' ? 'justify-end' : 'justify-start'
+              isArabic ? 'justify-end' : 'justify-start'
             }`}
           >
             <Link href="/" className={`${pillBase} ${secondaryPill}`}>
