@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
+import { buildAbsoluteAppUrl } from '@/lib/app-url';
 import {
   MADIXO_PLAN_COOKIE,
   syncPlanCookieFromUser,
@@ -68,7 +69,7 @@ function clearOAuthCookies(response: NextResponse) {
 }
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const cookieStore = await cookies();
   const code = searchParams.get('code');
   const language = detectLanguage(request.headers.get('accept-language'));
@@ -87,14 +88,14 @@ export async function GET(request: Request) {
     if (!error) {
       const cookiePlan = (await syncPlanCookieFromUser()) ?? 'free';
 
-      let destination = `${origin}/auth/verified?next=${encodeURIComponent(next)}`;
+      let destination = buildAbsoluteAppUrl(`/auth/verified?next=${encodeURIComponent(next)}`);
 
       if (flow === 'oauth') {
-        destination = `${origin}${next}`;
+        destination = buildAbsoluteAppUrl(next);
       }
 
       if (flow === 'recovery') {
-        destination = `${origin}/reset-password?next=${encodeURIComponent(next)}`;
+        destination = buildAbsoluteAppUrl(`/reset-password?next=${encodeURIComponent(next)}`);
       }
 
       const response = NextResponse.redirect(destination);
@@ -118,7 +119,7 @@ export async function GET(request: Request) {
         : copy.verificationError;
 
   const response = NextResponse.redirect(
-    `${origin}/auth/error?next=${encodeURIComponent(next)}&message=${encodeURIComponent(message)}`
+    buildAbsoluteAppUrl(`/auth/error?next=${encodeURIComponent(next)}&message=${encodeURIComponent(message)}`)
   );
   clearOAuthCookies(response);
   return response;
