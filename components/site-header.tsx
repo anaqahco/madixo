@@ -24,26 +24,25 @@ export default function SiteHeader({
 
   return (
     <div className={`mx-auto w-full ${maxWidthClass} ${className}`}>
-      <div className="flex flex-col gap-4 rounded-[30px] border border-[#E5E7EB] bg-white/90 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80 md:flex-row md:items-start md:justify-between md:gap-6 md:px-6 md:py-5">
-        <div
-          className={`order-1 shrink-0 md:order-2 ${
-            isArabic ? 'md:self-start' : 'md:self-start'
-          }`}
-        >
-          {logo}
-        </div>
+      <div className="rounded-[28px] border border-[#E5E7EB] bg-white/90 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80 md:px-6 md:py-5">
+        <div className="flex flex-col gap-4 md:gap-5">
+          <div
+            className={`flex items-center justify-between gap-4 ${
+              isArabic ? 'text-right' : 'text-left'
+            }`}
+          >
+            <div className={`shrink-0 ${isArabic ? 'order-1' : 'order-2'}`}>{logo}</div>
 
-        <div
-          className={`order-2 flex w-full flex-col gap-3 md:order-1 md:max-w-[760px] ${
-            isArabic ? 'md:items-end' : 'md:items-start'
-          }`}
-        >
-          <LanguageSwitcher
-            value={uiLang}
-            onChange={onLanguageChange}
-            className={isArabic ? 'self-end' : 'self-start'}
-          />
-          <AuthActions uiLang={uiLang} />
+            <LanguageSwitcher
+              value={uiLang}
+              onChange={onLanguageChange}
+              className={isArabic ? 'order-2' : 'order-1'}
+            />
+          </div>
+
+          <div className="w-full">
+            <AuthActions uiLang={uiLang} />
+          </div>
         </div>
       </div>
     </div>
