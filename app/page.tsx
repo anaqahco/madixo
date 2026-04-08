@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import SiteHeader from '@/components/site-header';
 import SiteFooter from '@/components/site-footer';
 import { useUiLanguageState } from '@/components/ui-language-provider';
@@ -540,14 +540,18 @@ function validateStartForm(
   };
 }
 
+const FLASH_NOTICE_KEY = 'madixo_flash_notice_v1';
+
 export default function HomePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [preferredLanguage, setPreferredLanguage] = useUiLanguageState();
   const [idea, setIdea] = useState('');
   const [market, setMarket] = useState('');
   const [customer, setCustomer] = useState('');
   const [formError, setFormError] = useState('');
+  const [flashNotice, setFlashNotice] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<'idea' | 'market' | 'customer', string>>>({});
   const formSectionRef = useRef<HTMLDivElement | null>(null);
   const ideaInputRef = useRef<HTMLInputElement | null>(null);
@@ -668,6 +672,54 @@ export default function HomePage() {
     { title: copy.value4Title, description: copy.value4Description },
   ];
 
+
+  useEffect(() => {
+    const messageFromQuery = searchParams.get('message')?.trim() || '';
+
+    if (messageFromQuery) {
+      setFlashNotice(messageFromQuery);
+      return;
+    }
+
+    try {
+      const raw = window.sessionStorage.getItem(FLASH_NOTICE_KEY);
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw) as {
+        message?: string;
+        savedAt?: number;
+      };
+
+      const message = typeof parsed.message === 'string' ? parsed.message.trim() : '';
+      const savedAt = typeof parsed.savedAt === 'number' ? parsed.savedAt : 0;
+
+      if (!message) {
+        window.sessionStorage.removeItem(FLASH_NOTICE_KEY);
+        return;
+      }
+
+      if (savedAt && Date.now() - savedAt > 1000 * 60 * 3) {
+        window.sessionStorage.removeItem(FLASH_NOTICE_KEY);
+        return;
+      }
+
+      setFlashNotice(message);
+      window.sessionStorage.removeItem(FLASH_NOTICE_KEY);
+    } catch {
+      // ignore storage failures
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!flashNotice) return;
+
+    const timeout = window.setTimeout(() => {
+      setFlashNotice('');
+    }, 5000);
+
+    return () => window.clearTimeout(timeout);
+  }, [flashNotice]);
+
   const signalItems = [
     copy.signal1,
     copy.signal2,
@@ -736,6 +788,29 @@ export default function HomePage() {
           }
         />
       </section>
+
+      {flashNotice ? (
+        <section className="px-6 pt-4">
+          <div className="mx-auto max-w-6xl">
+            <div
+              className={`flex items-start justify-between gap-3 rounded-[22px] border border-[#BBF7D0] bg-[#F0FDF4] px-5 py-4 text-sm font-medium text-[#166534] shadow-sm ${
+                isArabic ? 'text-right' : 'text-left'
+              }`}
+              role="status"
+              aria-live="polite"
+            >
+              <p className="leading-7">{flashNotice}</p>
+              <button
+                type="button"
+                onClick={() => setFlashNotice('')}
+                className="shrink-0 rounded-full border border-[#BBF7D0] bg-white px-3 py-1 text-xs font-semibold text-[#166534] transition hover:bg-[#DCFCE7]"
+              >
+                {isArabic ? 'إغلاق' : 'Dismiss'}
+              </button>
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="mx-auto flex max-w-6xl flex-col items-center px-6 pb-14 pt-10 text-center md:pt-12">
         <span className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-semibold text-[#4B5563] shadow-sm">
