@@ -6,11 +6,8 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import SiteHeader from '@/components/site-header';
 import SiteFooter from '@/components/site-footer';
-import {
-  getClientUiLanguage,
-  setClientUiLanguage,
-  type UiLanguage,
-} from '@/lib/ui-language';
+import { useUiLanguageState } from '@/components/ui-language-provider';
+import { setClientUiLanguage, type UiLanguage } from '@/lib/ui-language';
 
 type PlanKey = 'free' | 'pro' | 'team';
 
@@ -600,7 +597,7 @@ function getReasonText(reason: string | null, language: UiLanguage) {
 }
 
 export default function PricingPage() {
-  const [uiLang, setUiLang] = useState<UiLanguage>(() => getClientUiLanguage('en'));
+  const [uiLang, setUiLang] = useUiLanguageState();
   const [currentPlan, setCurrentPlan] = useState<PlanKey>('free');
   const [planUsage, setPlanUsage] = useState<PlanUsage | null>(null);
   const [billing, setBilling] = useState<BillingInfo | null>(null);
