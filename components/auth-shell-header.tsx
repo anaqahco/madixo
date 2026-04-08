@@ -48,17 +48,17 @@ export default function AuthShellHeader({
   const isArabic = uiLang === 'ar';
 
   const pillBase =
-    'rounded-full border px-4 py-2 text-sm font-semibold transition';
+    'rounded-full border px-[15px] py-[10px] text-[14px] font-semibold leading-none transition-colors duration-200';
   const secondaryPill =
-    'border-[#E5E7EB] bg-white text-[#374151] hover:bg-[#F9FAFB]';
+    'border-[#DCE4EE] bg-white text-[#374151] hover:bg-[#F8FAFC]';
   const primaryPill =
-    'border-[#111827] bg-[#111827] text-white hover:opacity-90';
+    'border-[#111827] bg-[#111827] text-white hover:bg-[#0F172A]';
 
   return (
     <div className="mx-auto w-full max-w-6xl">
-      <div className="rounded-[28px] border border-[#E5E7EB] bg-white/90 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80 md:px-6 md:py-5">
+      <div className="rounded-[28px] border border-[#E5E7EB] bg-white/95 px-5 py-4 shadow-[0_8px_30px_rgba(17,24,39,0.04)] backdrop-blur supports-[backdrop-filter]:bg-white/85 md:px-7 md:py-4">
         <div
-          className={`flex items-center justify-between gap-4 ${
+          className={`flex min-h-[64px] items-center justify-between gap-5 md:min-h-[72px] ${
             isArabic ? 'flex-row-reverse' : 'flex-row'
           }`}
         >
@@ -69,21 +69,21 @@ export default function AuthShellHeader({
           <LanguageSwitcher value={uiLang} className="shrink-0" />
         </div>
 
-        <div className="mt-5 border-t border-[#EEF2F7] pt-5">
+        <div className="mt-4 border-t border-[#EEF2F7] pt-4">
           <div
-            className={`flex flex-wrap items-center gap-2 ${
+            className={`flex flex-wrap items-center gap-2.5 ${
               isArabic ? 'justify-end' : 'justify-start'
             }`}
           >
-            <Link href="/" className={`${pillBase} ${secondaryPill}`}>
+            <Link href="/" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
               {copy.home}
             </Link>
 
-            <Link href="/pricing" className={`${pillBase} ${secondaryPill}`}>
+            <Link href="/pricing" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
               {copy.pricing}
             </Link>
 
-            <Link href="/blog" className={`${pillBase} ${secondaryPill}`}>
+            <Link href="/blog" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
               {copy.blog}
             </Link>
 
@@ -91,14 +91,14 @@ export default function AuthShellHeader({
               <>
                 <Link
                   href="/login?mode=login&next=%2Freports"
-                  className={`${pillBase} ${secondaryPill}`}
+                  className={`${pillBase} whitespace-nowrap ${secondaryPill}`}
                 >
                   {copy.login}
                 </Link>
 
                 <Link
                   href="/login?mode=signup&next=%2Freports"
-                  className={`${pillBase} ${primaryPill}`}
+                  className={`${pillBase} whitespace-nowrap ${primaryPill}`}
                 >
                   {copy.signup}
                 </Link>
