@@ -25,17 +25,13 @@ export default function SiteHeader({
   return (
     <div className={`mx-auto w-full ${maxWidthClass} ${className}`}>
       <div className="rounded-[28px] border border-[#E5E7EB] bg-white/90 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80 md:px-6 md:py-5">
-        <div
-          className={`flex items-center justify-between gap-4 ${
-            isArabic ? 'flex-row-reverse' : 'flex-row'
-          }`}
-        >
-          <div className="shrink-0">{logo}</div>
+        <div dir="ltr" className="flex items-center justify-between gap-4">
+          <div className={`shrink-0 ${isArabic ? 'order-1' : 'order-2'}`}>{logo}</div>
 
           <LanguageSwitcher
             value={uiLang}
             onChange={onLanguageChange}
-            className="shrink-0"
+            className={`shrink-0 ${isArabic ? 'order-2' : 'order-1'}`}
           />
         </div>
 
