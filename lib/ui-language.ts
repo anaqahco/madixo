@@ -30,6 +30,14 @@ export function getClientUiLanguage(fallback: UiLanguage = 'en'): UiLanguage {
     return fallback;
   }
 
+  const queryValue = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).get('uiLang')
+    : null;
+
+  if (isUiLanguage(queryValue)) {
+    return queryValue;
+  }
+
   const cookieValue = document.cookie
     .split('; ')
     .find((entry) => entry.startsWith(`${UI_LANGUAGE_COOKIE}=`))
@@ -42,6 +50,7 @@ export function getClientUiLanguage(fallback: UiLanguage = 'en'): UiLanguage {
   }
 
   const documentLanguage = document.documentElement.lang;
+
   if (isUiLanguage(documentLanguage)) {
     return documentLanguage;
   }
