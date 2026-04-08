@@ -63,7 +63,7 @@ export default async function UseCasesPage() {
             >
               {copy.pricing}
             </Link>
-            <LanguageSwitcher />
+            <LanguageSwitcher value={uiLang} />
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
