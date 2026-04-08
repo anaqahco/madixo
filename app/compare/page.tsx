@@ -2,12 +2,15 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import MixedText from '@/components/mixed-text';
 import SiteHeader from '@/components/site-header';
 import LifecycleStatusBadge from '@/components/lifecycle-status-badge';
 import PlanUpgradeNotice from '@/components/plan-upgrade-notice';
+import { useUiLanguageState } from '@/components/ui-language-provider';
+import { createClient } from '@/lib/supabase/client';
 import {
+  type AnalysisResult,
   type ReportSortOption,
   type SavedMadixoReport,
 } from '@/lib/madixo-reports';
@@ -16,7 +19,7 @@ import {
   lifecycleStatusPriority,
   type ReportLifecycleStatus,
 } from '@/lib/madixo-lifecycle-status';
-import { getClientUiLanguage, type UiLanguage } from '@/lib/ui-language';
+import { type UiLanguage } from '@/lib/ui-language';
 import { getCompareSelectionLimit, getPlanLabel, normalizePlan } from '@/lib/madixo-plans';
 
 function readPlanFromCookieClient(): 'free' | 'pro' | 'team' {
@@ -67,6 +70,20 @@ async function fetchCurrentPlanClient(): Promise<{
 
 type CompareSortMode = ReportSortOption | 'status';
 
+type ReportsTableRow = {
+  id: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+  query: string;
+  market: string;
+  customer: string;
+  opportunity_score: number;
+  opportunity_label: string;
+  summary: string;
+  result_json: AnalysisResult;
+};
+
 type ValidationPlanStatusRow = {
   report_id: string;
   ui_lang: UiLanguage;
@@ -75,6 +92,23 @@ type ValidationPlanStatusRow = {
   decision_state: string | null;
   updated_at?: string | null;
 };
+
+type BreakdownKey = keyof SavedMadixoReport['result']['scoreBreakdown'];
+
+function toSafeText(value: string | null | undefined, fallback = '') {
+  return typeof value === 'string' && value.trim() ? value.trim() : fallback;
+}
+
+function mapRowToSavedReport(row: ReportsTableRow): SavedMadixoReport {
+  return {
+    id: row.id,
+    createdAt: row.created_at,
+    query: toSafeText(row.query),
+    market: toSafeText(row.market),
+    customer: toSafeText(row.customer),
+    result: row.result_json,
+  };
+}
 
 function countArabicChars(value: string) {
   return (value.match(/[\u0600-\u06FF]/g) ?? []).length;
@@ -93,6 +127,35 @@ function detectTextLanguage(value: string): UiLanguage {
   }
 
   return arabicScore >= latinScore ? 'ar' : 'en';
+}
+
+function detectReportLanguage(report: SavedMadixoReport): UiLanguage {
+  const combined = [
+    report.query,
+    report.market,
+    report.customer,
+    report.result.query,
+    report.result.summary,
+    report.result.whyThisOpportunity,
+    report.result.opportunityLabel,
+    report.result.marketDemand.title,
+    report.result.marketDemand.description,
+    report.result.competition.title,
+    report.result.competition.description,
+    report.result.targetCustomers.title,
+    report.result.targetCustomers.description,
+    report.result.suggestedMvp.title,
+    report.result.suggestedMvp.description,
+    report.result.opportunityAngle,
+    report.result.goToMarket,
+    report.result.bestFirstCustomer.title,
+    report.result.firstOffer.title,
+    report.result.revenueModel.title,
+    report.result.nextSteps.join(' '),
+    report.result.risks.join(' '),
+  ].join(' ');
+
+  return detectTextLanguage(combined);
 }
 
 function labelFromScore(score: number, language: UiLanguage) {
@@ -412,8 +475,7 @@ export default function CompareReportsPage() {
   const [initialized, setInitialized] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [preferredLanguage, setPreferredLanguage] = useState<UiLanguage>(() => getClientUiLanguage('en'));
-
+  const [preferredLanguage, setPreferredLanguage] = useUiLanguageState();
   useEffect(() => {
     fetchCurrentPlanClient().then((payload) => {
       setPlan(payload.plan);
@@ -424,9 +486,10 @@ export default function CompareReportsPage() {
   const copy = UI_COPY[preferredLanguage];
   const scoreBreakdownItems = getScoreBreakdownItems(preferredLanguage);
   const compareLimit = getCompareSelectionLimit(plan);
+  const isFreePlan = plan === 'free';
   const currentPlanLabel = planLabelFromApi || getPlanLabel(plan, preferredLanguage);
 
-  const refreshReports = useCallback(async (nextSort: CompareSortMode = sortBy) => {
+  const refreshReports = async (nextSort: CompareSortMode = sortBy) => {
     try {
       setLoading(true);
       setError('');
@@ -450,7 +513,7 @@ export default function CompareReportsPage() {
       const mapped = Array.isArray(payload.reports) ? payload.reports : [];
       const planRows = Array.isArray(payload.validationPlans) ? payload.validationPlans : [];
 
-      const nextReports = [...mapped];
+      let nextReports = [...mapped];
 
       const reportIds = mapped.map((item) => item.id);
       const nextStatusMap: Record<string, ReportLifecycleStatus> = {};
@@ -522,11 +585,11 @@ export default function CompareReportsPage() {
     } finally {
       setLoading(false);
     }
-  }, [copy.failedToLoadReports, initialized, preferredLanguage, sortBy]);
+  };
 
   useEffect(() => {
     refreshReports(sortBy);
-  }, [refreshReports, sortBy]);
+  }, [sortBy, preferredLanguage]);
 
   const selectedReports = useMemo(() => {
     return reports.filter((report) => selectedIds.includes(report.id));
