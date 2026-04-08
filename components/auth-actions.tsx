@@ -40,7 +40,7 @@ const COPY = {
     compare: 'Compare Reports',
     pricing: 'Plans',
     logout: 'Log Out',
-    signedInAs: 'Signed in as',
+    signedInAs: 'Signed in via',
     signedIn: 'Signed in',
     providerGoogle: 'Google',
     providerEmail: 'Email',
@@ -424,48 +424,58 @@ export default function AuthActions({ uiLang }: Props) {
   const providerLabel = getProviderLabel(userSummary?.provider || 'email', uiLang);
 
   return (
-    <div className="flex w-full flex-col gap-3">
-      <div
-        className={`flex items-center gap-3 rounded-[22px] border border-[#E5E7EB] bg-white px-3 py-3 shadow-sm ${
-          uiLang === 'ar' ? 'text-right' : 'text-left'
-        }`}
-      >
-        {avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={avatarUrl}
-            alt={name || email || 'User avatar'}
-            className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover"
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-[#111827] text-sm font-bold text-white">
-            {initials}
-          </div>
-        )}
+    <div
+      className={`flex w-full flex-col gap-4 xl:flex-row xl:items-center xl:gap-5 ${
+        uiLang === 'ar' ? 'xl:flex-row-reverse' : ''
+      }`}
+    >
+      <div className="w-full shrink-0 xl:w-auto xl:min-w-[380px] xl:max-w-[440px]">
+        <div
+          className={`flex items-center gap-3 rounded-[24px] border border-[#E5E7EB] bg-[#FCFCFD] px-3 py-3 shadow-sm ${
+            uiLang === 'ar' ? 'flex-row-reverse text-right' : 'text-left'
+          }`}
+        >
+          {avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={avatarUrl}
+              alt={name || email || 'User avatar'}
+              className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover"
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-[#111827] text-sm font-bold text-white">
+              {initials}
+            </div>
+          )}
 
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="truncate text-sm font-semibold text-[#111827]">
-              {name || email || copy.signedIn}
+          <div className="min-w-0 flex-1">
+            <div
+              className={`flex flex-wrap items-center gap-2 ${
+                uiLang === 'ar' ? 'justify-end' : 'justify-start'
+              }`}
+            >
+              <p className="truncate text-sm font-semibold text-[#111827]">
+                {name || email || copy.signedIn}
+              </p>
+              <span className="inline-flex items-center rounded-full bg-[#F3F4F6] px-2.5 py-1 text-[11px] font-semibold text-[#4B5563]">
+                {providerLabel}
+              </span>
+            </div>
+
+            {email ? (
+              <p className="truncate text-xs text-[#6B7280]">{email}</p>
+            ) : null}
+
+            <p className="mt-1 text-[11px] font-medium text-[#6B7280]">
+              {copy.signedInAs} {providerLabel}
             </p>
-            <span className="inline-flex items-center rounded-full bg-[#F3F4F6] px-2.5 py-1 text-[11px] font-semibold text-[#4B5563]">
-              {providerLabel}
-            </span>
           </div>
-
-          {email ? (
-            <p className="truncate text-xs text-[#6B7280]">{email}</p>
-          ) : null}
-
-          <p className="mt-1 text-[11px] font-medium text-[#6B7280]">
-            {copy.signedInAs} {providerLabel}
-          </p>
         </div>
       </div>
 
       <div
-        className={`flex flex-wrap items-center gap-2 ${
+        className={`flex flex-1 flex-wrap items-center gap-2 ${
           uiLang === 'ar' ? 'justify-end' : 'justify-start'
         }`}
       >
