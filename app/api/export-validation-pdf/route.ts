@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { chromium } from 'playwright';
+import chromium from '@sparticuz/chromium';
+import { chromium as playwright } from 'playwright-core';
 import { NextResponse } from 'next/server';
 import type { SavedMadixoReport } from '@/lib/madixo-reports';
 import {
@@ -263,7 +264,7 @@ function buildUtf8FileName(report: SavedMadixoReport, uiLang: UiLanguage) {
 }
 
 export async function POST(request: Request) {
-  let browser: Awaited<ReturnType<typeof chromium.launch>> | null = null;
+  let browser: Awaited<ReturnType<typeof playwright.launch>> | null = null;
 
   try {
     const payload = (await request.json()) as ExportPayload;
@@ -896,7 +897,12 @@ export async function POST(request: Request) {
 </body>
 </html>`;
 
-    browser = await chromium.launch({ headless: true });
+    chromium.setGraphicsMode = false;
+    browser = await playwright.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
     const page = await browser.newPage({
       viewport: { width: 1240, height: 1754 },
       deviceScaleFactor: 1,
