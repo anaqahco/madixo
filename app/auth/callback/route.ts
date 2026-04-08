@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
-import { MADIXO_PLAN_COOKIE, syncPlanCookieFromUser } from '@/lib/madixo-plan-store';
+import {
+  MADIXO_PLAN_COOKIE,
+  syncPlanCookieFromUser,
+} from '@/lib/madixo-plan-store';
 
 type UiLanguage = 'ar' | 'en';
 type AuthFlow = 'oauth' | 'email' | 'recovery';
@@ -87,7 +90,7 @@ export async function GET(request: Request) {
       let destination = `${origin}/auth/verified?next=${encodeURIComponent(next)}`;
 
       if (flow === 'oauth') {
-        destination = `${origin}/auth/finish?next=${encodeURIComponent(next)}`;
+        destination = `${origin}${next}`;
       }
 
       if (flow === 'recovery') {
