@@ -357,38 +357,7 @@ export default function AuthActions({ uiLang }: Props) {
   const dangerPill =
     'border-[#F8D1D1] bg-[#FFF7F7] text-[#C24141] hover:bg-[#FFF1F1]';
 
-  const saveSignedOutFlashNotice = () => {
-    try {
-      setClientUiLanguage(uiLang);
-      window.sessionStorage.setItem(
-        FLASH_NOTICE_KEY,
-        JSON.stringify({
-          type: 'success',
-          message: copy.signedOut,
-          savedAt: Date.now(),
-        })
-      );
-    } catch {
-      // ignore storage failures
-    }
-  };
-
-  const navigateToSignedOutHome = () => {
-    saveSignedOutFlashNotice();
-
-    router.replace('/');
-    router.refresh();
-
-    window.setTimeout(() => {
-      if (window.location.pathname !== '/') {
-        window.location.assign('/');
-      }
-    }, 180);
-  };
-
   const handleSignOut = async () => {
-    if (isSigningOut) return;
-
     setIsSigningOut(true);
     setSessionState('guest');
     setUserSummary(null);
@@ -399,23 +368,32 @@ export default function AuthActions({ uiLang }: Props) {
     });
 
     try {
-      await Promise.race([
-        Promise.allSettled([
-          fetch('/api/auth/session', {
-            method: 'DELETE',
-            cache: 'no-store',
-            credentials: 'include',
-          }).catch(() => null),
-          supabase.auth.signOut().catch(() => null),
-        ]),
-        new Promise((resolve) => {
-          window.setTimeout(resolve, 1500);
-        }),
-      ]);
+      await fetch('/api/auth/session', {
+        method: 'DELETE',
+        cache: 'no-store',
+        credentials: 'include',
+      }).catch(() => null);
+
+      await supabase.auth.signOut().catch(() => null);
     } finally {
       clearSupabaseBrowserStorage();
       writeAuthSnapshot(null);
-      navigateToSignedOutHome();
+
+      const destination = '/?notice=signed_out';
+
+      try {
+        setClientUiLanguage(uiLang);
+        window.sessionStorage.removeItem(FLASH_NOTICE_KEY);
+      } catch {
+        // ignore storage failures
+      }
+
+      router.replace(destination);
+      router.refresh();
+
+      window.setTimeout(() => {
+        window.location.replace(destination);
+      }, 150);
     }
   };
 
