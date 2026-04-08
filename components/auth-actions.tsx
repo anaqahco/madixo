@@ -344,13 +344,13 @@ export default function AuthActions({ uiLang }: Props) {
   const nextPath = pathname || '/';
 
   const pillBase =
-    'rounded-full border px-4 py-2 text-sm font-semibold transition';
+    'rounded-full border px-[15px] py-[10px] text-[14px] font-semibold leading-none transition-colors duration-200';
   const secondaryPill =
-    'border-[#E5E7EB] bg-white text-[#374151] hover:bg-[#F9FAFB]';
+    'border-[#DCE4EE] bg-white text-[#374151] hover:bg-[#F8FAFC]';
   const primaryPill =
-    'border-[#111827] bg-[#111827] text-white hover:opacity-90';
+    'border-[#111827] bg-[#111827] text-white hover:bg-[#0F172A]';
   const dangerPill =
-    'border-[#FECACA] bg-[#FEF2F2] text-[#B91C1C] hover:bg-[#FEE2E2]';
+    'border-[#F8D1D1] bg-[#FFF7F7] text-[#C24141] hover:bg-[#FFF1F1]';
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
@@ -389,12 +389,12 @@ export default function AuthActions({ uiLang }: Props) {
         dir={isArabic ? 'rtl' : 'ltr'}
         className="flex flex-wrap items-center gap-2 justify-start"
       >
-        <Link href="/blog" className={`${pillBase} ${secondaryPill}`}>
+        <Link href="/blog" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
           {copy.blog}
         </Link>
 
         {pathname !== '/pricing' ? (
-          <Link href="/pricing" className={`${pillBase} ${secondaryPill}`}>
+          <Link href="/pricing" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
             {copy.pricing}
           </Link>
         ) : null}
@@ -403,14 +403,14 @@ export default function AuthActions({ uiLang }: Props) {
           <>
             <Link
               href={`/login?mode=login&next=${encodeURIComponent(nextPath)}`}
-              className={`${pillBase} ${secondaryPill}`}
+              className={`${pillBase} whitespace-nowrap ${secondaryPill}`}
             >
               {copy.login}
             </Link>
 
             <Link
               href={`/login?mode=signup&next=${encodeURIComponent(nextPath)}`}
-              className={`${pillBase} ${primaryPill}`}
+              className={`${pillBase} whitespace-nowrap ${primaryPill}`}
             >
               {copy.signup}
             </Link>
@@ -427,17 +427,16 @@ export default function AuthActions({ uiLang }: Props) {
   const providerLabel = getProviderLabel(userSummary?.provider || 'email', uiLang);
 
   return (
-    <div className="flex w-full flex-col gap-3">
-      <div
-        dir="ltr"
-        className={`flex flex-col gap-3 md:items-center md:gap-4 ${
-          isArabic ? 'md:flex-row-reverse' : 'md:flex-row'
-        }`}
-      >
-        <div className="w-full md:max-w-[520px] md:flex-none">
+    <div className="flex w-full flex-col gap-2.5">
+      <div dir="ltr" className="flex flex-col gap-3 md:flex-row md:items-center md:gap-5 lg:gap-6">
+        <div
+          className={`w-full md:max-w-[480px] lg:max-w-[500px] md:flex-none ${
+            isArabic ? 'md:order-2' : 'md:order-1'
+          }`}
+        >
           <div
             dir="ltr"
-            className={`flex items-center gap-3 rounded-[22px] border border-[#E5E7EB] bg-white px-4 py-4 shadow-sm ${
+            className={`flex items-center gap-3 rounded-[24px] border border-[#E5E7EB] bg-white px-5 py-3.5 shadow-[0_6px_18px_rgba(17,24,39,0.05)] ${
               isArabic ? 'flex-row-reverse text-right' : 'flex-row text-left'
             }`}
           >
@@ -446,16 +445,16 @@ export default function AuthActions({ uiLang }: Props) {
               <img
                 src={avatarUrl}
                 alt={name || email || 'User avatar'}
-                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover"
+                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover shadow-sm"
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-[#111827] text-sm font-bold text-white">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-[#111827] text-sm font-bold text-white shadow-sm">
                 {initials}
               </div>
             )}
 
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 space-y-0.5">
               <div
                 className={`flex flex-wrap items-center gap-2 ${
                   isArabic ? 'justify-end' : 'justify-start'
@@ -464,7 +463,7 @@ export default function AuthActions({ uiLang }: Props) {
                 <p className="truncate text-sm font-semibold text-[#111827]">
                   {name || email || copy.signedIn}
                 </p>
-                <span className="inline-flex items-center rounded-full bg-[#F3F4F6] px-2.5 py-1 text-[11px] font-semibold text-[#4B5563]">
+                <span className="inline-flex items-center rounded-full bg-[#F3F4F6] px-2.5 py-0.5 text-[11px] font-semibold text-[#4B5563]">
                   {providerLabel}
                 </span>
               </div>
@@ -473,7 +472,7 @@ export default function AuthActions({ uiLang }: Props) {
                 <p className="truncate text-xs text-[#6B7280]">{email}</p>
               ) : null}
 
-              <p className="mt-1 text-[11px] font-medium text-[#6B7280]">
+              <p className="text-[11px] font-medium text-[#6B7280]">
                 {copy.signedInAs} {providerLabel}
               </p>
             </div>
@@ -482,40 +481,40 @@ export default function AuthActions({ uiLang }: Props) {
 
         <div
           dir={isArabic ? 'rtl' : 'ltr'}
-          className={`flex flex-wrap items-center gap-2 md:flex-1 ${
-            isArabic ? 'justify-start md:justify-end' : 'justify-start'
+          className={`flex flex-wrap items-center gap-2 md:gap-2.5 justify-start md:flex-1 ${
+            isArabic ? 'md:order-1' : 'md:order-2'
           }`}
         >
-          <Link href="/blog" className={`${pillBase} ${secondaryPill}`}>
+          <Link href="/blog" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
             {copy.blog}
           </Link>
 
           {pathname !== '/dashboard' ? (
-            <Link href="/dashboard" className={`${pillBase} ${secondaryPill}`}>
+            <Link href="/dashboard" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
               {copy.dashboard}
             </Link>
           ) : null}
 
           {pathname !== '/' ? (
-            <Link href="/" className={`${pillBase} ${secondaryPill}`}>
+            <Link href="/" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
               {copy.newScan}
             </Link>
           ) : null}
 
           {pathname !== '/reports' ? (
-            <Link href="/reports" className={`${pillBase} ${secondaryPill}`}>
+            <Link href="/reports" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
               {copy.reports}
             </Link>
           ) : null}
 
           {pathname !== '/compare' ? (
-            <Link href="/compare" className={`${pillBase} ${secondaryPill}`}>
+            <Link href="/compare" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
               {copy.compare}
             </Link>
           ) : null}
 
           {pathname !== '/pricing' ? (
-            <Link href="/pricing" className={`${pillBase} ${secondaryPill}`}>
+            <Link href="/pricing" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
               {copy.pricing}
             </Link>
           ) : null}
@@ -524,7 +523,7 @@ export default function AuthActions({ uiLang }: Props) {
             type="button"
             onClick={handleSignOut}
             disabled={isSigningOut}
-            className={`${pillBase} ${dangerPill}`}
+            className={`${pillBase} whitespace-nowrap ${dangerPill}`}
           >
             {isSigningOut ? copy.signingOut : copy.logout}
           </button>
