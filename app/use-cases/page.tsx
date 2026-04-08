@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
+import LanguageSwitcher from '@/components/language-switcher';
 import { getUseCases, localizeText } from '@/lib/blog';
 import { getServerUiLanguageFromCookie } from '@/lib/ui-language';
 
@@ -28,6 +29,9 @@ export default async function UseCasesPage() {
           start: 'ابدأ التحليل',
           pricing: 'شاهد الباقات',
           open: 'افتح الحالة',
+          blog: 'المقالات',
+          useCases: 'حالات الاستخدام',
+          comparisons: 'المقارنات',
         }
       : {
           eyebrow: 'Use Cases',
@@ -37,10 +41,54 @@ export default async function UseCasesPage() {
           start: 'Start analysis',
           pricing: 'See plans',
           open: 'Open use case',
+          blog: 'Articles',
+          useCases: 'Use Cases',
+          comparisons: 'Comparisons',
         };
 
   return (
     <>
+      <section className="border-b border-[#E5E7EB] bg-white">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-8">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/"
+              className="rounded-full bg-[#111827] px-6 py-3 text-sm font-semibold text-white hover:opacity-90"
+            >
+              {copy.start}
+            </Link>
+            <Link
+              href="/pricing"
+              className="rounded-full border border-[#D9E2F0] bg-white px-6 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]"
+            >
+              {copy.pricing}
+            </Link>
+            <LanguageSwitcher />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/blog"
+              className="rounded-full border border-[#D9E2F0] bg-white px-6 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]"
+            >
+              {copy.blog}
+            </Link>
+            <Link
+              href="/use-cases"
+              className="rounded-full bg-[#111827] px-6 py-3 text-sm font-semibold text-white hover:opacity-90"
+            >
+              {copy.useCases}
+            </Link>
+            <Link
+              href="/compare-to"
+              className="rounded-full border border-[#D9E2F0] bg-white px-6 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]"
+            >
+              {copy.comparisons}
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-6xl px-6 pb-10 pt-10 text-center">
         <p className="text-sm font-medium text-[#6B7280]">{copy.eyebrow}</p>
         <h1 className="mt-3 text-4xl font-bold tracking-tight text-[#111827] md:text-5xl">
