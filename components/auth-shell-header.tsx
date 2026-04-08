@@ -59,7 +59,7 @@ export default function AuthShellHeader({
     <div className="mx-auto w-full max-w-6xl">
       <div
         className={`flex flex-col gap-4 rounded-[28px] border border-[#E5E7EB] bg-white/90 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80 md:px-6 ${
-          uiLang === 'ar' ? 'md:flex-row-reverse' : 'md:flex-row'
+          uiLang === 'ar' ? 'md:flex-row' : 'md:flex-row-reverse'
         } md:items-center md:justify-between`}
       >
         <div className="flex min-w-0 items-center gap-4">
@@ -77,7 +77,7 @@ export default function AuthShellHeader({
 
         <div
           className={`flex flex-col gap-3 ${
-            uiLang === 'ar' ? 'md:items-start' : 'md:items-end'
+            uiLang === 'ar' ? 'md:items-end' : 'md:items-start'
           }`}
         >
           <LanguageSwitcher value={uiLang} />
