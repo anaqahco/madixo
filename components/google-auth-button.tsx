@@ -10,6 +10,10 @@ type Props = {
   mode: 'login' | 'signup';
 };
 
+const OAUTH_NEXT_COOKIE = 'madixo_oauth_next';
+const OAUTH_FLOW_COOKIE = 'madixo_oauth_flow';
+const OAUTH_COOKIE_MAX_AGE = 60 * 10;
+
 const COPY = {
   en: {
     login: 'Continue with Google',
@@ -52,6 +56,14 @@ function GoogleIcon() {
   );
 }
 
+function setCookie(name: string, value: string, maxAge: number) {
+  document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAge}; SameSite=Lax`;
+}
+
+function clearCookie(name: string) {
+  document.cookie = `${name}=; Path=/; Max-Age=0; SameSite=Lax`;
+}
+
 export default function GoogleAuthButton({
   uiLang,
   nextPath,
@@ -66,6 +78,9 @@ export default function GoogleAuthButton({
     try {
       setLoading(true);
       setError('');
+
+      setCookie(OAUTH_NEXT_COOKIE, nextPath, OAUTH_COOKIE_MAX_AGE);
+      setCookie(OAUTH_FLOW_COOKIE, 'oauth', OAUTH_COOKIE_MAX_AGE);
 
       const supabase = createClient();
       const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(
@@ -83,6 +98,8 @@ export default function GoogleAuthButton({
         throw error;
       }
     } catch {
+      clearCookie(OAUTH_NEXT_COOKIE);
+      clearCookie(OAUTH_FLOW_COOKIE);
       setLoading(false);
       setError(copy.error);
     }
