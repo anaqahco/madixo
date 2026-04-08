@@ -8,6 +8,7 @@ import MixedText from '@/components/mixed-text';
 import SiteHeader from '@/components/site-header';
 import LifecycleStatusBadge from '@/components/lifecycle-status-badge';
 import PlanUpgradeNotice from '@/components/plan-upgrade-notice';
+import { useUiLanguageState } from '@/components/ui-language-provider';
 import {
   getReportLifecycleStatus,
   lifecycleStatusPriority,
@@ -18,7 +19,7 @@ import {
   type SavedMadixoReport,
 } from '@/lib/madixo-reports';
 import { normalizePlan } from '@/lib/madixo-plans';
-import { getClientUiLanguage, type UiLanguage } from '@/lib/ui-language';
+import { type UiLanguage } from '@/lib/ui-language';
 
 type ReportsSortMode = ReportSortOption | 'status';
 type StatusFilter =
@@ -392,7 +393,7 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [preferredLanguage, setPreferredLanguage] = useState<UiLanguage>(() => getClientUiLanguage('en'));
+  const [preferredLanguage, setPreferredLanguage] = useUiLanguageState();
   const [showSlowNotice, setShowSlowNotice] = useState(false);
   const requestIdRef = useRef(0);
 
