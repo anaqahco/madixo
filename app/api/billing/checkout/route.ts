@@ -6,6 +6,7 @@ import {
 } from '@/lib/madixo-billing';
 import { getCurrentMadixoPlan } from '@/lib/madixo-plan-store';
 import { normalizePlan } from '@/lib/madixo-plans';
+import { getPublicAppUrl } from '@/lib/app-url';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -13,71 +14,6 @@ export const dynamic = 'force-dynamic';
 type RequestedBody = {
   plan?: string;
 };
-
-function cleanBaseUrl(value: string | null | undefined) {
-  if (!value) return null;
-
-  const trimmed = value.trim();
-  if (!trimmed) return null;
-
-  try {
-    const url = new URL(trimmed);
-    return url.origin;
-  } catch {
-    return null;
-  }
-}
-
-function buildOriginFromForwardedHeaders(request: Request) {
-  const forwardedHost = request.headers.get('x-forwarded-host')?.trim();
-  const forwardedProto = request.headers.get('x-forwarded-proto')?.trim() || 'https';
-
-  if (!forwardedHost) {
-    return null;
-  }
-
-  try {
-    return new URL(`${forwardedProto}://${forwardedHost}`).origin;
-  } catch {
-    return null;
-  }
-}
-
-function isLocalOrigin(origin: string | null) {
-  if (!origin) return true;
-
-  return (
-    origin.includes('localhost') ||
-    origin.includes('127.0.0.1') ||
-    origin.includes('0.0.0.0')
-  );
-}
-
-function resolvePublicBaseUrl(request: Request) {
-  const candidates = [
-    buildOriginFromForwardedHeaders(request),
-    cleanBaseUrl(request.headers.get('origin')),
-    (() => {
-      const referer = request.headers.get('referer');
-      if (!referer) return null;
-      try {
-        return new URL(referer).origin;
-      } catch {
-        return null;
-      }
-    })(),
-    cleanBaseUrl(process.env.NEXT_PUBLIC_APP_URL),
-    cleanBaseUrl(process.env.APP_URL),
-    cleanBaseUrl(request.url),
-  ];
-
-  const publicCandidate = candidates.find((candidate) => candidate && !isLocalOrigin(candidate));
-  if (publicCandidate) {
-    return publicCandidate;
-  }
-
-  return candidates.find(Boolean) ?? 'http://localhost:3000';
-}
 
 export async function POST(request: Request) {
   try {
@@ -165,7 +101,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const publicBaseUrl = resolvePublicBaseUrl(request);
+    const publicBaseUrl = getPublicAppUrl();
 
     return NextResponse.json({
       ok: true,
