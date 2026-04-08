@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { setClientUiLanguage } from '@/lib/ui-language';
@@ -233,6 +233,7 @@ function applySnapshotState(
 
 export default function AuthActions({ uiLang }: Props) {
   const pathname = usePathname();
+  const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const isArabic = uiLang === 'ar';
 
@@ -356,7 +357,38 @@ export default function AuthActions({ uiLang }: Props) {
   const dangerPill =
     'border-[#F8D1D1] bg-[#FFF7F7] text-[#C24141] hover:bg-[#FFF1F1]';
 
+  const saveSignedOutFlashNotice = () => {
+    try {
+      setClientUiLanguage(uiLang);
+      window.sessionStorage.setItem(
+        FLASH_NOTICE_KEY,
+        JSON.stringify({
+          type: 'success',
+          message: copy.signedOut,
+          savedAt: Date.now(),
+        })
+      );
+    } catch {
+      // ignore storage failures
+    }
+  };
+
+  const navigateToSignedOutHome = () => {
+    saveSignedOutFlashNotice();
+
+    router.replace('/');
+    router.refresh();
+
+    window.setTimeout(() => {
+      if (window.location.pathname !== '/') {
+        window.location.assign('/');
+      }
+    }, 180);
+  };
+
   const handleSignOut = async () => {
+    if (isSigningOut) return;
+
     setIsSigningOut(true);
     setSessionState('guest');
     setUserSummary(null);
@@ -367,32 +399,23 @@ export default function AuthActions({ uiLang }: Props) {
     });
 
     try {
-      await fetch('/api/auth/session', {
-        method: 'DELETE',
-        cache: 'no-store',
-        credentials: 'include',
-      }).catch(() => null);
-
-      await supabase.auth.signOut().catch(() => null);
+      await Promise.race([
+        Promise.allSettled([
+          fetch('/api/auth/session', {
+            method: 'DELETE',
+            cache: 'no-store',
+            credentials: 'include',
+          }).catch(() => null),
+          supabase.auth.signOut().catch(() => null),
+        ]),
+        new Promise((resolve) => {
+          window.setTimeout(resolve, 1500);
+        }),
+      ]);
     } finally {
       clearSupabaseBrowserStorage();
       writeAuthSnapshot(null);
-
-      try {
-        setClientUiLanguage(uiLang);
-        window.sessionStorage.setItem(
-          FLASH_NOTICE_KEY,
-          JSON.stringify({
-            type: 'success',
-            message: copy.signedOut,
-            savedAt: Date.now(),
-          })
-        );
-      } catch {
-        // ignore storage failures
-      }
-
-      window.location.replace('/');
+      navigateToSignedOutHome();
     }
   };
 
