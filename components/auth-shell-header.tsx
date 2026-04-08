@@ -47,6 +47,7 @@ export default function AuthShellHeader({
   showAuthActions = true,
 }: Props) {
   const copy = COPY[uiLang];
+  const isArabic = uiLang === 'ar';
 
   const pillBase =
     'rounded-full border px-4 py-2 text-sm font-semibold transition';
@@ -58,16 +59,15 @@ export default function AuthShellHeader({
   return (
     <div className="mx-auto w-full max-w-6xl">
       <div
-        className={`flex flex-col gap-4 rounded-[28px] border border-[#E5E7EB] bg-white/90 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80 md:px-6 ${
-          uiLang === 'ar' ? 'md:flex-row' : 'md:flex-row-reverse'
-        } md:items-center md:justify-between`}
+        dir="ltr"
+        className="flex flex-col gap-4 rounded-[28px] border border-[#E5E7EB] bg-white/90 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80 md:flex-row md:items-center md:justify-between md:px-6"
       >
-        <div className="flex min-w-0 items-center gap-4">
+        <div className={`flex min-w-0 items-center gap-4 ${isArabic ? 'md:order-1' : 'md:order-2'}`}>
           <Link href="/" className="shrink-0" aria-label="Madixo home">
             <MadixoLogo />
           </Link>
 
-          <div className="hidden min-w-0 md:block">
+          <div dir={isArabic ? 'rtl' : 'ltr'} className="hidden min-w-0 md:block">
             <p className="truncate text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
               MADIXO
             </p>
@@ -76,15 +76,16 @@ export default function AuthShellHeader({
         </div>
 
         <div
+          dir={isArabic ? 'rtl' : 'ltr'}
           className={`flex flex-col gap-3 ${
-            uiLang === 'ar' ? 'md:items-end' : 'md:items-start'
+            isArabic ? 'md:order-2 md:items-end' : 'md:order-1 md:items-start'
           }`}
         >
-          <LanguageSwitcher value={uiLang} />
+          <LanguageSwitcher value={uiLang} className={isArabic ? 'self-end' : 'self-start'} />
 
           <div
             className={`flex flex-wrap items-center gap-2 ${
-              uiLang === 'ar' ? 'justify-start' : 'justify-end'
+              isArabic ? 'justify-end' : 'justify-start'
             }`}
           >
             <Link href="/" className={`${pillBase} ${secondaryPill}`}>
