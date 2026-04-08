@@ -424,7 +424,7 @@ export default function AuthActions({ uiLang }: Props) {
   const providerLabel = getProviderLabel(userSummary?.provider || 'email', uiLang);
 
   return (
-    <div className="flex w-full flex-col gap-3 md:max-w-[640px]">
+    <div className="flex w-full flex-col gap-3">
       <div
         className={`flex items-center gap-3 rounded-[22px] border border-[#E5E7EB] bg-white px-3 py-3 shadow-sm ${
           uiLang === 'ar' ? 'text-right' : 'text-left'
