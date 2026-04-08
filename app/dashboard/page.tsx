@@ -4,10 +4,22 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import MixedText from '@/components/mixed-text';
+import { useUiLanguageState } from '@/components/ui-language-provider';
 import SiteHeader from '@/components/site-header';
 import PlanUpgradeNotice from '@/components/plan-upgrade-notice';
 import type { SavedMadixoReport } from '@/lib/madixo-reports';
-import { getClientUiLanguage, type UiLanguage } from '@/lib/ui-language';
+import { type UiLanguage } from '@/lib/ui-language';
+
+type ValidationDecisionState = 'undecided' | 'continue' | 'pivot' | 'stop';
+
+type ValidationPlanStatusRow = {
+  report_id: string;
+  ui_lang: UiLanguage;
+  evidence_summary_json: unknown | null;
+  iteration_engine_json: unknown | null;
+  decision_state: ValidationDecisionState | null;
+  updated_at?: string | null;
+};
 
 type DashboardStage =
   | 'analysis_only'
@@ -166,6 +178,22 @@ function makeExcerpt(value: string | null | undefined, maxLength = 170) {
   if (cleaned.length <= maxLength) return cleaned;
 
   return `${cleaned.slice(0, maxLength).trim()}…`;
+}
+
+function getDashboardStage(
+  row: ValidationPlanStatusRow | undefined
+): DashboardStage {
+  if (!row) return 'analysis_only';
+  if (row.iteration_engine_json) return 'best_step_ready';
+  if (
+    row.decision_state === 'continue' ||
+    row.decision_state === 'pivot' ||
+    row.decision_state === 'stop'
+  ) {
+    return 'current_decision_set';
+  }
+  if (row.evidence_summary_json) return 'decision_view_ready';
+  return 'collecting_evidence';
 }
 
 function stagePriority(stage: DashboardStage) {
@@ -439,7 +467,7 @@ export default function DashboardPage() {
   >({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [preferredLanguage, setPreferredLanguage] = useState<UiLanguage>(() => getClientUiLanguage('en'));
+  const [preferredLanguage, setPreferredLanguage] = useUiLanguageState();
   const [currentPlanLabel, setCurrentPlanLabel] = useState('');
   const [planUsage, setPlanUsage] = useState<PlanUsage | null>(null);
 
