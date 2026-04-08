@@ -198,7 +198,10 @@ function clearSupabaseBrowserStorage() {
   }
 }
 
-function buildSummaryFromUser(session: Session | null, user: User | null): UserSummary | null {
+function buildSummaryFromUser(
+  session: Session | null,
+  user: User | null
+): UserSummary | null {
   if (!session || !user) return null;
 
   return {
@@ -227,6 +230,7 @@ function applySnapshotState(
 export default function AuthActions({ uiLang }: Props) {
   const pathname = usePathname();
   const supabase = useMemo(() => createClient(), []);
+  const isArabic = uiLang === 'ar';
 
   const [hasHydrated, setHasHydrated] = useState(false);
   const [sessionState, setSessionState] = useState<SessionState>('loading');
@@ -383,7 +387,7 @@ export default function AuthActions({ uiLang }: Props) {
     return (
       <div
         className={`flex flex-wrap items-center gap-2 ${
-          uiLang === 'ar' ? 'justify-end' : 'justify-start'
+          isArabic ? 'justify-end' : 'justify-start'
         }`}
       >
         <Link href="/blog" className={`${pillBase} ${secondaryPill}`}>
@@ -424,103 +428,109 @@ export default function AuthActions({ uiLang }: Props) {
   const providerLabel = getProviderLabel(userSummary?.provider || 'email', uiLang);
 
   return (
-    <div
-      className={`flex w-full flex-col gap-4 xl:flex-row xl:items-center xl:gap-5 ${
-        uiLang === 'ar' ? 'xl:flex-row-reverse' : ''
-      }`}
-    >
-      <div className="w-full shrink-0 xl:w-auto xl:min-w-[380px] xl:max-w-[440px]">
-        <div
-          className={`flex items-center gap-3 rounded-[24px] border border-[#E5E7EB] bg-[#FCFCFD] px-3 py-3 shadow-sm ${
-            uiLang === 'ar' ? 'flex-row-reverse text-right' : 'text-left'
-          }`}
-        >
-          {avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={avatarUrl}
-              alt={name || email || 'User avatar'}
-              className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover"
-              referrerPolicy="no-referrer"
-            />
-          ) : (
-            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-[#111827] text-sm font-bold text-white">
-              {initials}
-            </div>
-          )}
-
-          <div className="min-w-0 flex-1">
-            <div
-              className={`flex flex-wrap items-center gap-2 ${
-                uiLang === 'ar' ? 'justify-end' : 'justify-start'
-              }`}
-            >
-              <p className="truncate text-sm font-semibold text-[#111827]">
-                {name || email || copy.signedIn}
-              </p>
-              <span className="inline-flex items-center rounded-full bg-[#F3F4F6] px-2.5 py-1 text-[11px] font-semibold text-[#4B5563]">
-                {providerLabel}
-              </span>
-            </div>
-
-            {email ? (
-              <p className="truncate text-xs text-[#6B7280]">{email}</p>
-            ) : null}
-
-            <p className="mt-1 text-[11px] font-medium text-[#6B7280]">
-              {copy.signedInAs} {providerLabel}
-            </p>
-          </div>
-        </div>
-      </div>
-
+    <div className="flex w-full flex-col gap-3">
       <div
-        className={`flex flex-1 flex-wrap items-center gap-2 ${
-          uiLang === 'ar' ? 'justify-end' : 'justify-start'
+        className={`flex flex-col gap-3 md:items-center ${
+          isArabic ? 'md:flex-row-reverse' : 'md:flex-row'
         }`}
       >
-        <Link href="/blog" className={`${pillBase} ${secondaryPill}`}>
-          {copy.blog}
-        </Link>
-
-        {pathname !== '/dashboard' ? (
-          <Link href="/dashboard" className={`${pillBase} ${secondaryPill}`}>
-            {copy.dashboard}
-          </Link>
-        ) : null}
-
-        {pathname !== '/' ? (
-          <Link href="/" className={`${pillBase} ${secondaryPill}`}>
-            {copy.newScan}
-          </Link>
-        ) : null}
-
-        {pathname !== '/reports' ? (
-          <Link href="/reports" className={`${pillBase} ${secondaryPill}`}>
-            {copy.reports}
-          </Link>
-        ) : null}
-
-        {pathname !== '/compare' ? (
-          <Link href="/compare" className={`${pillBase} ${secondaryPill}`}>
-            {copy.compare}
-          </Link>
-        ) : null}
-
-        {pathname !== '/pricing' ? (
-          <Link href="/pricing" className={`${pillBase} ${secondaryPill}`}>
-            {copy.pricing}
-          </Link>
-        ) : null}
-
-        <button
-          type="button"
-          onClick={handleSignOut}
-          disabled={isSigningOut}
-          className={`${pillBase} ${dangerPill}`}
+        <div
+          className={`w-full md:max-w-[520px] md:flex-none ${
+            isArabic ? 'md:ml-0 md:mr-auto' : 'md:mr-0 md:ml-auto'
+          }`}
         >
-          {isSigningOut ? copy.signingOut : copy.logout}
-        </button>
+          <div
+            className={`flex items-center gap-3 rounded-[22px] border border-[#E5E7EB] bg-white px-4 py-4 shadow-sm ${
+              isArabic ? 'flex-row-reverse text-right' : 'flex-row text-left'
+            }`}
+          >
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={avatarUrl}
+                alt={name || email || 'User avatar'}
+                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-[#111827] text-sm font-bold text-white">
+                {initials}
+              </div>
+            )}
+
+            <div className="min-w-0 flex-1">
+              <div
+                className={`flex flex-wrap items-center gap-2 ${
+                  isArabic ? 'justify-end' : 'justify-start'
+                }`}
+              >
+                <p className="truncate text-sm font-semibold text-[#111827]">
+                  {name || email || copy.signedIn}
+                </p>
+                <span className="inline-flex items-center rounded-full bg-[#F3F4F6] px-2.5 py-1 text-[11px] font-semibold text-[#4B5563]">
+                  {providerLabel}
+                </span>
+              </div>
+
+              {email ? (
+                <p className="truncate text-xs text-[#6B7280]">{email}</p>
+              ) : null}
+
+              <p className="mt-1 text-[11px] font-medium text-[#6B7280]">
+                {copy.signedInAs} {providerLabel}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className={`flex flex-wrap items-center gap-2 ${
+            isArabic ? 'justify-end md:justify-start' : 'justify-start md:justify-end'
+          }`}
+        >
+          <Link href="/blog" className={`${pillBase} ${secondaryPill}`}>
+            {copy.blog}
+          </Link>
+
+          {pathname !== '/dashboard' ? (
+            <Link href="/dashboard" className={`${pillBase} ${secondaryPill}`}>
+              {copy.dashboard}
+            </Link>
+          ) : null}
+
+          {pathname !== '/' ? (
+            <Link href="/" className={`${pillBase} ${secondaryPill}`}>
+              {copy.newScan}
+            </Link>
+          ) : null}
+
+          {pathname !== '/reports' ? (
+            <Link href="/reports" className={`${pillBase} ${secondaryPill}`}>
+              {copy.reports}
+            </Link>
+          ) : null}
+
+          {pathname !== '/compare' ? (
+            <Link href="/compare" className={`${pillBase} ${secondaryPill}`}>
+              {copy.compare}
+            </Link>
+          ) : null}
+
+          {pathname !== '/pricing' ? (
+            <Link href="/pricing" className={`${pillBase} ${secondaryPill}`}>
+              {copy.pricing}
+            </Link>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={handleSignOut}
+            disabled={isSigningOut}
+            className={`${pillBase} ${dangerPill}`}
+          >
+            {isSigningOut ? copy.signingOut : copy.logout}
+          </button>
+        </div>
       </div>
     </div>
   );
