@@ -624,7 +624,7 @@ export default function CompareReportsPage() {
   return (
     <main
       dir={copy.dir}
-      className="min-h-screen bg-[#FAFAFB] px-6 pb-16 pt-6 text-[#111827]"
+      className="min-h-screen bg-[#FAFAFB] px-4 pb-12 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6"
     >
       <div className="mx-auto max-w-7xl">
         <SiteHeader
@@ -632,7 +632,7 @@ export default function CompareReportsPage() {
           onLanguageChange={setPreferredLanguage}
           logo={<MadixoLogo />}
           maxWidthClass="max-w-7xl"
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         />
 
         {compareUpgradeNotice ? (
@@ -655,11 +655,11 @@ export default function CompareReportsPage() {
               {copy.decisionWorkspace}
             </div>
 
-            <h1 className="mt-4 text-4xl font-bold tracking-tight md:text-6xl">
+            <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-6xl">
               {copy.compareReports}
             </h1>
 
-            <p className="mt-4 max-w-3xl text-lg leading-8 text-[#4B5563]">
+            <p className="mt-4 max-w-3xl text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
               {copy.compareIntro}
             </p>
           </div>
@@ -703,47 +703,47 @@ export default function CompareReportsPage() {
         ) : null}
 
         {loading ? (
-          <div className="rounded-[32px] border border-[#E5E7EB] bg-white px-8 py-12 shadow-sm md:px-12 md:py-14">
+          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:rounded-[32px] md:px-12 md:py-14">
             <div className="mx-auto max-w-2xl text-center">
               <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
                 {copy.loadingWorkspace}
               </div>
 
-              <h2 className="mt-6 text-3xl font-bold md:text-4xl">
+              <h2 className="mt-6 text-2xl font-bold sm:text-3xl md:text-4xl">
                 {copy.loadingTitle}
               </h2>
 
-              <p className="mt-4 text-lg leading-8 text-[#4B5563]">
+              <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
                 {copy.loadingDescription}
               </p>
             </div>
           </div>
         ) : reports.length === 0 ? (
-          <div className="rounded-[32px] border border-[#E5E7EB] bg-white px-8 py-12 shadow-sm md:px-12 md:py-14">
+          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:rounded-[32px] md:px-12 md:py-14">
             <div className="mx-auto max-w-2xl text-center">
               <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
                 {copy.noSavedReports}
               </div>
 
-              <h2 className="mt-6 text-3xl font-bold md:text-4xl">
+              <h2 className="mt-6 text-2xl font-bold sm:text-3xl md:text-4xl">
                 {copy.noReportsTitle}
               </h2>
 
-              <p className="mt-4 text-lg leading-8 text-[#4B5563]">
+              <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
                 {copy.noReportsDescription}
               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 <Link
                   href="/"
-                  className="inline-block rounded-full bg-black px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+                  className="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto"
                 >
                   {copy.startNewScan}
                 </Link>
 
                 <Link
                   href="/reports"
-                  className="inline-block rounded-full border border-[#E5E7EB] bg-white px-5 py-3 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
+                  className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-5 py-3 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB] sm:w-auto"
                 >
                   {copy.openMyReports}
                 </Link>
@@ -752,10 +752,10 @@ export default function CompareReportsPage() {
           </div>
         ) : (
           <>
-            <div className="mb-10 rounded-[32px] border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-7">
+            <div className="mb-8 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:mb-10 sm:p-6 md:rounded-[32px] md:p-7">
               <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div>
-                  <h2 className="text-2xl font-semibold">{copy.chooseReports}</h2>
+                  <h2 className="text-xl font-semibold sm:text-2xl">{copy.chooseReports}</h2>
                   <p className="mt-2 text-sm leading-7 text-[#6B7280]">
                     {copy.chooseReportsDescription}
                   </p>
@@ -770,14 +770,14 @@ export default function CompareReportsPage() {
                     type="button"
                     onClick={handleClearSelection}
                     disabled={selectedIds.length === 0}
-                    className="rounded-full border border-[#111827] bg-white px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="inline-flex w-full items-center justify-center rounded-full border border-[#111827] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                   >
                     {copy.clearSelection}
                   </button>
                 </div>
               </div>
 
-              <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <div className="mt-6 grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {reports.map((report) => {
                   const selected = selectedIds.includes(report.id);
                   const safeLabel = getOpportunityLabelForUi(
@@ -794,7 +794,7 @@ export default function CompareReportsPage() {
                       key={report.id}
                       type="button"
                       onClick={() => handleToggle(report.id)}
-                      className={`rounded-2xl border p-5 text-left transition ${
+                      className={`rounded-2xl border p-4 text-left transition sm:p-5 ${
                         selected
                           ? 'border-[#111827] bg-[#F9FAFB] ring-2 ring-[#111827]/10'
                           : 'border-[#E5E7EB] bg-white hover:bg-[#FAFAFB]'
@@ -875,7 +875,7 @@ export default function CompareReportsPage() {
 
             {!canCompare ? (
               <div className="rounded-[32px] border border-[#E5E7EB] bg-white p-10 text-center shadow-sm">
-                <h2 className="text-2xl font-semibold">
+                <h2 className="text-xl font-semibold sm:text-2xl">
                   {copy.selectAtLeastTwoTitle}
                 </h2>
                 <p className="mt-3 text-lg leading-8 text-[#4B5563]">
@@ -887,7 +887,7 @@ export default function CompareReportsPage() {
                 <div className="rounded-[32px] border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-7">
                   <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                     <div>
-                      <h2 className="text-2xl font-semibold">
+                      <h2 className="text-xl font-semibold sm:text-2xl">
                         {copy.selectedOpportunities}
                       </h2>
                       <p className="mt-2 text-sm leading-7 text-[#6B7280]">
