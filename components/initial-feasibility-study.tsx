@@ -224,16 +224,16 @@ export default function InitialFeasibilityStudyPanel({
   };
 
   return (
-    <section className="mt-10 rounded-[32px] border border-[#E5E7EB] bg-white p-8 shadow-sm">
+    <section className="mt-8 rounded-[28px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:mt-10 sm:p-8 sm:rounded-[32px]">
       <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
             {copy.eyebrow}
           </p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#111827] md:text-4xl">
+          <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
             {copy.headline}
           </h2>
-          <p className="mt-4 text-lg leading-8 text-[#4B5563]">
+          <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
             {displayStudy ? copy.description : copy.empty}
           </p>
         </div>
@@ -245,7 +245,7 @@ export default function InitialFeasibilityStudyPanel({
                 type="button"
                 onClick={handleExportPdf}
                 disabled={loading || exportingPdf}
-                className="rounded-full border border-[#D0D5DD] bg-white px-6 py-3 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-full border border-[#D0D5DD] bg-white px-6 py-3 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60 w-full sm:w-auto"
               >
                 {exportingPdf ? copy.exportingPdf : copy.exportPdf}
               </button>
@@ -254,7 +254,7 @@ export default function InitialFeasibilityStudyPanel({
             <button
               onClick={onGenerate}
               disabled={loading || exportingPdf}
-              className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 w-full sm:w-auto"
             >
               {loading ? copy.loading : displayStudy ? copy.refresh : copy.create}
             </button>
@@ -340,7 +340,7 @@ export default function InitialFeasibilityStudyPanel({
               <div className="rounded-2xl border border-[#E5E7EB] bg-[#FAFAFB] px-4 py-3 text-sm font-semibold text-[#111827]">
                 {displayStudy.breakEvenTimeline}
               </div>
-              <p className="mt-4 text-lg leading-8 text-[#4B5563]">
+              <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
                 {displayStudy.breakEvenSummary}
               </p>
             </SectionCard>
@@ -359,7 +359,7 @@ export default function InitialFeasibilityStudyPanel({
                     className="rounded-2xl border border-[#E5E7EB] bg-white p-4"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3">
-                      <h3 className="text-lg font-semibold text-[#111827]">
+                      <h3 className="text-base font-semibold text-[#111827] sm:text-lg">
                         {item.item}
                       </h3>
                       <span className="rounded-full bg-[#F3F4F6] px-3 py-1 text-sm font-semibold text-[#111827]">
@@ -386,7 +386,7 @@ export default function InitialFeasibilityStudyPanel({
                     className="rounded-2xl border border-[#E5E7EB] bg-white p-4"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3">
-                      <h3 className="text-lg font-semibold text-[#111827]">
+                      <h3 className="text-base font-semibold text-[#111827] sm:text-lg">
                         {item.item}
                       </h3>
                       <span className="rounded-full bg-[#F3F4F6] px-3 py-1 text-sm font-semibold text-[#111827]">
@@ -411,7 +411,7 @@ export default function InitialFeasibilityStudyPanel({
                 <div className="rounded-2xl border border-[#E5E7EB] bg-[#FAFAFB] px-4 py-3 text-lg font-semibold text-[#111827]">
                   {scenario.monthlyRevenue}
                 </div>
-                <p className="mt-4 text-sm leading-7 text-[#6B7280]">
+                <p className="mt-3 text-sm leading-7 text-[#6B7280]">
                   {scenario.note}
                 </p>
               </SectionCard>
@@ -428,7 +428,7 @@ export default function InitialFeasibilityStudyPanel({
             </SectionCard>
 
             <SectionCard title={copy.action}>
-              <p className="text-lg leading-8 text-[#4B5563]">
+              <p className="text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
                 {displayStudy.recommendedAction}
               </p>
 
