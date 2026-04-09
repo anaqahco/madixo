@@ -781,9 +781,11 @@ export default function HomePage() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      applyUserState(Boolean(session?.user));
-    });
+    } = supabase.auth.onAuthStateChange(
+      (_event: unknown, session: { user?: unknown } | null) => {
+        applyUserState(Boolean(session?.user));
+      }
+    );
 
     return () => {
       mounted = false;
