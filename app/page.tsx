@@ -340,7 +340,7 @@ function PricingCard({
 }: PricingCardProps) {
   return (
     <div
-      className={`rounded-[28px] border p-6 shadow-sm ${
+      className={`rounded-[28px] border p-5 shadow-sm sm:p-6 ${
         highlighted
           ? 'border-[#111827] bg-[#111827] text-white'
           : 'border-[#D9E2F0] bg-[#F7F9FC] text-[#111827]'
@@ -802,7 +802,7 @@ export default function HomePage() {
 
   return (
     <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] text-[#111827]">
-      <section className="px-6 pt-6 md:pt-8">
+      <section className="px-4 pt-4 sm:px-6 sm:pt-6 md:pt-8">
         <SiteHeader
           uiLang={preferredLanguage}
           onLanguageChange={setPreferredLanguage}
@@ -820,39 +820,16 @@ export default function HomePage() {
       </section>
 
       {flashNotice ? (
-        <section className="px-6 pt-4">
+        <section className="px-4 pt-4 sm:px-6">
           <div className="mx-auto max-w-6xl">
             <div
-              className={`flex items-start justify-between gap-4 rounded-[24px] border border-[#BBF7D0] bg-[#F0FDF4] px-5 py-4 text-[#166534] shadow-[0_10px_30px_rgba(34,197,94,0.08)] ${
+              className={`flex items-start justify-between gap-3 rounded-[22px] border border-[#BBF7D0] bg-[#F0FDF4] px-5 py-4 text-sm font-medium text-[#166534] shadow-sm ${
                 isArabic ? 'text-right' : 'text-left'
               }`}
               role="status"
               aria-live="polite"
             >
-              <div className={`flex items-start gap-3 ${isArabic ? 'flex-row-reverse' : 'flex-row'}`}>
-                <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#BBF7D0] bg-white">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="h-5 w-5"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      stroke="currentColor"
-                      strokeWidth="2.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-
-                <div>
-                  <p className="text-sm font-semibold">{isArabic ? 'تم تنفيذ العملية بنجاح' : 'Done successfully'}</p>
-                  <p className="mt-1 text-sm leading-7 text-[#166534]">{flashNotice}</p>
-                </div>
-              </div>
-
+              <p className="leading-7">{flashNotice}</p>
               <button
                 type="button"
                 onClick={() => setFlashNotice('')}
@@ -865,30 +842,30 @@ export default function HomePage() {
         </section>
       ) : null}
 
-      <section className="mx-auto flex max-w-6xl flex-col items-center px-6 pb-14 pt-10 text-center md:pt-12">
+      <section className="mx-auto flex max-w-6xl flex-col items-center px-4 pb-12 pt-8 text-center sm:px-6 sm:pb-14 sm:pt-10 md:pt-12">
         <span className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-semibold text-[#4B5563] shadow-sm">
           {copy.heroEyebrow}
         </span>
 
-        <h1 className="mt-6 max-w-4xl text-4xl font-bold leading-tight tracking-tight md:text-6xl">
+        <h1 className="mt-5 max-w-4xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:mt-6 md:text-6xl">
           {copy.heroTitle}
         </h1>
 
-        <p className="mt-6 max-w-3xl text-base leading-8 text-[#4B5563] md:text-lg">
+        <p className="mt-6 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
           {copy.heroDescription}
         </p>
 
-        <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
+        <div className="mt-8 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
           <button
             onClick={handleAnalyze}
-            className="cursor-pointer rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+            className="cursor-pointer rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90 w-full sm:w-auto"
           >
             {copy.primaryCta}
           </button>
 
           <a
             href={secondaryHref}
-            className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-6 py-3 text-sm font-semibold text-[#111827] transition hover:bg-[#EEF3F9]"
+            className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-6 py-3 text-sm font-semibold text-[#111827] transition hover:bg-[#EEF3F9] w-full sm:w-auto"
           >
             {copy.secondaryCta}
           </a>
@@ -907,7 +884,7 @@ export default function HomePage() {
 
         <div
           ref={formSectionRef}
-          className="mt-14 w-full max-w-4xl rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-6 shadow-sm md:p-8"
+          className="mt-12 w-full max-w-4xl rounded-[24px] border border-[#D9E2F0] bg-[#F7F9FC] p-4 shadow-sm sm:p-6 md:mt-14 md:rounded-[28px] md:p-8"
         >
           <p className="text-sm font-medium text-[#6B7280]">{copy.radarLabel}</p>
           <p className="mt-3 text-sm leading-7 text-[#4B5563]">{copy.radarDescription}</p>
@@ -1004,20 +981,20 @@ export default function HomePage() {
 
           <button
             onClick={handleAnalyze}
-            className="mt-6 cursor-pointer rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+            className="mt-6 w-full cursor-pointer rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto"
           >
             {copy.analyzeOpportunity}
           </button>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-16">
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
         <div className="text-center">
           <p className="text-sm font-medium text-[#6B7280]">{copy.trustEyebrow}</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#111827] md:text-4xl">
+          <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
             {copy.trustTitle}
           </h2>
-          <p className="mx-auto mt-4 max-w-3xl text-base leading-8 text-[#4B5563] md:text-lg">
+          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
             {copy.trustDescription}
           </p>
         </div>
@@ -1026,9 +1003,9 @@ export default function HomePage() {
           {trustCards.map((card) => (
             <div
               key={card.title}
-              className="rounded-2xl border border-[#D9E2F0] bg-[#F7F9FC] p-6 shadow-sm"
+              className="rounded-2xl border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6"
             >
-              <h3 className="text-2xl font-semibold tracking-tight text-[#111827]">
+              <h3 className="text-xl font-semibold tracking-tight text-[#111827] sm:text-2xl">
                 {card.title}
               </h3>
               <p className="mt-4 text-base leading-8 text-[#4B5563]">
@@ -1038,7 +1015,7 @@ export default function HomePage() {
           ))}
         </div>
 
-        <div className="mt-8 rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-6 shadow-sm">
+        <div className="mt-8 rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6">
           <p className="text-sm font-semibold text-[#6B7280]">{copy.builtForTitle}</p>
           <div className="mt-4 flex flex-wrap justify-center gap-3">
             {fitItems.map((item) => (
@@ -1053,13 +1030,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-16">
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
         <div className="text-center">
           <p className="text-sm font-medium text-[#6B7280]">{copy.pricingEyebrow}</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#111827] md:text-4xl">
+          <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
             {copy.pricingTitle}
           </h2>
-          <p className="mx-auto mt-4 max-w-3xl text-base leading-8 text-[#4B5563] md:text-lg">
+          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
             {copy.pricingDescription}
           </p>
         </div>
@@ -1081,13 +1058,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-16">
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
         <div className="text-center">
           <p className="text-sm font-medium text-[#6B7280]">{copy.valueEyebrow}</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#111827] md:text-4xl">
+          <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
             {copy.valueTitle}
           </h2>
-          <p className="mx-auto mt-4 max-w-3xl text-base leading-8 text-[#4B5563] md:text-lg">
+          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
             {copy.valueDescription}
           </p>
         </div>
@@ -1096,9 +1073,9 @@ export default function HomePage() {
           {valueCards.map((card) => (
             <div
               key={card.title}
-              className="rounded-2xl border border-[#D9E2F0] bg-[#F7F9FC] p-6 shadow-sm"
+              className="rounded-2xl border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6"
             >
-              <h3 className="text-2xl font-semibold tracking-tight text-[#111827]">
+              <h3 className="text-xl font-semibold tracking-tight text-[#111827] sm:text-2xl">
                 {card.title}
               </h3>
               <p className="mt-4 text-base leading-8 text-[#4B5563]">
@@ -1109,14 +1086,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-16">
-        <div className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-6 shadow-sm md:p-8">
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
+        <div className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6 md:p-8">
           <div className="text-center">
             <p className="text-sm font-medium text-[#6B7280]">{copy.signalsEyebrow}</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#111827] md:text-4xl">
+            <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
               {copy.signalsTitle}
             </h2>
-            <p className="mx-auto mt-4 max-w-3xl text-base leading-8 text-[#4B5563] md:text-lg">
+            <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
               {copy.signalsDescription}
             </p>
           </div>
@@ -1134,13 +1111,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id={sectionId} className="mx-auto max-w-6xl px-6 pb-16">
+      <section id={sectionId} className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
         <div className="text-center">
           <p className="text-sm font-medium text-[#6B7280]">{copy.howMadixoWorks}</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#111827] md:text-4xl">
+          <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
             {copy.howMadixoWorks}
           </h2>
-          <p className="mx-auto mt-4 max-w-3xl text-base leading-8 text-[#4B5563] md:text-lg">
+          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
             {copy.howMadixoWorksDescription}
           </p>
         </div>
@@ -1149,13 +1126,13 @@ export default function HomePage() {
           {steps.map((step) => (
             <div
               key={step.number}
-              className="rounded-2xl border border-[#D9E2F0] bg-[#F7F9FC] p-6 shadow-sm"
+              className="rounded-2xl border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6"
             >
               <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#EEF3F9] text-lg font-semibold text-[#111827]">
                 {step.number}
               </div>
               <h3 className="text-2xl font-semibold">{step.title}</h3>
-              <p className="mt-4 text-lg leading-8 text-[#4B5563]">
+              <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
                 {step.description}
               </p>
             </div>
@@ -1163,7 +1140,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-16">
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
         <div className="rounded-[24px] border border-[#D9E2F0] bg-[#F8FAFD] p-5 shadow-sm md:p-6">
           <div className="text-center">
             <p className="text-sm font-medium text-[#6B7280]">{copy.contentEyebrow}</p>
@@ -1214,7 +1191,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-24 text-center">
+      <section className="mx-auto max-w-6xl px-4 pb-20 text-center sm:px-6 sm:pb-24">
         <h2 className="text-3xl font-bold md:text-4xl">{copy.closingTitle}</h2>
         <p className="mt-4 text-lg text-[#4B5563]">{copy.closingDescription}</p>
 
