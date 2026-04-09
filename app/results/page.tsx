@@ -1183,6 +1183,7 @@ export default function ResultsPage() {
   const copy = UI_COPY[uiLang];
   const feasibilityCopy = FEASIBILITY_COPY[uiLang];
   const loadingStages = useMemo(() => copy.loadingStages, [copy]);
+  const mobileMoreActionsLabel = uiLang === 'ar' ? 'مزيد من الإجراءات' : 'More actions';
   const scoreBreakdownItems = useMemo(
     () => getScoreBreakdownItems(uiLang),
     [uiLang]
