@@ -1184,6 +1184,7 @@ export default function ResultsPage() {
   const feasibilityCopy = FEASIBILITY_COPY[uiLang];
   const loadingStages = useMemo(() => copy.loadingStages, [copy]);
   const mobileMoreActionsLabel = uiLang === 'ar' ? 'مزيد من الإجراءات' : 'More actions';
+  const mobileQuickActionsLabel = uiLang === 'ar' ? 'إجراءات سريعة' : 'Quick actions';
   const scoreBreakdownItems = useMemo(
     () => getScoreBreakdownItems(uiLang),
     [uiLang]
@@ -2091,7 +2092,7 @@ ${copy.risks}:
 
   if (loading) {
     return (
-      <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-4 pb-12 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6">
+      <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-4 pb-28 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6">
         <div className="mx-auto max-w-6xl">
           <SiteHeader
             uiLang={uiLang}
@@ -2188,7 +2189,7 @@ ${copy.risks}:
 
   if (error || !result) {
     return (
-      <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-4 pb-12 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6">
+      <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-4 pb-28 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6">
         <div className="mx-auto max-w-5xl">
           <SiteHeader
             uiLang={uiLang}
@@ -2255,7 +2256,7 @@ ${copy.risks}:
   }
 
   return (
-    <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-4 pb-12 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6">
+    <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-4 pb-28 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6">
       <div className="mx-auto max-w-6xl">
         <SiteHeader
           uiLang={uiLang}
@@ -2331,42 +2332,55 @@ ${copy.risks}:
             </button>
           </div>
 
-          <div className="space-y-2.5 sm:hidden">
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={handleStartTesting}
-                disabled={testLoading || feasibilityLoading}
-                className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {testLoading ? copy.openingTest : testingActionCopy.button}
-              </button>
+          <div className="space-y-3 sm:hidden">
+            <div className="rounded-[28px] border border-[#E5E7EB] bg-white p-3 shadow-sm">
+              <div className="mb-3 flex items-center justify-between gap-3 px-1">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                  {mobileQuickActionsLabel}
+                </span>
+                {saved ? (
+                  <span className="inline-flex rounded-full bg-[#ECFDF3] px-2.5 py-1 text-[11px] font-semibold text-[#027A48]">
+                    {copy.saved}
+                  </span>
+                ) : null}
+              </div>
 
-              <button
-                onClick={handleExportPdf}
-                disabled={pdfLoading}
-                className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-[#111827] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {pdfLoading ? copy.preparingPdf : copy.exportPdf}
-              </button>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={handleStartTesting}
+                  disabled={testLoading || feasibilityLoading}
+                  className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {testLoading ? copy.openingTest : testingActionCopy.button}
+                </button>
 
-              <button
-                onClick={handleSaveReport}
-                disabled={saveLoading}
-                className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-[#111827] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {saveLoading ? copy.saving : saved ? copy.saved : copy.saveReport}
-              </button>
+                <button
+                  onClick={handleSaveReport}
+                  disabled={saveLoading || saved}
+                  className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-[#111827] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {saveLoading ? copy.saving : saved ? copy.saved : copy.saveReport}
+                </button>
 
-              <Link
-                href="/"
-                className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
-              >
-                ← {copy.newScan}
-              </Link>
+                <button
+                  onClick={handleExportPdf}
+                  disabled={pdfLoading}
+                  className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-[#111827] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {pdfLoading ? copy.preparingPdf : copy.exportPdf}
+                </button>
+
+                <button
+                  onClick={handleCopyReport}
+                  className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-black px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                >
+                  {copied ? copy.copied : copy.copyReport}
+                </button>
+              </div>
             </div>
 
-            <details className="rounded-[24px] border border-[#E5E7EB] bg-white px-3 py-3 shadow-sm">
-              <summary className="cursor-pointer list-none text-sm font-semibold text-[#111827] marker:hidden">
+            <details className="rounded-[24px] border border-[#E5E7EB] bg-white px-3 py-3 shadow-sm [&_summary::-webkit-details-marker]:hidden">
+              <summary className="cursor-pointer list-none text-sm font-semibold text-[#111827]">
                 <span className="flex items-center justify-between gap-3">
                   <span>{mobileMoreActionsLabel}</span>
                   <span className="text-xs text-[#6B7280]">+</span>
@@ -2374,13 +2388,6 @@ ${copy.risks}:
               </summary>
 
               <div className="mt-3 grid grid-cols-2 gap-2">
-                <button
-                  onClick={handleCopyReport}
-                  className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-black px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
-                >
-                  {copied ? copy.copied : copy.copyReport}
-                </button>
-
                 <button
                   onClick={handleGenerateFeasibility}
                   disabled={feasibilityLoading}
@@ -2405,6 +2412,13 @@ ${copy.risks}:
                   className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB]"
                 >
                   {copy.compareReports}
+                </Link>
+
+                <Link
+                  href="/"
+                  className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
+                >
+                  ← {copy.newScan}
                 </Link>
               </div>
             </details>
@@ -2802,6 +2816,35 @@ ${copy.risks}:
             </div>
           </div>
         ) : null}
+
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#E5E7EB] bg-white/95 px-4 pb-[max(0.85rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur sm:hidden">
+        <div className="mx-auto flex max-w-6xl items-center gap-2">
+          <button
+            onClick={handleStartTesting}
+            disabled={testLoading || feasibilityLoading}
+            className="inline-flex min-h-[46px] flex-1 items-center justify-center rounded-full bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {testLoading ? copy.openingTest : testingActionCopy.button}
+          </button>
+
+          {saved ? (
+            <Link
+              href="/reports"
+              className="inline-flex min-h-[46px] flex-1 items-center justify-center rounded-full border border-[#111827] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB]"
+            >
+              {copy.myReports}
+            </Link>
+          ) : (
+            <button
+              onClick={handleSaveReport}
+              disabled={saveLoading}
+              className="inline-flex min-h-[46px] flex-1 items-center justify-center rounded-full border border-[#111827] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {saveLoading ? copy.saving : copy.saveReport}
+            </button>
+          )}
+        </div>
+      </div>
       </div>
     </main>
   );
