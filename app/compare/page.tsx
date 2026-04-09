@@ -264,6 +264,7 @@ const UI_COPY = {
     selectedCount: 'selected',
     selectionPlanHint: 'Current plan',
     clearSelection: 'Clear Selection',
+    jumpToComparison: 'Jump to Comparison',
     selectionLimitReached:
       'Your current plan reached the comparison limit. Remove one report or upgrade to compare more.',
     selectionHint:
@@ -329,6 +330,7 @@ const UI_COPY = {
     selectedCount: 'محدد',
     selectionPlanHint: 'الباقة الحالية',
     clearSelection: 'مسح التحديد',
+    jumpToComparison: 'اذهب إلى المقارنة',
     selectionLimitReached:
       'وصلت إلى حد المقارنة في خطتك الحالية. أزل تحديد تقرير أو قم بالترقية للمقارنة بعدد أكبر.',
     selectionHint: 'اختر الأفكار التي تريد مقارنتها جنبًا إلى جنب.',
