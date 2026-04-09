@@ -24,8 +24,8 @@ export default function SiteHeader({
 
   return (
     <div className={`mx-auto w-full ${maxWidthClass} ${className}`}>
-      <div className="rounded-[28px] border border-[#E5E7EB] bg-white/95 px-5 py-4 shadow-[0_8px_30px_rgba(17,24,39,0.04)] backdrop-blur supports-[backdrop-filter]:bg-white/85 md:px-7 md:py-4">
-        <div dir="ltr" className="flex min-h-[64px] items-center justify-between gap-5 md:min-h-[72px]">
+      <div className="rounded-[24px] border border-[#E5E7EB] bg-white/95 px-4 py-3 shadow-[0_8px_30px_rgba(17,24,39,0.04)] backdrop-blur supports-[backdrop-filter]:bg-white/85 sm:px-5 sm:py-4 md:rounded-[28px] md:px-7 md:py-4">
+        <div dir="ltr" className="flex min-h-[56px] items-center justify-between gap-4 sm:min-h-[64px] md:min-h-[72px] md:gap-5">
           <div className={`shrink-0 ${isArabic ? 'order-1' : 'order-2'}`}>{logo}</div>
 
           <LanguageSwitcher
@@ -35,7 +35,7 @@ export default function SiteHeader({
           />
         </div>
 
-        <div className="mt-4 border-t border-[#EEF2F7] pt-4">
+        <div className="mt-3 border-t border-[#EEF2F7] pt-3 sm:mt-4 sm:pt-4">
           <AuthActions uiLang={uiLang} />
         </div>
       </div>
