@@ -871,13 +871,13 @@ function HtmlPdfReport({
           </PdfSection>
         </div>
 
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <PdfSection title={copy.whyThisOpportunity}>
             <div className="text-[22px] leading-[1.95] text-[#374151]">{result.whyThisOpportunity}</div>
           </PdfSection>
         </div>
 
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <PdfSection title={copy.whyThisScore}>
             <div className="mb-6 flex items-center gap-3">
               <span className="rounded-full bg-[#111827] px-5 py-2 text-[15px] font-semibold text-white">
@@ -2090,19 +2090,19 @@ ${copy.risks}:
 
   if (loading) {
     return (
-      <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-6 pb-16 pt-6 text-[#111827]">
+      <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-4 pb-12 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6">
         <div className="mx-auto max-w-6xl">
           <SiteHeader
             uiLang={uiLang}
             onLanguageChange={handleLanguageChange}
             logo={<MadixoLogo />}
-            className="mb-8"
+            className="mb-6 sm:mb-8"
           />
 
           <div className="mb-10">
             <Link
               href="/"
-              className="inline-block rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
+              className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB] sm:w-auto"
             >
               ← {copy.newScan}
             </Link>
@@ -2187,20 +2187,20 @@ ${copy.risks}:
 
   if (error || !result) {
     return (
-      <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-6 pb-16 pt-6 text-[#111827]">
+      <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-4 pb-12 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6">
         <div className="mx-auto max-w-5xl">
           <SiteHeader
             uiLang={uiLang}
             onLanguageChange={handleLanguageChange}
             logo={<MadixoLogo />}
             maxWidthClass="max-w-5xl"
-            className="mb-8"
+            className="mb-6 sm:mb-8"
           />
 
-          <div className="mb-10 flex flex-wrap items-center gap-3">
+          <div className="mb-8 grid grid-cols-2 gap-3 sm:mb-10 sm:flex sm:flex-wrap sm:items-center">
             <Link
               href="/"
-              className="inline-block rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
+              className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB] sm:w-auto"
             >
               ← {copy.newScan}
             </Link>
@@ -2254,26 +2254,26 @@ ${copy.risks}:
   }
 
   return (
-    <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-6 pb-16 pt-6 text-[#111827]">
+    <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-4 pb-12 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6">
       <div className="mx-auto max-w-6xl">
         <SiteHeader
           uiLang={uiLang}
           onLanguageChange={handleLanguageChange}
           logo={<MadixoLogo />}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         />
 
-        <div className="mb-10 flex flex-wrap items-center gap-3">
+        <div className="mb-8 grid grid-cols-2 gap-3 sm:mb-10 sm:flex sm:flex-wrap sm:items-center">
           <Link
             href="/"
-            className="inline-block rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
+            className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB] sm:w-auto"
           >
             ← {copy.newScan}
           </Link>
 
           <button
             onClick={handleCopyReport}
-            className="rounded-full bg-black px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+            className="inline-flex w-full items-center justify-center rounded-full bg-black px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto"
           >
             {copied ? copy.copied : copy.copyReport}
           </button>
@@ -2281,7 +2281,7 @@ ${copy.risks}:
           <button
             onClick={handleSaveReport}
             disabled={saveLoading}
-            className="rounded-full border border-[#111827] bg-white px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex w-full items-center justify-center rounded-full border border-[#111827] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           >
             {saveLoading ? copy.saving : saved ? copy.saved : copy.saveReport}
           </button>
@@ -2289,7 +2289,7 @@ ${copy.risks}:
           <button
             onClick={handleStartTesting}
             disabled={testLoading || feasibilityLoading}
-            className="rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           >
             {testLoading ? copy.openingTest : testingActionCopy.button}
           </button>
@@ -2297,7 +2297,7 @@ ${copy.risks}:
           <button
             onClick={handleGenerateFeasibility}
             disabled={feasibilityLoading}
-            className="rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           >
             {feasibilityLoading
               ? feasibilityCopy.loading
@@ -2308,14 +2308,14 @@ ${copy.risks}:
 
           <Link
             href="/reports"
-            className="inline-block rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB]"
+            className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] sm:w-auto"
           >
             {copy.myReports}
           </Link>
 
           <Link
             href="/compare"
-            className="inline-block rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB]"
+            className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] sm:w-auto"
           >
             {copy.compareReports}
           </Link>
@@ -2323,14 +2323,14 @@ ${copy.risks}:
           <button
             onClick={handleExportPdf}
             disabled={pdfLoading}
-            className="rounded-full border border-[#111827] bg-white px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex w-full items-center justify-center rounded-full border border-[#111827] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           >
             {pdfLoading ? copy.preparingPdf : copy.exportPdf}
           </button>
         </div>
 
         {upgradePrompt ? (
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <PlanUpgradeNotice
               title={upgradePrompt.title}
               description={upgradePrompt.description}
@@ -2343,61 +2343,61 @@ ${copy.risks}:
           </div>
         ) : null}
 
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold md:text-6xl">
+        <div className="mb-10 text-center">
+          <h1 className="text-3xl font-bold sm:text-4xl md:text-6xl">
             {copy.opportunityAnalysis}
           </h1>
           <MixedText
             as="p"
             text={displayQuery}
-            className="mt-4 text-xl font-medium text-[#4B5563]"
+            className="mt-3 text-lg font-medium leading-8 text-[#4B5563] sm:mt-4 sm:text-xl"
           />
         </div>
 
-        <div className="mb-8 grid gap-6 md:grid-cols-2">
+        <div className="mb-8 grid gap-4 sm:gap-6 md:grid-cols-2">
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.targetMarket}
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <MixedText
                 as="p"
                 text={displayMarket}
-                className="text-lg leading-8 text-[#4B5563]"
+                className="text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8"
               />
             </div>
           </div>
 
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.inputTargetCustomer}
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <MixedText
                 as="p"
                 text={displayCustomer}
-                className="text-lg leading-8 text-[#4B5563]"
+                className="text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8"
               />
             </div>
           </div>
         </div>
 
         <div className="mb-8 rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-          <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+          <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
             {copy.whyThisOpportunity}
           </div>
-          <div className="p-6">
-            <p className="text-lg leading-8 text-[#4B5563]">
+          <div className="p-4 sm:p-6">
+            <p className="text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
               {result.whyThisOpportunity}
             </p>
           </div>
         </div>
 
         <div className="mb-8 rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-          <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+          <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
             {copy.whyThisScore}
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="mb-5 flex flex-wrap items-center gap-3">
               <span className="rounded-full bg-[#111827] px-4 py-2 text-sm font-semibold text-white">
                 {copy.overallScore}: {result.opportunityScore}/100
@@ -2435,13 +2435,13 @@ ${copy.risks}:
 
         <div className="grid gap-6 md:grid-cols-4">
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm md:col-span-1">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.opportunityScore}
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-end gap-2">
-                  <span className="text-6xl font-bold leading-none">
+                  <span className="text-5xl font-bold leading-none sm:text-6xl">
                     {result.opportunityScore}
                   </span>
                   <span className="mb-1 text-2xl font-semibold text-[#6B7280]">
@@ -2458,11 +2458,11 @@ ${copy.risks}:
           </div>
 
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.marketDemand}
             </div>
-            <div className="p-6">
-              <h3 className="text-3xl font-semibold">
+            <div className="p-4 sm:p-6">
+              <h3 className="text-2xl font-semibold sm:text-3xl">
                 {result.marketDemand.title}
               </h3>
               <p className="mt-4 text-lg leading-8 text-[#4B5563]">
@@ -2472,11 +2472,11 @@ ${copy.risks}:
           </div>
 
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.competition}
             </div>
-            <div className="p-6">
-              <h3 className="text-3xl font-semibold">
+            <div className="p-4 sm:p-6">
+              <h3 className="text-2xl font-semibold sm:text-3xl">
                 {result.competition.title}
               </h3>
               <p className="mt-4 text-lg leading-8 text-[#4B5563]">
@@ -2486,11 +2486,11 @@ ${copy.risks}:
           </div>
 
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.targetCustomers}
             </div>
-            <div className="p-6">
-              <h3 className="text-3xl font-semibold">
+            <div className="p-4 sm:p-6">
+              <h3 className="text-2xl font-semibold sm:text-3xl">
                 {result.targetCustomers.title}
               </h3>
               <p className="mt-4 text-lg leading-8 text-[#4B5563]">
@@ -2500,16 +2500,16 @@ ${copy.risks}:
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-12">
+        <div className="mt-8 grid gap-4 sm:gap-6 md:grid-cols-12">
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm md:col-span-5">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.suggestedMvp}
             </div>
-            <div className="p-6">
-              <h3 className="text-3xl font-bold">
+            <div className="p-4 sm:p-6">
+              <h3 className="text-2xl font-bold sm:text-3xl">
                 {result.suggestedMvp.title}
               </h3>
-              <p className="mt-4 text-2xl text-[#374151]">
+              <p className="mt-3 text-xl text-[#374151] sm:mt-4 sm:text-2xl">
                 {result.suggestedMvp.description}
               </p>
 
@@ -2527,14 +2527,14 @@ ${copy.risks}:
           </div>
 
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm md:col-span-3">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.revenueModel}
             </div>
-            <div className="p-6">
-              <h3 className="text-3xl font-bold">
+            <div className="p-4 sm:p-6">
+              <h3 className="text-2xl font-bold sm:text-3xl">
                 {result.revenueModel.title}
               </h3>
-              <p className="mt-3 text-2xl font-semibold">
+              <p className="mt-3 text-xl font-semibold sm:text-2xl">
                 {result.revenueModel.price}
               </p>
               <p className="mt-4 text-lg leading-8 text-[#6B7280]">
@@ -2544,10 +2544,10 @@ ${copy.risks}:
           </div>
 
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm md:col-span-4">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.nextSteps}
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <div className="space-y-4 text-lg font-medium text-[#374151]">
                 {result.nextSteps.map((step) => (
                   <p key={step}>{step}</p>
@@ -2557,13 +2557,13 @@ ${copy.risks}:
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-2">
+        <div className="mt-8 grid gap-4 sm:gap-6 md:grid-cols-2">
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.bestFirstCustomer}
             </div>
-            <div className="p-6">
-              <h3 className="text-3xl font-semibold">
+            <div className="p-4 sm:p-6">
+              <h3 className="text-2xl font-semibold sm:text-3xl">
                 {result.bestFirstCustomer.title}
               </h3>
               <p className="mt-4 text-lg leading-8 text-[#4B5563]">
@@ -2573,14 +2573,14 @@ ${copy.risks}:
           </div>
 
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.firstOffer}
             </div>
-            <div className="p-6">
-              <h3 className="text-3xl font-semibold">
+            <div className="p-4 sm:p-6">
+              <h3 className="text-2xl font-semibold sm:text-3xl">
                 {result.firstOffer.title}
               </h3>
-              <p className="mt-3 text-2xl font-semibold text-[#111827]">
+              <p className="mt-3 text-xl font-semibold text-[#111827] sm:text-2xl">
                 {result.firstOffer.priceIdea}
               </p>
               <p className="mt-4 text-lg leading-8 text-[#4B5563]">
@@ -2590,12 +2590,12 @@ ${copy.risks}:
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-4">
+        <div className="mt-8 grid gap-4 sm:gap-6 md:grid-cols-4">
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.painPoints}
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <div className="space-y-3 text-lg text-[#4B5563]">
                 {result.painPoints.map((point) => (
                   <p key={point}>{point}</p>
@@ -2605,32 +2605,32 @@ ${copy.risks}:
           </div>
 
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.opportunityAngle}
             </div>
-            <div className="p-6">
-              <p className="text-lg leading-8 text-[#4B5563]">
+            <div className="p-4 sm:p-6">
+              <p className="text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
                 {result.opportunityAngle}
               </p>
             </div>
           </div>
 
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.goToMarket}
             </div>
-            <div className="p-6">
-              <p className="text-lg leading-8 text-[#4B5563]">
+            <div className="p-4 sm:p-6">
+              <p className="text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
                 {result.goToMarket}
               </p>
             </div>
           </div>
 
           <div className="rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
-            <div className="rounded-t-3xl bg-[#F3F4F6] px-6 py-4 text-xl font-semibold">
+            <div className="rounded-t-3xl bg-[#F3F4F6] px-4 py-3 text-lg font-semibold sm:px-6 sm:py-4 sm:text-xl">
               {copy.risks}
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <div className="space-y-3 text-lg text-[#4B5563]">
                 {result.risks.map((risk) => (
                   <p key={risk}>{risk}</p>
@@ -2663,7 +2663,7 @@ ${copy.risks}:
             generatedAt={generatedAtText}
           />
         ) : (
-          <div className="rounded-[32px] border border-[#E5E7EB] bg-white p-8 shadow-sm">
+          <div className="rounded-[28px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-8 sm:rounded-[32px]">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div className="max-w-3xl">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
