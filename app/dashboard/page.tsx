@@ -581,8 +581,8 @@ export default function DashboardPage() {
       />
 
       <div className="mx-auto mt-6 max-w-6xl sm:mt-8">
-        <div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr] lg:items-start">
-          <section className="rounded-[28px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-7 md:rounded-[32px] md:p-9">
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1.25fr_0.75fr] lg:items-start">
+          <section className="rounded-[28px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-6 md:p-9">
             <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
               {copy.workspaceOverview}
             </div>
@@ -591,11 +591,11 @@ export default function DashboardPage() {
               {copy.heroTitle}
             </h1>
 
-            <p className="mt-4 max-w-3xl text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
+            <p className="mt-3 max-w-3xl text-base leading-7 text-[#4B5563] md:mt-4 md:text-lg md:leading-8">
               {copy.heroDescription}
             </p>
 
-            <div className="mt-7 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap">
+            <div className="mt-6 grid gap-2 sm:mt-8 sm:flex sm:flex-wrap sm:gap-3">
               <Link
                 href="/"
                 className="inline-flex w-full items-center justify-center rounded-full bg-[#111827] px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto"
@@ -617,7 +617,7 @@ export default function DashboardPage() {
               {focusItem ? (
                 <Link
                   href={getPrimaryHref(focusItem.report.id, focusItem.stage)}
-                  className="inline-flex items-center rounded-full border border-[#111827] bg-white px-5 py-3 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB]"
+                  className="inline-flex w-full items-center justify-center rounded-full border border-[#111827] bg-white px-5 py-3 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] sm:w-auto"
                 >
                   {copy.continueFocus}
                 </Link>
@@ -625,7 +625,7 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          <section className="rounded-[28px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-7 md:rounded-[32px] md:p-8">
+          <section className="rounded-[28px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-6 md:p-8">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
               {copy.quickActions}
             </p>
@@ -633,19 +633,19 @@ export default function DashboardPage() {
             <div className="mt-5 grid gap-3">
               <Link
                 href="/"
-                className="rounded-[22px] border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-4 text-sm font-semibold text-[#111827] transition hover:bg-white min-h-[52px] flex items-center"
+                className="rounded-[22px] border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-4 text-sm font-semibold text-[#111827] transition hover:bg-white"
               >
                 {copy.startNewAnalysis}
               </Link>
               <Link
                 href="/reports"
-                className="rounded-[22px] border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-4 text-sm font-semibold text-[#111827] transition hover:bg-white min-h-[52px] flex items-center"
+                className="rounded-[22px] border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-4 text-sm font-semibold text-[#111827] transition hover:bg-white"
               >
                 {copy.openReports}
               </Link>
               <Link
                 href="/compare"
-                className="rounded-[22px] border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-4 text-sm font-semibold text-[#111827] transition hover:bg-white min-h-[52px] flex items-center"
+                className="rounded-[22px] border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-4 text-sm font-semibold text-[#111827] transition hover:bg-white"
               >
                 {copy.openCompare}
               </Link>
@@ -663,8 +663,8 @@ export default function DashboardPage() {
 
 
         {planUsage ? (
-          <section className="mt-6 rounded-[32px] border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-8">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+          <section className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
                   {preferredLanguage === 'ar' ? 'الباقة الحالية' : 'Current plan'}
@@ -675,13 +675,13 @@ export default function DashboardPage() {
               </div>
               <Link
                 href="/pricing"
-                className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-white"
+                className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-white sm:w-auto"
               >
                 {preferredLanguage === 'ar' ? 'إدارة الباقة' : 'Manage plan'}
               </Link>
             </div>
 
-            <div className="mt-5 grid gap-3 sm:gap-4 md:grid-cols-3">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
               <div className="rounded-[24px] border border-[#E5E7EB] bg-[#F9FAFB] p-4">
                 <p className="text-xs font-semibold text-[#6B7280]">
                   {preferredLanguage === 'ar' ? 'استهلاك التحليلات' : 'Analysis usage'}
@@ -748,7 +748,7 @@ export default function DashboardPage() {
         ) : null}
 
         {loading ? (
-          <div className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:rounded-[32px] md:px-12 md:py-14">
+          <div className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:px-12 md:py-14">
             <div className="mx-auto max-w-2xl text-center">
               <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
                 {copy.loadingDashboard}
@@ -760,7 +760,7 @@ export default function DashboardPage() {
             </div>
           </div>
         ) : reports.length === 0 ? (
-          <div className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:rounded-[32px] md:px-12 md:py-14">
+          <div className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:px-12 md:py-14">
             <div className="mx-auto max-w-2xl text-center">
               <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
                 {copy.dashboard}
@@ -786,7 +786,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <>
-            <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <section className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4 sm:gap-4">
               <StatCard
                 title={copy.totalIdeas}
                 value={stats.total}
@@ -809,14 +809,14 @@ export default function DashboardPage() {
               />
             </section>
 
-            <section className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-              <div className="rounded-[32px] border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-8">
+            <section className="mt-6 grid gap-4 sm:gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+              <div className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
                       {copy.focusNow}
                     </p>
-                    <h2 className="mt-3 text-2xl font-bold tracking-tight md:text-3xl">
+                    <h2 className="mt-3 text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
                       {focusItem ? (
                         <MixedText text={focusItem.report.query || copy.noFocusYet} />
                       ) : (
@@ -836,7 +836,7 @@ export default function DashboardPage() {
                 </div>
 
                 {focusItem ? (
-                  <div className="mt-6 grid gap-4 md:grid-cols-4">
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-4 md:gap-4">
                     <div className="rounded-[22px] border border-[#E5E7EB] bg-[#F9FAFB] p-4">
                       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6B7280]">
                         {copy.score}
@@ -886,7 +886,7 @@ export default function DashboardPage() {
                 ) : null}
 
                 {focusItem ? (
-                  <div className="mt-6 grid gap-4 md:grid-cols-[1fr_1fr]">
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-[1fr_1fr] md:gap-4">
                     <div className="rounded-[24px] border border-[#E5E7EB] bg-[#FCFCFD] p-5">
                       <p className="text-[11px] font-semibold tracking-[0.18em] text-[#6B7280]">
                         {copy.quickSummary}
@@ -913,7 +913,7 @@ export default function DashboardPage() {
                 ) : null}
 
                 {focusItem ? (
-                  <div className="mt-6 flex flex-wrap gap-3">
+                  <div className="mt-6 grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
                     <Link
                       href={getPrimaryHref(focusItem.report.id, focusItem.stage)}
                       className="inline-flex w-full items-center justify-center rounded-full bg-[#111827] px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto"
@@ -922,7 +922,7 @@ export default function DashboardPage() {
                     </Link>
                     <Link
                       href={`/results?reportId=${focusItem.report.id}`}
-                      className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-5 py-3 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB] sm:w-auto"
+                      className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-5 py-3 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
                     >
                       {copy.openOpportunity}
                     </Link>
@@ -930,7 +930,7 @@ export default function DashboardPage() {
                 ) : null}
               </div>
 
-              <div className="rounded-[32px] border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-8">
+              <div className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
                   {copy.recentIdeas}
                 </p>
@@ -995,22 +995,22 @@ export default function DashboardPage() {
                           </div>
                         </div>
 
-                        <div className="mt-4 flex flex-wrap gap-2">
+                        <div className="mt-4 grid gap-2 sm:flex sm:flex-wrap">
                           <Link
                             href={getPrimaryHref(report.id, stage)}
-                            className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#111827] ring-1 ring-[#E5E7EB] transition hover:bg-white"
+                            className="inline-flex w-full items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#111827] ring-1 ring-[#E5E7EB] transition hover:bg-white sm:w-auto"
                           >
                             {stageActionLabel(stage, preferredLanguage)}
                           </Link>
                           <Link
                             href={`/results?reportId=${report.id}`}
-                            className="rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#374151] transition hover:bg-white"
+                            className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#374151] transition hover:bg-white sm:w-auto"
                           >
                             {copy.openOpportunity}
                           </Link>
                           <Link
                             href={`/compare?ids=${report.id}`}
-                            className="rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#374151] transition hover:bg-white"
+                            className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#374151] transition hover:bg-white sm:w-auto"
                           >
                             {copy.compare}
                           </Link>
