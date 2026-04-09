@@ -471,12 +471,12 @@ export default function DashboardPage() {
   const [currentPlanLabel, setCurrentPlanLabel] = useState('');
   const [planUsage, setPlanUsage] = useState<PlanUsage | null>(null);
   const planSectionRef = useRef<HTMLElement | null>(null);
-  const focusSectionRef = useRef<HTMLElement | null>(null);
-  const recentIdeasSectionRef = useRef<HTMLElement | null>(null);
+  const focusSectionRef = useRef<HTMLDivElement | null>(null);
+  const recentIdeasSectionRef = useRef<HTMLDivElement | null>(null);
 
   const copy = UI_COPY[preferredLanguage];
 
-  function scrollToSection(target: HTMLElement | null) {
+  function scrollToSection(target: Element | null) {
     if (!target) return;
 
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
