@@ -641,10 +641,10 @@ export default function ReportsPage() {
         ];
 
   return (
-    <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-6 pb-16 pt-6 text-[#111827]">
+    <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] px-4 pb-12 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6">
       <SiteHeader uiLang={preferredLanguage} onLanguageChange={setPreferredLanguage} logo={<MadixoLogo />} />
 
-      <div className="mx-auto mt-8 max-w-6xl">
+      <div className="mx-auto mt-6 max-w-6xl sm:mt-8">
         {reportsUpgradeNotice ? (
           <div className="mb-6">
             <PlanUpgradeNotice
@@ -665,9 +665,9 @@ export default function ReportsPage() {
               {copy.savedWorkspace}
             </div>
 
-            <h1 className="mt-4 text-4xl font-bold tracking-tight md:text-6xl">{copy.myReports}</h1>
+            <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-6xl">{copy.myReports}</h1>
 
-            <p className="mt-4 max-w-2xl text-lg leading-8 text-[#4B5563]">{copy.workspaceDescription}</p>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">{copy.workspaceDescription}</p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -723,13 +723,13 @@ export default function ReportsPage() {
         ) : null}
 
         {loading ? (
-          <div className="rounded-[32px] border border-[#E5E7EB] bg-white px-8 py-12 shadow-sm md:px-12 md:py-14">
+          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:rounded-[32px] md:px-12 md:py-14">
             <div className="mx-auto max-w-2xl text-center">
               <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
                 {copy.loadingReports}
               </div>
-              <h2 className="mt-6 text-3xl font-bold md:text-4xl">{copy.loadingWorkspace}</h2>
-              <p className="mt-4 text-lg leading-8 text-[#4B5563]">{copy.loadingWorkspaceDescription}</p>
+              <h2 className="mt-6 text-2xl font-bold sm:text-3xl md:text-4xl">{copy.loadingWorkspace}</h2>
+              <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">{copy.loadingWorkspaceDescription}</p>
 
               {showSlowNotice ? (
                 <div className="mx-auto mt-8 max-w-xl rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-start">
@@ -747,20 +747,20 @@ export default function ReportsPage() {
             </div>
           </div>
         ) : reports.length === 0 ? (
-          <div className="rounded-[32px] border border-[#E5E7EB] bg-white px-8 py-12 shadow-sm md:px-12 md:py-14">
+          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:rounded-[32px] md:px-12 md:py-14">
             <div className="mx-auto max-w-2xl text-center">
               <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
                 {copy.noSavedReports}
               </div>
-              <h2 className="mt-6 text-3xl font-bold md:text-4xl">{copy.noReportsSavedYet}</h2>
-              <p className="mt-4 text-lg leading-8 text-[#4B5563]">{copy.noReportsDescription}</p>
+              <h2 className="mt-6 text-2xl font-bold sm:text-3xl md:text-4xl">{copy.noReportsSavedYet}</h2>
+              <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">{copy.noReportsDescription}</p>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                <Link href="/" className="inline-block rounded-full bg-black px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90">
+                <Link href="/" className="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto">
                   {copy.startNewScan}
                 </Link>
                 <Link
                   href="/compare"
-                  className="inline-block rounded-full border border-[#E5E7EB] bg-white px-5 py-3 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
+                  className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-5 py-3 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB] sm:w-auto"
                 >
                   {copy.openComparePage}
                 </Link>
@@ -785,7 +785,7 @@ export default function ReportsPage() {
               const validateHref = `/validate/${report.id}`;
 
               return (
-                <div key={report.id} className="rounded-[32px] border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-7">
+                <div key={report.id} className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:rounded-[32px] md:p-7">
                   <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
                     <div className="max-w-4xl">
                       <div className="flex flex-wrap items-center gap-3">
@@ -805,18 +805,18 @@ export default function ReportsPage() {
                         />
                       </div>
 
-                      <MixedText as="h2" text={safeQuery} className="mt-4 text-2xl font-bold leading-tight md:text-3xl" />
+                      <MixedText as="h2" text={safeQuery} className="mt-4 text-xl font-bold leading-tight sm:text-2xl md:text-3xl" />
 
-                      <div className="mt-4 flex flex-wrap gap-3">
-                        <span className="rounded-full bg-[#F3F4F6] px-4 py-2 text-sm font-medium text-[#374151]">
+                      <div className="mt-4 grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:gap-3">
+                        <span className="rounded-full bg-[#F3F4F6] px-4 py-2 text-sm font-medium text-[#374151] break-words">
                           {copy.market}: <MixedText as="span" text={safeMarket} />
                         </span>
-                        <span className="rounded-full bg-[#F3F4F6] px-4 py-2 text-sm font-medium text-[#374151]">
+                        <span className="rounded-full bg-[#F3F4F6] px-4 py-2 text-sm font-medium text-[#374151] break-words">
                           {copy.customer}: <MixedText as="span" text={safeCustomer} />
                         </span>
                       </div>
 
-                      <MixedText as="p" text={report.result.summary} className="mt-5 max-w-3xl text-lg leading-8 text-[#4B5563]" />
+                      <MixedText as="p" text={report.result.summary} className="mt-5 max-w-3xl text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8" />
                     </div>
                   </div>
 
@@ -824,14 +824,14 @@ export default function ReportsPage() {
                     <div className="flex flex-wrap gap-3">
                       <Link
                         href={validateHref}
-                        className="rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                        className="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto"
                       >
                         {getPrimaryValidationAction(lifecycleStatus, copy)}
                       </Link>
 
                       <Link
                         href={resultsHref}
-                        className="rounded-full border border-[#111827] bg-white px-5 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB]"
+                        className="inline-flex w-full items-center justify-center rounded-full border border-[#111827] bg-white px-5 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] sm:w-auto"
                       >
                         {copy.openReport}
                       </Link>
@@ -863,7 +863,7 @@ export default function ReportsPage() {
                     </div>
                   </div>
 
-                  <div className="mt-6 grid gap-4 md:grid-cols-3">
+                  <div className="mt-5 grid gap-3 sm:gap-4 md:grid-cols-3">
                     <div className="rounded-2xl bg-[#F9FAFB] p-4">
                       <p className="text-sm font-semibold text-[#6B7280]">{copy.whyThisOpportunity}</p>
                       <MixedText as="p" text={report.result.whyThisOpportunity} className="mt-2 text-sm leading-7 text-[#4B5563]" />
