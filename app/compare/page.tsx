@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import MixedText from '@/components/mixed-text';
 import SiteHeader from '@/components/site-header';
 import LifecycleStatusBadge from '@/components/lifecycle-status-badge';
@@ -595,12 +595,30 @@ export default function CompareReportsPage() {
     return reports.filter((report) => selectedIds.includes(report.id));
   }, [reports, selectedIds]);
 
+  const comparisonSectionRef = useRef<HTMLDivElement | null>(null);
+  const previousSelectedCountRef = useRef(0);
   const canCompare = selectedReports.length >= 2;
   const selectionLimitReached = selectedIds.length >= compareLimit;
   const compareUpgradeNotice = useMemo(
     () => getCompareUpgradeNotice(preferredLanguage, currentPlanLabel, compareLimit, showCompareLimitPrompt || selectionLimitReached),
     [preferredLanguage, currentPlanLabel, compareLimit, showCompareLimitPrompt, selectionLimitReached]
   );
+
+  useEffect(() => {
+    const previousCount = previousSelectedCountRef.current;
+    const nextCount = selectedReports.length;
+
+    if (previousCount < 2 && nextCount >= 2) {
+      window.setTimeout(() => {
+        comparisonSectionRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }, 120);
+    }
+
+    previousSelectedCountRef.current = nextCount;
+  }, [selectedReports.length]);
 
   const handleToggle = (id: string) => {
     setSelectedIds((current) => {
@@ -867,8 +885,25 @@ export default function CompareReportsPage() {
                     : copy.selectionHint}
                 </p>
 
-                <div className="text-sm font-semibold text-[#374151]">
-                  {canCompare ? copy.comparisonReady : copy.selectAtLeastTwo}
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                  <div className="text-sm font-semibold text-[#374151]">
+                    {canCompare ? copy.comparisonReady : copy.selectAtLeastTwo}
+                  </div>
+
+                  {canCompare ? (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        comparisonSectionRef.current?.scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'start',
+                        })
+                      }
+                      className="inline-flex items-center justify-center rounded-full bg-[#111827] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 md:hidden"
+                    >
+                      {copy.jumpToComparison}
+                    </button>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -883,7 +918,7 @@ export default function CompareReportsPage() {
                 </p>
               </div>
             ) : (
-              <div className="space-y-8">
+              <div ref={comparisonSectionRef} className="space-y-8">
                 <div className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5 md:p-7">
                   <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                     <div>
