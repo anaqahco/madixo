@@ -237,6 +237,19 @@ const UI_COPY = {
     pathStep1: 'Collect a new market note',
     pathStep2: 'Rebuild the decision view',
     pathStep3: 'Generate the best step now',
+    quickNavTitle: 'Quick navigation',
+    quickNavDescription:
+      'Jump to the part you need now without scrolling through the full page.',
+    navSummary: 'Summary',
+    navChannels: 'Channels',
+    navChecklist: 'Action list',
+    navEvidence: 'Market notes',
+    navDecisionView: 'Decision view',
+    navCurrentDecision: 'Current decision',
+    navBestStep: 'Best step now',
+    mobileBarPrimary: 'Go to market notes',
+    mobileBarSecondary: 'Decision view',
+    mobileBarTertiary: 'Best step now',
   },
   ar: {
     dir: 'rtl',
@@ -327,6 +340,19 @@ const UI_COPY = {
     pathStep1: 'أضف ملاحظة سوق جديدة',
     pathStep2: 'حدّث رؤية القرار',
     pathStep3: 'أنشئ أفضل خطوة الآن',
+    quickNavTitle: 'تنقل سريع',
+    quickNavDescription:
+      'انتقل مباشرة إلى الجزء الذي تحتاجه الآن بدون نزول طويل داخل الصفحة.',
+    navSummary: 'الخلاصة',
+    navChannels: 'القنوات',
+    navChecklist: 'قائمة التنفيذ',
+    navEvidence: 'ملاحظات السوق',
+    navDecisionView: 'رؤية القرار',
+    navCurrentDecision: 'القرار الحالي',
+    navBestStep: 'أفضل خطوة الآن',
+    mobileBarPrimary: 'اذهب إلى ملاحظات السوق',
+    mobileBarSecondary: 'رؤية القرار',
+    mobileBarTertiary: 'أفضل خطوة الآن',
   },
 } as const;
 
@@ -483,7 +509,7 @@ function DecisionPill({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+      className={`inline-flex min-h-[44px] w-full items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition sm:w-auto ${
         active
           ? 'border-[#111827] bg-[#111827] text-white'
           : 'border-[#E5E7EB] bg-white text-[#374151] hover:bg-[#F9FAFB]'
@@ -663,6 +689,38 @@ function AppliedPlanNotice({
   );
 }
 
+function QuickNavCard({
+  title,
+  description,
+  items,
+}: {
+  title: string;
+  description: string;
+  items: Array<{
+    label: string;
+    onClick: () => void;
+  }>;
+}) {
+  return (
+    <section className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5 md:p-6 lg:hidden">
+      <h2 className="text-base font-bold text-[#111827]">{title}</h2>
+      <p className="mt-2 text-sm leading-7 text-[#6B7280]">{description}</p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {items.map((item) => (
+          <button
+            key={item.label}
+            type="button"
+            onClick={item.onClick}
+            className="inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-sm font-semibold text-[#374151]"
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 async function fetchEvidenceEntries(reportId: string, uiLang: UiLanguage) {
   const response = await fetch(
     `/api/evidence?reportId=${encodeURIComponent(reportId)}&uiLang=${uiLang}`,
@@ -735,8 +793,13 @@ export default function ValidationModeClient({
     serializeWorkspaceState(normalizeValidationWorkspaceState(undefined))
   );
   const appliedNoticeRef = useRef<HTMLDivElement | null>(null);
+  const summarySectionRef = useRef<HTMLDivElement | null>(null);
+  const channelsSectionRef = useRef<HTMLDivElement | null>(null);
+  const checklistSectionRef = useRef<HTMLDivElement | null>(null);
   const evidenceSectionRef = useRef<HTMLDivElement | null>(null);
   const synthesisSectionRef = useRef<HTMLDivElement | null>(null);
+  const decisionSectionRef = useRef<HTMLDivElement | null>(null);
+  const iterationSectionRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setUiLang(getClientUiLanguage(initialUiLang));
@@ -1005,6 +1068,13 @@ export default function ValidationModeClient({
     uiLang,
   ]);
 
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
+    ref.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  };
+
   const handleLanguageChange = (language: UiLanguage) => {
     setClientUiLanguage(language);
     setUiLang(language);
@@ -1084,10 +1154,19 @@ export default function ValidationModeClient({
   const progressPercent = Math.round((currentStep / totalSteps) * 100);
   const stepCounterLabel = getStepCounterLabel(currentStep, totalSteps, uiLang);
   const stepItems = [copy.step1, copy.step2, copy.step3, copy.step4];
+  const quickNavItems = [
+    { label: copy.navSummary, onClick: () => scrollToSection(summarySectionRef) },
+    { label: copy.navChannels, onClick: () => scrollToSection(channelsSectionRef) },
+    { label: copy.navChecklist, onClick: () => scrollToSection(checklistSectionRef) },
+    { label: copy.navEvidence, onClick: () => scrollToSection(evidenceSectionRef) },
+    { label: copy.navDecisionView, onClick: () => scrollToSection(synthesisSectionRef) },
+    { label: copy.navCurrentDecision, onClick: () => scrollToSection(decisionSectionRef) },
+    { label: copy.navBestStep, onClick: () => scrollToSection(iterationSectionRef) },
+  ];
 
   return (
     <main className="min-h-screen bg-[#F3F4F6] text-[#111827]" dir={copy.dir}>
-      <div className="mx-auto w-full max-w-6xl px-4 py-5 md:px-6 md:py-8">
+      <div className={`mx-auto w-full max-w-6xl px-4 py-5 md:px-6 md:py-8 ${plan ? 'pb-28 lg:pb-8' : ''}`}>
         <SiteHeader
           uiLang={uiLang}
           onLanguageChange={handleLanguageChange}
@@ -1245,23 +1324,27 @@ export default function ValidationModeClient({
         ) : null}
 
         {appliedNotice ? (
-          <div ref={appliedNoticeRef} className="mt-6">
+          <div ref={appliedNoticeRef} className="mt-6 scroll-mt-24">
             <AppliedPlanNotice
               uiLang={uiLang}
               notice={appliedNotice}
               onDismiss={() => setAppliedNotice(null)}
               onGoToEvidence={() => {
-                evidenceSectionRef.current?.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'start',
-                });
+                scrollToSection(evidenceSectionRef);
               }}
               onGoToDecisionView={() => {
-                synthesisSectionRef.current?.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'start',
-                });
+                scrollToSection(synthesisSectionRef);
               }}
+            />
+          </div>
+        ) : null}
+
+        {plan ? (
+          <div className="mt-6">
+            <QuickNavCard
+              title={copy.quickNavTitle}
+              description={copy.quickNavDescription}
+              items={quickNavItems}
             />
           </div>
         ) : null}
@@ -1269,7 +1352,8 @@ export default function ValidationModeClient({
         {plan ? (
           <div className="mt-6 space-y-6">
             <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-              <SectionCard title={copy.opportunitySummary}>
+              <div ref={summarySectionRef} className="scroll-mt-24">
+                <SectionCard title={copy.opportunitySummary}>
                 <div className="grid gap-3 sm:grid-cols-2 md:gap-4">
                   {summaryRows.map((row) => (
                     <div
@@ -1286,8 +1370,10 @@ export default function ValidationModeClient({
                   ))}
                 </div>
               </SectionCard>
+              </div>
 
-              <SectionCard title={copy.outreachChannels}>
+              <div ref={channelsSectionRef} className="scroll-mt-24">
+                <SectionCard title={copy.outreachChannels}>
                 {plan.outreachChannels.length ? (
                   <BulletList items={plan.outreachChannels} />
                 ) : (
@@ -1296,6 +1382,7 @@ export default function ValidationModeClient({
                   </p>
                 )}
               </SectionCard>
+              </div>
             </div>
 
             <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1fr_1fr]">
@@ -1305,7 +1392,8 @@ export default function ValidationModeClient({
                 </div>
               </SectionCard>
 
-              <SectionCard title={copy.planChecklist}>
+              <div ref={checklistSectionRef} className="scroll-mt-24">
+                <SectionCard title={copy.planChecklist}>
                 {checklist.length ? (
                   <BulletList items={checklist} />
                 ) : (
@@ -1314,6 +1402,7 @@ export default function ValidationModeClient({
                   </p>
                 )}
               </SectionCard>
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5 lg:gap-6">
@@ -1346,7 +1435,7 @@ export default function ValidationModeClient({
               </SectionCard>
             </div>
 
-            <div ref={evidenceSectionRef}>
+            <div ref={evidenceSectionRef} className="scroll-mt-24">
               <ValidationEvidenceSection
                 reportId={report.id}
                 uiLang={uiLang}
@@ -1360,7 +1449,7 @@ export default function ValidationModeClient({
               />
             </div>
 
-            <div ref={synthesisSectionRef}>
+            <div ref={synthesisSectionRef} className="scroll-mt-24">
               <ValidationEvidenceSynthesis
                 reportId={report.id}
                 uiLang={uiLang}
@@ -1375,7 +1464,8 @@ export default function ValidationModeClient({
               />
             </div>
 
-            <SectionCard title={copy.currentDecision}>
+            <div ref={decisionSectionRef} className="scroll-mt-24">
+              <SectionCard title={copy.currentDecision}>
               <div className="flex flex-wrap gap-3">
                 <DecisionPill
                   active={workspace.decisionState === 'undecided'}
@@ -1473,34 +1563,62 @@ export default function ValidationModeClient({
                 </div>
               ) : null}
             </SectionCard>
+            </div>
 
-            <ValidationIterationEngine
-              reportId={report.id}
-              uiLang={uiLang}
-              currentDecision={workspace.decisionState}
-              hasEvidenceSummary={Boolean(evidenceSynthesis)}
-              refreshToken={iterationRefreshToken}
-              onApplyComplete={(snapshot) => {
-                setPlan(snapshot.plan);
-                setWorkspace(snapshot.workspace);
-                lastSavedWorkspaceRef.current = serializeWorkspaceState(
-                  snapshot.workspace
-                );
-                setSaveState('idle');
-                setWorkspaceError('');
-                setEvidenceSynthesis(null);
-                setIterationRefreshToken((current) => current + 1);
-                setAppliedNotice(
-                  buildAppliedNoticeFromSnapshot(
-                    {
-                      plan: snapshot.plan,
-                      workspace: snapshot.workspace,
-                    },
-                    uiLang
+            <div ref={iterationSectionRef} className="scroll-mt-24">
+                <ValidationIterationEngine
+                reportId={report.id}
+                uiLang={uiLang}
+                currentDecision={workspace.decisionState}
+                hasEvidenceSummary={Boolean(evidenceSynthesis)}
+                refreshToken={iterationRefreshToken}
+                onApplyComplete={(snapshot) => {
+                  setPlan(snapshot.plan);
+                  setWorkspace(snapshot.workspace);
+                  lastSavedWorkspaceRef.current = serializeWorkspaceState(
+                    snapshot.workspace
+                  );
+                  setSaveState('idle');
+                  setWorkspaceError('');
+                  setEvidenceSynthesis(null);
+                  setIterationRefreshToken((current) => current + 1);
+                  setAppliedNotice(
+                    buildAppliedNoticeFromSnapshot(
+                      {
+                        plan: snapshot.plan,
+                        workspace: snapshot.workspace,
+                      },
+                      uiLang
+                    )
+                  );
+                }}
+              />
+            </div>
+          </div>
+        ) : null}
+
+        {plan ? (
+          <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#E5E7EB] bg-white/95 px-4 py-3 shadow-[0_-12px_30px_rgba(15,23,42,0.08)] backdrop-blur lg:hidden">
+            <div className="mx-auto flex max-w-6xl gap-2">
+              <button
+                type="button"
+                onClick={() => scrollToSection(evidenceSectionRef)}
+                className="inline-flex min-h-[46px] flex-1 items-center justify-center rounded-full bg-[#111827] px-4 py-2 text-sm font-semibold text-white"
+              >
+                {copy.mobileBarPrimary}
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  scrollToSection(
+                    currentStep >= 4 ? iterationSectionRef : synthesisSectionRef
                   )
-                );
-              }}
-            />
+                }
+                className="inline-flex min-h-[46px] flex-1 items-center justify-center rounded-full border border-[#111827] bg-white px-4 py-2 text-sm font-semibold text-[#111827]"
+              >
+                {currentStep >= 4 ? copy.mobileBarTertiary : copy.mobileBarSecondary}
+              </button>
+            </div>
           </div>
         ) : null}
       </div>
