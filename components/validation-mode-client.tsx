@@ -1087,20 +1087,20 @@ export default function ValidationModeClient({
 
   return (
     <main className="min-h-screen bg-[#F3F4F6] text-[#111827]" dir={copy.dir}>
-      <div className="mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8">
+      <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:py-6 md:px-6 md:py-8">
         <SiteHeader
           uiLang={uiLang}
           onLanguageChange={handleLanguageChange}
           logo={<MadixoLogo />}
         />
 
-        <div className="mt-6 rounded-[32px] border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-8">
+        <div className="mt-5 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:mt-6 sm:p-6 md:rounded-[32px] md:p-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
                 {copy.eyebrow}
               </p>
-              <h1 className="mt-2 text-3xl font-black tracking-tight text-[#111827] md:text-5xl">
+              <h1 className="mt-2 text-2xl font-black tracking-tight text-[#111827] sm:text-3xl md:text-5xl">
                 {copy.title}
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-[#4B5563] md:text-base">
@@ -1163,7 +1163,7 @@ export default function ValidationModeClient({
               />
             </div>
 
-            <div className="mt-4 grid gap-3 md:grid-cols-4">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-4">
               {stepItems.map((item, index) => {
                 const stepNumber = index + 1;
                 const isActive = stepNumber === currentStep;
@@ -1189,13 +1189,13 @@ export default function ValidationModeClient({
         </div>
 
         {state === 'loading' ? (
-          <div className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-8">
+          <div className="mt-6 rounded-[24px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:rounded-[28px] md:p-8">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-3xl">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
                   {copy.eyebrow}
                 </p>
-                <h2 className="mt-3 text-2xl font-black tracking-tight text-[#111827] md:text-4xl">
+                <h2 className="mt-3 text-xl font-black tracking-tight text-[#111827] sm:text-2xl md:text-4xl">
                   {copy.loading}
                 </h2>
                 <p className="mt-4 text-sm leading-7 text-[#4B5563] md:text-base">
@@ -1210,7 +1210,7 @@ export default function ValidationModeClient({
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6B7280]">
                   {copy.loadingCountdown}
                 </p>
-                <p className="mt-3 text-4xl font-black text-[#111827]">
+                <p className="mt-3 text-3xl font-black text-[#111827] sm:text-4xl">
                   {loadingCountdownSeconds}
                 </p>
                 <p className="mt-1 text-sm text-[#4B5563]">
@@ -1268,7 +1268,7 @@ export default function ValidationModeClient({
 
         {plan ? (
           <div className="mt-6 space-y-6">
-            <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1.15fr_0.85fr]">
               <SectionCard title={copy.opportunitySummary}>
                 <div className="grid gap-4 md:grid-cols-2">
                   {summaryRows.map((row) => (
@@ -1298,7 +1298,7 @@ export default function ValidationModeClient({
               </SectionCard>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1fr_1fr]">
               <SectionCard title={copy.outreachScript}>
                 <div className="rounded-[24px] bg-[#F9FAFB] p-5 text-sm leading-7 text-[#374151]">
                   <MixedText as="p" text={plan.outreachScript} />
@@ -1316,7 +1316,7 @@ export default function ValidationModeClient({
               </SectionCard>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
               <SectionCard title={copy.continueSignals}>
                 {plan.continueSignals.length ? (
                   <BulletList items={plan.continueSignals} />
