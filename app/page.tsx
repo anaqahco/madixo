@@ -823,13 +823,36 @@ export default function HomePage() {
         <section className="px-6 pt-4">
           <div className="mx-auto max-w-6xl">
             <div
-              className={`flex items-start justify-between gap-3 rounded-[22px] border border-[#BBF7D0] bg-[#F0FDF4] px-5 py-4 text-sm font-medium text-[#166534] shadow-sm ${
+              className={`flex items-start justify-between gap-4 rounded-[24px] border border-[#BBF7D0] bg-[#F0FDF4] px-5 py-4 text-[#166534] shadow-[0_10px_30px_rgba(34,197,94,0.08)] ${
                 isArabic ? 'text-right' : 'text-left'
               }`}
               role="status"
               aria-live="polite"
             >
-              <p className="leading-7">{flashNotice}</p>
+              <div className={`flex items-start gap-3 ${isArabic ? 'flex-row-reverse' : 'flex-row'}`}>
+                <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#BBF7D0] bg-white">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="h-5 w-5"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      stroke="currentColor"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <p className="text-sm font-semibold">{isArabic ? 'تم تنفيذ العملية بنجاح' : 'Done successfully'}</p>
+                  <p className="mt-1 text-sm leading-7 text-[#166534]">{flashNotice}</p>
+                </div>
+              </div>
+
               <button
                 type="button"
                 onClick={() => setFlashNotice('')}
