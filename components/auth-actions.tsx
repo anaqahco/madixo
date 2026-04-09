@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { setClientUiLanguage } from '@/lib/ui-language';
@@ -30,6 +30,7 @@ type AuthSnapshot = {
 const AUTH_SNAPSHOT_KEY = 'madixo_auth_snapshot_v1';
 const AUTH_SNAPSHOT_TTL_MS = 1000 * 60 * 60 * 24 * 3;
 const FLASH_NOTICE_KEY = 'madixo_flash_notice_v1';
+const LOGOUT_FALLBACK_DELAY_MS = 700;
 
 const COPY = {
   en: {
@@ -48,9 +49,6 @@ const COPY = {
     providerEmail: 'Email',
     providerOther: 'Account',
     signingOut: 'Signing out...',
-    signingOutTitle: 'Signing you out',
-    signingOutDescription: 'We are ending your session and returning you to the home page.',
-    signedOut: 'You have been signed out successfully.',
   },
   ar: {
     blog: 'المدونة',
@@ -68,9 +66,6 @@ const COPY = {
     providerEmail: 'البريد الإلكتروني',
     providerOther: 'الحساب',
     signingOut: 'جارٍ تسجيل الخروج...',
-    signingOutTitle: 'جارٍ تسجيل خروجك',
-    signingOutDescription: 'ننهي جلستك الآن ونعيدك إلى الصفحة الرئيسية.',
-    signedOut: 'تم تسجيل الخروج بنجاح.',
   },
 } as const;
 
@@ -237,7 +232,6 @@ function applySnapshotState(
 
 export default function AuthActions({ uiLang }: Props) {
   const pathname = usePathname();
-  const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const isArabic = uiLang === 'ar';
 
@@ -361,82 +355,45 @@ export default function AuthActions({ uiLang }: Props) {
   const dangerPill =
     'border-[#F8D1D1] bg-[#FFF7F7] text-[#C24141] hover:bg-[#FFF1F1]';
 
-  const handleSignOut = async () => {
+  const handleSignOut = () => {
     if (isSigningOut) return;
 
     setIsSigningOut(true);
     setSessionState('guest');
     setUserSummary(null);
+
     writeAuthSnapshot({
       sessionState: 'guest',
       userSummary: null,
       savedAt: Date.now(),
     });
 
-    const destination = '/?notice=signed_out';
-
-    const redirectHome = () => {
-      try {
-        setClientUiLanguage(uiLang);
-        window.sessionStorage.removeItem(FLASH_NOTICE_KEY);
-      } catch {
-        // ignore storage failures
-      }
-
-      router.replace(destination);
-      router.refresh();
-
-      window.setTimeout(() => {
-        window.location.replace(destination);
-      }, 220);
-    };
+    clearSupabaseBrowserStorage();
 
     try {
-      await fetch('/api/auth/session', {
-        method: 'DELETE',
-        cache: 'no-store',
-        credentials: 'include',
-      }).catch(() => null);
-
-      await supabase.auth.signOut().catch(() => null);
-    } finally {
-      clearSupabaseBrowserStorage();
-      writeAuthSnapshot(null);
-      redirectHome();
+      setClientUiLanguage(uiLang);
+      window.sessionStorage.removeItem(FLASH_NOTICE_KEY);
+    } catch {
+      // ignore storage failures
     }
+
+    const destination = '/auth/logout?notice=signed_out';
+
+    void fetch('/api/auth/session', {
+      method: 'DELETE',
+      cache: 'no-store',
+      credentials: 'include',
+      keepalive: true,
+    }).catch(() => null);
+
+    window.setTimeout(() => {
+      window.location.assign(destination);
+    }, 20);
+
+    window.setTimeout(() => {
+      window.location.replace(destination);
+    }, LOGOUT_FALLBACK_DELAY_MS);
   };
-
-  useEffect(() => {
-    if (!isSigningOut || typeof document === 'undefined') return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isSigningOut]);
-
-  const signingOutOverlay = isSigningOut ? (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#111827]/18 px-6 backdrop-blur-[3px]">
-      <div
-        dir={isArabic ? 'rtl' : 'ltr'}
-        className="w-full max-w-md rounded-[28px] border border-[#E5E7EB] bg-white px-6 py-6 text-center shadow-[0_25px_70px_rgba(17,24,39,0.16)]"
-        role="status"
-        aria-live="polite"
-      >
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#F8FAFC]">
-          <span
-            className="h-6 w-6 animate-spin rounded-full border-2 border-[#CBD5E1] border-t-[#111827]"
-            aria-hidden="true"
-          />
-        </div>
-
-        <h3 className="mt-5 text-lg font-semibold text-[#111827]">{copy.signingOutTitle}</h3>
-        <p className="mt-2 text-sm leading-7 text-[#6B7280]">{copy.signingOutDescription}</p>
-      </div>
-    </div>
-  ) : null;
 
   if (!hasHydrated || sessionState === 'loading') {
     return <div className="h-10" aria-hidden="true" />;
@@ -444,41 +401,38 @@ export default function AuthActions({ uiLang }: Props) {
 
   if (sessionState === 'guest') {
     return (
-      <>
-        {signingOutOverlay}
-        <div
-          dir={isArabic ? 'rtl' : 'ltr'}
-          className="flex flex-wrap items-center gap-2 justify-start"
-        >
-          <Link href="/blog" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
-            {copy.blog}
+      <div
+        dir={isArabic ? 'rtl' : 'ltr'}
+        className="flex flex-wrap items-center gap-2 justify-start"
+      >
+        <Link href="/blog" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
+          {copy.blog}
+        </Link>
+
+        {pathname !== '/pricing' ? (
+          <Link href="/pricing" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
+            {copy.pricing}
           </Link>
+        ) : null}
 
-          {pathname !== '/pricing' ? (
-            <Link href="/pricing" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
-              {copy.pricing}
+        {pathname !== '/login' ? (
+          <>
+            <Link
+              href={`/login?mode=login&next=${encodeURIComponent(nextPath)}`}
+              className={`${pillBase} whitespace-nowrap ${secondaryPill}`}
+            >
+              {copy.login}
             </Link>
-          ) : null}
 
-          {pathname !== '/login' ? (
-            <>
-              <Link
-                href={`/login?mode=login&next=${encodeURIComponent(nextPath)}`}
-                className={`${pillBase} whitespace-nowrap ${secondaryPill}`}
-              >
-                {copy.login}
-              </Link>
-
-              <Link
-                href={`/login?mode=signup&next=${encodeURIComponent(nextPath)}`}
-                className={`${pillBase} whitespace-nowrap ${primaryPill}`}
-              >
-                {copy.signup}
-              </Link>
-            </>
-          ) : null}
-        </div>
-      </>
+            <Link
+              href={`/login?mode=signup&next=${encodeURIComponent(nextPath)}`}
+              className={`${pillBase} whitespace-nowrap ${primaryPill}`}
+            >
+              {copy.signup}
+            </Link>
+          </>
+        ) : null}
+      </div>
     );
   }
 
@@ -489,9 +443,7 @@ export default function AuthActions({ uiLang }: Props) {
   const providerLabel = getProviderLabel(userSummary?.provider || 'email', uiLang);
 
   return (
-    <>
-      {signingOutOverlay}
-      <div className="flex w-full flex-col gap-2.5">
+    <div className="flex w-full flex-col gap-2.5">
       <div dir="ltr" className="flex flex-col gap-3 md:flex-row md:items-center md:gap-5 lg:gap-6">
         <div
           className={`w-full md:max-w-[480px] lg:max-w-[500px] md:flex-none ${
@@ -587,22 +539,14 @@ export default function AuthActions({ uiLang }: Props) {
             type="button"
             onClick={handleSignOut}
             disabled={isSigningOut}
-            className={`${pillBase} whitespace-nowrap ${dangerPill} ${isSigningOut ? 'cursor-not-allowed opacity-70' : ''}`}
-            aria-busy={isSigningOut}
+            className={`${pillBase} whitespace-nowrap ${dangerPill} ${
+              isSigningOut ? 'cursor-wait opacity-70' : ''
+            }`}
           >
-            <span className="inline-flex items-center gap-2">
-              {isSigningOut ? (
-                <span
-                  className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#F3B8B8] border-t-[#C24141]"
-                  aria-hidden="true"
-                />
-              ) : null}
-              <span>{isSigningOut ? copy.signingOut : copy.logout}</span>
-            </span>
+            {isSigningOut ? copy.signingOut : copy.logout}
           </button>
         </div>
       </div>
     </div>
-    </>
   );
 }
