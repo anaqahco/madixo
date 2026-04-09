@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { buildAbsoluteAppUrl, getConfiguredAppUrl } from '@/lib/app-url';
 import { createClient } from '@/lib/supabase/server';
 import {
   getMadixoBillingEnvironment,
@@ -6,7 +7,6 @@ import {
 } from '@/lib/madixo-billing';
 import { getCurrentMadixoPlan } from '@/lib/madixo-plan-store';
 import { normalizePlan } from '@/lib/madixo-plans';
-import { getPublicAppUrl } from '@/lib/app-url';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -14,6 +14,67 @@ export const dynamic = 'force-dynamic';
 type RequestedBody = {
   plan?: string;
 };
+
+function cleanBaseUrl(value: string | null | undefined) {
+  if (!value) return null;
+
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  try {
+    const url = new URL(trimmed);
+    return url.origin;
+  } catch {
+    return null;
+  }
+}
+
+function buildOriginFromForwardedHeaders(request: Request) {
+  const forwardedHost = request.headers.get('x-forwarded-host')?.trim();
+  const forwardedProto = request.headers.get('x-forwarded-proto')?.trim() || 'https';
+
+  if (!forwardedHost) {
+    return null;
+  }
+
+  try {
+    return new URL(`${forwardedProto}://${forwardedHost}`).origin;
+  } catch {
+    return null;
+  }
+}
+
+function isAllowedProductionOrigin(origin: string | null) {
+  if (!origin) return false;
+
+  const normalized = origin.toLowerCase();
+  return normalized === 'https://madixo.ai' || normalized === 'https://www.madixo.ai';
+}
+
+function resolvePublicBaseUrl(request: Request) {
+  const configured = getConfiguredAppUrl();
+  if (isAllowedProductionOrigin(configured)) {
+    return configured;
+  }
+
+  const candidates = [
+    buildOriginFromForwardedHeaders(request),
+    cleanBaseUrl(request.headers.get('origin')),
+    (() => {
+      const referer = request.headers.get('referer');
+      if (!referer) return null;
+      try {
+        return new URL(referer).origin;
+      } catch {
+        return null;
+      }
+    })(),
+    cleanBaseUrl(request.url),
+  ];
+
+  const productionCandidate = candidates.find((candidate) => isAllowedProductionOrigin(candidate));
+  return productionCandidate ?? 'https://madixo.ai';
+}
 
 export async function POST(request: Request) {
   try {
@@ -101,7 +162,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const publicBaseUrl = getPublicAppUrl();
+    const publicBaseUrl = resolvePublicBaseUrl(request);
 
     return NextResponse.json({
       ok: true,
