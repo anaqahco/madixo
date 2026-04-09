@@ -35,7 +35,7 @@ function MadixoLogo() {
       width={210}
       height={54}
       priority
-      className="h-auto w-[175px] md:w-[210px]"
+      className="h-auto w-[150px] sm:w-[170px] md:w-[210px]"
     />
   );
 }
@@ -48,7 +48,7 @@ export default function AuthShellHeader({
   const isArabic = uiLang === 'ar';
 
   const pillBase =
-    'inline-flex min-h-[42px] items-center justify-center rounded-full border px-4 py-2.5 text-[14px] font-semibold leading-none transition-colors duration-200 md:min-h-0 md:px-[15px] md:py-[10px]';
+    'rounded-full border px-[13px] py-[9px] text-[13px] font-semibold leading-none transition-colors duration-200 sm:px-[15px] sm:py-[10px] sm:text-[14px]';
   const secondaryPill =
     'border-[#DCE4EE] bg-white text-[#374151] hover:bg-[#F8FAFC]';
   const primaryPill =
@@ -71,8 +71,8 @@ export default function AuthShellHeader({
 
         <div className="mt-3 border-t border-[#EEF2F7] pt-3 sm:mt-4 sm:pt-4">
           <div
-            className={`grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2.5 ${
-              isArabic ? 'sm:justify-end' : 'sm:justify-start'
+            className={`flex flex-wrap items-center gap-2.5 ${
+              isArabic ? 'justify-end' : 'justify-start'
             }`}
           >
             <Link href="/" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
