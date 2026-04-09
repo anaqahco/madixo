@@ -399,7 +399,7 @@ function MadixoLogo() {
 
 function CompareCell({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-sm">
+    <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
       {children}
     </div>
   );
@@ -414,7 +414,7 @@ function SectionGrid({
 }) {
   return (
     <div
-      className={`grid gap-6 ${
+      className={`grid gap-4 sm:gap-5 ${
         count === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'
       }`}
     >
@@ -649,7 +649,7 @@ export default function CompareReportsPage() {
           </div>
         ) : null}
 
-        <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
               {copy.decisionWorkspace}
@@ -659,13 +659,13 @@ export default function CompareReportsPage() {
               {copy.compareReports}
             </h1>
 
-            <p className="mt-4 max-w-3xl text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
+            <p className="mt-3 max-w-3xl text-base leading-7 text-[#4B5563] md:mt-4 md:text-lg md:leading-8">
               {copy.compareIntro}
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+            <div className="w-full rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm sm:w-auto">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
                 {copy.selected}
               </p>
@@ -673,7 +673,7 @@ export default function CompareReportsPage() {
               <p className="mt-1 text-xs text-[#6B7280]">{copy.selectionPlanHint}: {currentPlanLabel}</p>
             </div>
 
-            <div className="rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm">
+            <div className="w-full rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm sm:w-auto">
               <label
                 htmlFor="sort-compare-reports"
                 className="block text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]"
@@ -703,7 +703,7 @@ export default function CompareReportsPage() {
         ) : null}
 
         {loading ? (
-          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:rounded-[32px] md:px-12 md:py-14">
+          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:px-12 md:py-14">
             <div className="mx-auto max-w-2xl text-center">
               <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
                 {copy.loadingWorkspace}
@@ -713,13 +713,13 @@ export default function CompareReportsPage() {
                 {copy.loadingTitle}
               </h2>
 
-              <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
+              <p className="mt-4 text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
                 {copy.loadingDescription}
               </p>
             </div>
           </div>
         ) : reports.length === 0 ? (
-          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:rounded-[32px] md:px-12 md:py-14">
+          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:px-12 md:py-14">
             <div className="mx-auto max-w-2xl text-center">
               <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
                 {copy.noSavedReports}
@@ -729,21 +729,21 @@ export default function CompareReportsPage() {
                 {copy.noReportsTitle}
               </h2>
 
-              <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
+              <p className="mt-4 text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
                 {copy.noReportsDescription}
               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 <Link
                   href="/"
-                  className="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto"
+                  className="inline-block rounded-full bg-black px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90"
                 >
                   {copy.startNewScan}
                 </Link>
 
                 <Link
                   href="/reports"
-                  className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-5 py-3 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB] sm:w-auto"
+                  className="inline-block rounded-full border border-[#E5E7EB] bg-white px-5 py-3 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
                 >
                   {copy.openMyReports}
                 </Link>
@@ -752,7 +752,7 @@ export default function CompareReportsPage() {
           </div>
         ) : (
           <>
-            <div className="mb-8 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:mb-10 sm:p-6 md:rounded-[32px] md:p-7">
+            <div className="mb-8 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5 md:p-7">
               <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div>
                   <h2 className="text-xl font-semibold sm:text-2xl">{copy.chooseReports}</h2>
@@ -761,8 +761,8 @@ export default function CompareReportsPage() {
                   </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-1.5 text-sm font-semibold text-[#374151]">
+                <div className="grid gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+                  <span className="inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-1.5 text-sm font-semibold text-[#374151]">
                     {selectedIds.length} {copy.selectedCount}
                   </span>
 
@@ -770,14 +770,14 @@ export default function CompareReportsPage() {
                     type="button"
                     onClick={handleClearSelection}
                     disabled={selectedIds.length === 0}
-                    className="inline-flex w-full items-center justify-center rounded-full border border-[#111827] bg-white px-4 py-2.5 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                    className="inline-flex w-full items-center justify-center rounded-full border border-[#111827] bg-white px-4 py-2 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                   >
                     {copy.clearSelection}
                   </button>
                 </div>
               </div>
 
-              <div className="mt-6 grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <div className="mt-6 grid gap-3 sm:grid-cols-2 md:gap-4 xl:grid-cols-3">
                 {reports.map((report) => {
                   const selected = selectedIds.includes(report.id);
                   const safeLabel = getOpportunityLabelForUi(
@@ -860,7 +860,7 @@ export default function CompareReportsPage() {
                 })}
               </div>
 
-              <div className="mt-5 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+              <div className="mt-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <p className="text-sm text-[#6B7280]">
                   {selectionLimitReached
                     ? copy.selectionLimitReached
@@ -874,17 +874,17 @@ export default function CompareReportsPage() {
             </div>
 
             {!canCompare ? (
-              <div className="rounded-[32px] border border-[#E5E7EB] bg-white p-10 text-center shadow-sm">
+              <div className="rounded-[28px] border border-[#E5E7EB] bg-white p-6 text-center shadow-sm sm:p-8 md:p-10">
                 <h2 className="text-xl font-semibold sm:text-2xl">
                   {copy.selectAtLeastTwoTitle}
                 </h2>
-                <p className="mt-3 text-lg leading-8 text-[#4B5563]">
+                <p className="mt-3 text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
                   {copy.selectAtLeastTwoDescription}
                 </p>
               </div>
             ) : (
               <div className="space-y-8">
-                <div className="rounded-[32px] border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-7">
+                <div className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5 md:p-7">
                   <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                     <div>
                       <h2 className="text-xl font-semibold sm:text-2xl">
@@ -895,7 +895,7 @@ export default function CompareReportsPage() {
                       </p>
                     </div>
 
-                    <span className="rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-1.5 text-sm font-semibold text-[#374151]">
+                    <span className="inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-1.5 text-sm font-semibold text-[#374151]">
                       {selectedReports.length} {copy.reportsInComparison}
                     </span>
                   </div>
@@ -913,7 +913,7 @@ export default function CompareReportsPage() {
                         return (
                           <div
                             key={report.id}
-                            className="rounded-3xl border border-[#E5E7EB] bg-white p-6 shadow-sm"
+                            className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5 md:p-6"
                           >
                             <div className="flex flex-wrap items-center gap-3">
                               <p className="text-sm font-medium text-[#6B7280]">
@@ -932,7 +932,7 @@ export default function CompareReportsPage() {
                             <MixedText
                               as="h2"
                               text={report.query}
-                              className="mt-3 text-2xl font-bold leading-9"
+                              className="mt-3 text-xl font-bold leading-8 sm:text-2xl sm:leading-9"
                             />
 
                             <div className="mt-4 flex flex-wrap gap-3">
