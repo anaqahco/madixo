@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { createClient as createSupabaseClient } from '@/lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import SiteHeader from '@/components/site-header';
 import SiteFooter from '@/components/site-footer';
@@ -17,26 +18,26 @@ import { type UiLanguage } from '@/lib/ui-language';
 
 const EXAMPLES = {
   en: {
-    idea: 'AI for dental clinics',
-    market: 'Saudi Arabia',
-    customer: 'Private dental clinics with 2-10 branches',
+    idea: 'AI operations assistant for multi-location service businesses',
+    market: 'United States, United Kingdom, GCC, Europe',
+    customer: 'Service businesses with multiple locations or 5 to 50 staff',
   },
   ar: {
-    idea: 'ذكاء اصطناعي لعيادات الأسنان',
-    market: 'السعودية، الرياض، الكويت، مصر',
-    customer: 'عيادات أسنان خاصة لديها من 2 إلى 10 فروع',
+    idea: 'مساعد ذكاء اصطناعي لتشغيل الشركات الخدمية متعددة الفروع',
+    market: 'الولايات المتحدة، المملكة المتحدة، الخليج، أوروبا',
+    customer: 'شركات خدمية لديها عدة فروع أو من 5 إلى 50 موظفًا',
   },
 } as const;
 
 const INPUT_PLACEHOLDERS = {
   en: {
-    idea: 'Example: furnished apartment turnover service, beard serum for men, gym subscription management tool',
+    idea: 'Example: AI receptionist for clinics, compliance tool for logistics teams, inventory software for small retail chains',
     customer:
-      'Example: owners of small furnished apartments, men interested in beard care, owners of small gyms',
+      'Example: clinic operators, logistics managers, small retail chains, internal sales teams',
   },
   ar: {
-    idea: 'مثال: مغسلة سيارات نسائية متنقلة في الرياض، متجر تيشيرتات شبابية، خدمة واتساب لتأكيد مواعيد العيادات',
-    customer: 'مثال: مالكات سيارات، أصحاب عيادات صغيرة، شباب من 18 إلى 30 سنة',
+    idea: 'مثال: مساعد ذكاء اصطناعي لعيادات التجميل، نظام مخزون لسلاسل التجزئة الصغيرة، أداة امتثال لفرق الخدمات اللوجستية',
+    customer: 'مثال: مشغلو العيادات، مديرو العمليات، سلاسل التجزئة الصغيرة، فرق المبيعات الداخلية',
   },
 } as const;
 
@@ -44,14 +45,14 @@ const UI_COPY = {
   en: {
     dir: 'ltr',
     heroEyebrow: 'AI Opportunity Analysis Workspace',
-    heroTitle: 'Turn an idea into a clearer direction and next move.',
+    heroTitle: 'Turn an idea into a clearer direction and practical next move.',
     heroDescription:
-      'Madixo helps you analyze opportunities, generate an early feasibility view, turn them into testing plans, capture market evidence, and decide the next move with more confidence.',
+      'Madixo helps you analyze opportunities, build an early feasibility view, turn ideas into testing plans, capture market evidence, and decide the next move with more confidence.',
     primaryCta: 'Start Opportunity Analysis',
     secondaryCta: 'See How It Works',
     radarLabel: 'Start with an idea',
     radarDescription:
-      'Describe the opportunity, market, and customer, then let Madixo turn that into analysis, early feasibility, testing, evidence, and a clearer working path.',
+      'Describe the opportunity, market, and customer, then let Madixo turn that into structured analysis, early feasibility, testing, evidence, and a clearer working path.',
     businessIdea: 'Business Idea',
     targetMarket: 'Target Market',
     targetCustomer: 'Target Customer',
@@ -172,18 +173,20 @@ const UI_COPY = {
     closingDescription:
       'Start with analysis, then add early feasibility, testing, evidence, and a clearer next move with Madixo.',
     signedOutNotice: 'You have been signed out successfully.',
+    authRequiredToAnalyze:
+      'Create your account or log in first to start the opportunity analysis.',
   },
   ar: {
     dir: 'rtl',
     heroEyebrow: 'مساحة عمل لتحليل الفرص وتحديد الخطوة التالية',
-    heroTitle: 'حوّل الفكرة إلى اتجاه أوضح وخطوة تالية أهدأ.',
+    heroTitle: 'حوّل الفكرة إلى اتجاه أوضح وخطوة تالية عملية.',
     heroDescription:
-      'يساعدك Madixo على تحليل الفرص، وإنشاء دراسة جدوى أولية، وتحويلها إلى خطة تجربة، وجمع نتائج التجربة من السوق، ثم تحديد الخطوة التالية بثقة أكبر.',
+      'يساعدك Madixo على تحليل الفرص، وبناء دراسة جدوى أولية، وتحويل الفكرة إلى خطة تجربة، وجمع ملاحظات السوق، ثم تحديد الخطوة التالية بثقة أكبر.',
     primaryCta: 'ابدأ تحليل الفرصة',
     secondaryCta: 'استكشف كيف يعمل',
     radarLabel: 'ابدأ من الفكرة',
     radarDescription:
-      'صف الفرصة والسوق والعميل، ثم دع Madixo يحول ذلك إلى تحليل ودراسة جدوى أولية وخطة تجربة وملاحظات سوق ومسار أوضح للعمل.',
+      'صف الفكرة والسوق والعميل، ثم دع Madixo يحول ذلك إلى تحليل منظم ودراسة جدوى أولية وخطة تجربة وملاحظات سوق ومسار عملي أوضح.',
     businessIdea: 'الفكرة التجارية',
     targetMarket: 'السوق المستهدف',
     targetCustomer: 'العميل المستهدف',
@@ -304,6 +307,8 @@ const UI_COPY = {
     closingDescription:
       'ابدأ بتحليل الفكرة، ثم أضف دراسة جدوى أولية وتجربة ونتائج وقرار أوضح مع Madixo.',
     signedOutNotice: 'تم تسجيل الخروج بنجاح.',
+    authRequiredToAnalyze:
+      'أنشئ حسابك أو سجّل الدخول أولًا لبدء تحليل الفرصة.',
   },
 } as const;
 
@@ -494,20 +499,20 @@ function getFormValidationCopy(language: UiLanguage) {
       general:
         'أكمل الحقول الثلاثة بشكل واضح حتى يبدأ التحليل.',
       idea:
-        'اكتب فكرة واضحة حتى لو كانت قصيرة. مثال: مغسلة سيارات نسائية متنقلة في الرياض، متجر تيشيرتات شبابية، خدمة واتساب لتأكيد مواعيد العيادات.',
-      market: 'اكتب السوق بشكل واضح، مثل: السعودية، الرياض، الكويت، أو مصر.',
+        'اكتب فكرة واضحة حتى لو كانت قصيرة. مثال: مساعد ذكاء اصطناعي للعيادات، نظام مخزون لسلاسل التجزئة الصغيرة، أو أداة امتثال لفرق الخدمات اللوجستية.',
+      market: 'اكتب السوق بشكل واضح، مثل: الولايات المتحدة، الخليج، أوروبا، أو جنوب شرق آسيا.',
       customer:
-        'اكتب العميل المستهدف بشكل مختصر وواضح، مثل: مالكات سيارات، أصحاب عيادات صغيرة، أو شباب من 18 إلى 30 سنة.',
+        'اكتب العميل المستهدف بشكل مختصر وواضح، مثل: مشغلو العيادات، مديرو العمليات، أو الشركات الخدمية متعددة الفروع.',
     };
   }
 
   return {
     general: 'Complete the three fields clearly to start the analysis.',
     idea:
-      'Write the idea in a way that can be understood, even if it is short. Example: selling T-shirts, beard serum, booking platform, importing products and adapting them.',
-    market: 'Write the market clearly, such as Saudi Arabia, Riyadh, or GCC.',
+      'Write the idea clearly, even if it is short. Example: AI receptionist for clinics, compliance tool for logistics teams, inventory software for small retail chains.',
+    market: 'Write the market clearly, such as the United States, GCC, Europe, or Southeast Asia.',
     customer:
-      'Write the target customer clearly, even in a short way, such as youth, mothers, clinic owners, or all ages.',
+      'Write the target customer clearly, even in a short way, such as clinic operators, logistics managers, internal sales teams, or multi-location service businesses.',
   };
 }
 
@@ -544,6 +549,35 @@ function validateStartForm(
 
 const FLASH_NOTICE_KEY = 'madixo_flash_notice_v1';
 
+type HomepageSessionState = 'loading' | 'guest' | 'user';
+
+function buildAnalyzeResultsPath(params: {
+  query: string;
+  market: string;
+  customer: string;
+  uiLang: UiLanguage;
+}) {
+  const search = new URLSearchParams();
+  search.set('q', params.query);
+  search.set('uiLang', params.uiLang);
+  search.set('market', params.market);
+  search.set('customer', params.customer);
+  return `/results?${search.toString()}`;
+}
+
+function buildAnalyzeResumePath(params: {
+  idea: string;
+  market: string;
+  customer: string;
+}) {
+  const search = new URLSearchParams();
+  search.set('idea', params.idea);
+  search.set('market', params.market);
+  search.set('customer', params.customer);
+  search.set('startAnalysis', '1');
+  return `/?${search.toString()}`;
+}
+
 export default function HomePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -554,9 +588,12 @@ export default function HomePage() {
   const [customer, setCustomer] = useState('');
   const [formError, setFormError] = useState('');
   const [flashNotice, setFlashNotice] = useState('');
+  const [sessionState, setSessionState] = useState<HomepageSessionState>('loading');
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<'idea' | 'market' | 'customer', string>>>({});
   const formSectionRef = useRef<HTMLDivElement | null>(null);
   const ideaInputRef = useRef<HTMLInputElement | null>(null);
+  const hasHydratedDraftFromUrlRef = useRef(false);
+  const autoStartedAfterAuthRef = useRef(false);
 
 
   const copy = UI_COPY[preferredLanguage];
@@ -607,7 +644,7 @@ export default function HomePage() {
     },
   ];
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     const query = idea.trim();
     const targetMarket = market.trim();
     const targetCustomer = customer.trim();
@@ -630,13 +667,47 @@ export default function HomePage() {
     setFieldErrors({});
     setFormError('');
 
-    const params = new URLSearchParams();
-    params.set('q', query);
-    params.set('uiLang', preferredLanguage);
-    params.set('market', targetMarket);
-    params.set('customer', targetCustomer);
+    let hasAuthenticatedUser = sessionState === 'user';
 
-    router.push(`/results?${params.toString()}`);
+    if (!hasAuthenticatedUser) {
+      try {
+        const supabase = createSupabaseClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        hasAuthenticatedUser = Boolean(user);
+        setSessionState(user ? 'user' : 'guest');
+      } catch {
+        hasAuthenticatedUser = false;
+        setSessionState('guest');
+      }
+    }
+
+    if (!hasAuthenticatedUser) {
+      const nextPath = buildAnalyzeResumePath({
+        idea: query,
+        market: targetMarket,
+        customer: targetCustomer,
+      });
+
+      const loginParams = new URLSearchParams();
+      loginParams.set('mode', 'signup');
+      loginParams.set('next', nextPath);
+      loginParams.set('message', copy.authRequiredToAnalyze);
+
+      router.push(`/login?${loginParams.toString()}`);
+      return;
+    }
+
+    router.push(
+      buildAnalyzeResultsPath({
+        query,
+        market: targetMarket,
+        customer: targetCustomer,
+        uiLang: preferredLanguage,
+      })
+    );
   };
 
   const secondaryHref = `#${sectionId}`;
@@ -673,6 +744,79 @@ export default function HomePage() {
     { title: copy.value3Title, description: copy.value3Description },
     { title: copy.value4Title, description: copy.value4Description },
   ];
+
+  useEffect(() => {
+    if (hasHydratedDraftFromUrlRef.current) return;
+
+    const ideaFromQuery = searchParams.get('idea')?.trim() || '';
+    const marketFromQuery = searchParams.get('market')?.trim() || '';
+    const customerFromQuery = searchParams.get('customer')?.trim() || '';
+
+    if (ideaFromQuery) setIdea(ideaFromQuery);
+    if (marketFromQuery) setMarket(marketFromQuery);
+    if (customerFromQuery) setCustomer(customerFromQuery);
+
+    hasHydratedDraftFromUrlRef.current = true;
+  }, [searchParams]);
+
+  useEffect(() => {
+    const supabase = createSupabaseClient();
+    let mounted = true;
+
+    const applyUserState = (hasUser: boolean) => {
+      if (!mounted) return;
+      setSessionState(hasUser ? 'user' : 'guest');
+    };
+
+    supabase.auth
+      .getUser()
+      .then(({ data, error }) => {
+        if (!mounted) return;
+        applyUserState(!error && Boolean(data.user));
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setSessionState('guest');
+      });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      applyUserState(Boolean(session?.user));
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    const shouldStartAnalysis = searchParams.get('startAnalysis') === '1';
+
+    if (!shouldStartAnalysis || sessionState !== 'user' || autoStartedAfterAuthRef.current) {
+      return;
+    }
+
+    const query = (searchParams.get('idea') || '').trim();
+    const targetMarket = (searchParams.get('market') || '').trim();
+    const targetCustomer = (searchParams.get('customer') || '').trim();
+
+    if (!query || !targetMarket || !targetCustomer) {
+      return;
+    }
+
+    autoStartedAfterAuthRef.current = true;
+
+    router.replace(
+      buildAnalyzeResultsPath({
+        query,
+        market: targetMarket,
+        customer: targetCustomer,
+        uiLang: preferredLanguage,
+      })
+    );
+  }, [preferredLanguage, router, searchParams, sessionState]);
 
 
   useEffect(() => {
