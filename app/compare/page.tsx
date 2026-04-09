@@ -641,10 +641,19 @@ export default function CompareReportsPage() {
     setSelectedIds([]);
   };
 
+  const scrollToComparison = () => {
+    comparisonSectionRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  };
+
   return (
     <main
       dir={copy.dir}
-      className="min-h-screen bg-[#FAFAFB] px-4 pb-12 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6"
+      className={`min-h-screen bg-[#FAFAFB] px-4 pt-4 text-[#111827] sm:px-6 sm:pt-6 ${
+        canCompare ? 'pb-28 sm:pb-16' : 'pb-12 sm:pb-16'
+      }`}
     >
       <div className="mx-auto max-w-7xl">
         <SiteHeader
@@ -895,12 +904,7 @@ export default function CompareReportsPage() {
                   {canCompare ? (
                     <button
                       type="button"
-                      onClick={() =>
-                        comparisonSectionRef.current?.scrollIntoView({
-                          behavior: 'smooth',
-                          block: 'start',
-                        })
-                      }
+                      onClick={scrollToComparison}
                       className="inline-flex items-center justify-center rounded-full bg-[#111827] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 md:hidden"
                     >
                       {copy.jumpToComparison}
@@ -920,7 +924,7 @@ export default function CompareReportsPage() {
                 </p>
               </div>
             ) : (
-              <div ref={comparisonSectionRef} className="space-y-8">
+              <div ref={comparisonSectionRef} className="scroll-mt-24 space-y-8 sm:scroll-mt-28">
                 <div className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5 md:p-7">
                   <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                     <div>
@@ -1238,6 +1242,30 @@ export default function CompareReportsPage() {
             )}
           </>
         )}
+        {canCompare ? (
+          <div className="pointer-events-none fixed inset-x-0 bottom-3 z-30 px-4 md:hidden">
+            <div className="pointer-events-auto mx-auto max-w-md rounded-[24px] border border-[#D1D5DB] bg-white/95 p-3 shadow-[0_18px_60px_rgba(17,24,39,0.16)] backdrop-blur supports-[backdrop-filter]:bg-white/90">
+              <div className="flex items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                    {copy.comparisonReady}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-[#111827]">
+                    {selectedReports.length} {copy.reportsInComparison}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={scrollToComparison}
+                  className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                >
+                  {copy.jumpToComparison}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </main>
   );
