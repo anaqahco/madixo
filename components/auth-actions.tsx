@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { setClientUiLanguage } from '@/lib/ui-language';
@@ -30,7 +30,6 @@ type AuthSnapshot = {
 const AUTH_SNAPSHOT_KEY = 'madixo_auth_snapshot_v1';
 const AUTH_SNAPSHOT_TTL_MS = 1000 * 60 * 60 * 24 * 3;
 const FLASH_NOTICE_KEY = 'madixo_flash_notice_v1';
-const LOGOUT_FALLBACK_DELAY_MS = 700;
 
 const COPY = {
   en: {
@@ -49,6 +48,7 @@ const COPY = {
     providerEmail: 'Email',
     providerOther: 'Account',
     signingOut: 'Signing out...',
+    signedOut: 'You have been signed out successfully.',
   },
   ar: {
     blog: 'المدونة',
@@ -66,6 +66,7 @@ const COPY = {
     providerEmail: 'البريد الإلكتروني',
     providerOther: 'الحساب',
     signingOut: 'جارٍ تسجيل الخروج...',
+    signedOut: 'تم تسجيل الخروج بنجاح.',
   },
 } as const;
 
@@ -232,6 +233,7 @@ function applySnapshotState(
 
 export default function AuthActions({ uiLang }: Props) {
   const pathname = usePathname();
+  const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const isArabic = uiLang === 'ar';
 
@@ -347,7 +349,7 @@ export default function AuthActions({ uiLang }: Props) {
   const nextPath = pathname || '/';
 
   const pillBase =
-    'rounded-full border px-[15px] py-[10px] text-[14px] font-semibold leading-none transition-colors duration-200';
+    'inline-flex min-h-[42px] items-center justify-center rounded-full border px-4 py-2.5 text-[13px] font-semibold leading-none transition-colors duration-200 sm:min-h-[44px] sm:px-[15px] sm:py-[10px] sm:text-[14px]';
   const secondaryPill =
     'border-[#DCE4EE] bg-white text-[#374151] hover:bg-[#F8FAFC]';
   const primaryPill =
@@ -355,44 +357,44 @@ export default function AuthActions({ uiLang }: Props) {
   const dangerPill =
     'border-[#F8D1D1] bg-[#FFF7F7] text-[#C24141] hover:bg-[#FFF1F1]';
 
-  const handleSignOut = () => {
-    if (isSigningOut) return;
-
+  const handleSignOut = async () => {
     setIsSigningOut(true);
     setSessionState('guest');
     setUserSummary(null);
-
     writeAuthSnapshot({
       sessionState: 'guest',
       userSummary: null,
       savedAt: Date.now(),
     });
 
-    clearSupabaseBrowserStorage();
-
     try {
-      setClientUiLanguage(uiLang);
-      window.sessionStorage.removeItem(FLASH_NOTICE_KEY);
-    } catch {
-      // ignore storage failures
+      await fetch('/api/auth/session', {
+        method: 'DELETE',
+        cache: 'no-store',
+        credentials: 'include',
+      }).catch(() => null);
+
+      await supabase.auth.signOut().catch(() => null);
+    } finally {
+      clearSupabaseBrowserStorage();
+      writeAuthSnapshot(null);
+
+      const destination = '/?notice=signed_out';
+
+      try {
+        setClientUiLanguage(uiLang);
+        window.sessionStorage.removeItem(FLASH_NOTICE_KEY);
+      } catch {
+        // ignore storage failures
+      }
+
+      router.replace(destination);
+      router.refresh();
+
+      window.setTimeout(() => {
+        window.location.replace(destination);
+      }, 150);
     }
-
-    const destination = '/auth/logout?notice=signed_out';
-
-    void fetch('/api/auth/session', {
-      method: 'DELETE',
-      cache: 'no-store',
-      credentials: 'include',
-      keepalive: true,
-    }).catch(() => null);
-
-    window.setTimeout(() => {
-      window.location.assign(destination);
-    }, 20);
-
-    window.setTimeout(() => {
-      window.location.replace(destination);
-    }, LOGOUT_FALLBACK_DELAY_MS);
   };
 
   if (!hasHydrated || sessionState === 'loading') {
@@ -403,14 +405,14 @@ export default function AuthActions({ uiLang }: Props) {
     return (
       <div
         dir={isArabic ? 'rtl' : 'ltr'}
-        className="flex flex-wrap items-center gap-2 justify-start"
+        className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center sm:gap-2 sm:justify-start"
       >
-        <Link href="/blog" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
+        <Link href="/blog" className={`${pillBase} w-full whitespace-nowrap ${secondaryPill} sm:w-auto`}>
           {copy.blog}
         </Link>
 
         {pathname !== '/pricing' ? (
-          <Link href="/pricing" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
+          <Link href="/pricing" className={`${pillBase} w-full whitespace-nowrap ${secondaryPill} sm:w-auto`}>
             {copy.pricing}
           </Link>
         ) : null}
@@ -419,14 +421,14 @@ export default function AuthActions({ uiLang }: Props) {
           <>
             <Link
               href={`/login?mode=login&next=${encodeURIComponent(nextPath)}`}
-              className={`${pillBase} whitespace-nowrap ${secondaryPill}`}
+              className={`${pillBase} w-full whitespace-nowrap ${secondaryPill} sm:w-auto`}
             >
               {copy.login}
             </Link>
 
             <Link
               href={`/login?mode=signup&next=${encodeURIComponent(nextPath)}`}
-              className={`${pillBase} whitespace-nowrap ${primaryPill}`}
+              className={`${pillBase} col-span-2 w-full whitespace-nowrap ${primaryPill} sm:col-span-1 sm:w-auto`}
             >
               {copy.signup}
             </Link>
@@ -443,7 +445,7 @@ export default function AuthActions({ uiLang }: Props) {
   const providerLabel = getProviderLabel(userSummary?.provider || 'email', uiLang);
 
   return (
-    <div className="flex w-full flex-col gap-2.5">
+    <div className="flex w-full flex-col gap-3">
       <div dir="ltr" className="flex flex-col gap-3 md:flex-row md:items-center md:gap-5 lg:gap-6">
         <div
           className={`w-full md:max-w-[480px] lg:max-w-[500px] md:flex-none ${
@@ -452,7 +454,7 @@ export default function AuthActions({ uiLang }: Props) {
         >
           <div
             dir="ltr"
-            className={`flex items-center gap-3 rounded-[24px] border border-[#E5E7EB] bg-white px-5 py-3.5 shadow-[0_6px_18px_rgba(17,24,39,0.05)] ${
+            className={`flex items-center gap-3 rounded-[22px] border border-[#E5E7EB] bg-white px-4 py-3 shadow-[0_6px_18px_rgba(17,24,39,0.05)] sm:rounded-[24px] sm:px-5 sm:py-3.5 ${
               isArabic ? 'flex-row-reverse text-right' : 'flex-row text-left'
             }`}
           >
@@ -461,11 +463,11 @@ export default function AuthActions({ uiLang }: Props) {
               <img
                 src={avatarUrl}
                 alt={name || email || 'User avatar'}
-                className="h-11 w-11 rounded-full border border-[#E5E7EB] object-cover shadow-sm"
+                className="h-10 w-10 rounded-full border border-[#E5E7EB] object-cover shadow-sm sm:h-11 sm:w-11"
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E5E7EB] bg-[#111827] text-sm font-bold text-white shadow-sm">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-[#111827] text-sm font-bold text-white shadow-sm sm:h-11 sm:w-11">
                 {initials}
               </div>
             )}
@@ -476,19 +478,19 @@ export default function AuthActions({ uiLang }: Props) {
                   isArabic ? 'justify-end' : 'justify-start'
                 }`}
               >
-                <p className="truncate text-sm font-semibold text-[#111827]">
+                <p className="truncate text-[15px] font-semibold text-[#111827] sm:text-sm">
                   {name || email || copy.signedIn}
                 </p>
-                <span className="inline-flex items-center rounded-full bg-[#F3F4F6] px-2.5 py-0.5 text-[11px] font-semibold text-[#4B5563]">
+                <span className="inline-flex items-center rounded-full bg-[#F3F4F6] px-2.5 py-0.5 text-[10px] font-semibold text-[#4B5563] sm:text-[11px]">
                   {providerLabel}
                 </span>
               </div>
 
               {email ? (
-                <p className="truncate text-xs text-[#6B7280]">{email}</p>
+                <p className="truncate text-[12px] text-[#6B7280] sm:text-xs">{email}</p>
               ) : null}
 
-              <p className="text-[11px] font-medium text-[#6B7280]">
+              <p className="text-[10px] font-medium text-[#6B7280] sm:text-[11px]">
                 {copy.signedInAs} {providerLabel}
               </p>
             </div>
@@ -497,40 +499,40 @@ export default function AuthActions({ uiLang }: Props) {
 
         <div
           dir={isArabic ? 'rtl' : 'ltr'}
-          className={`flex flex-wrap items-center gap-2 md:gap-2.5 justify-start md:flex-1 ${
+          className={`grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center sm:gap-2.5 sm:justify-start md:flex-1 ${
             isArabic ? 'md:order-1' : 'md:order-2'
           }`}
         >
-          <Link href="/blog" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
+          <Link href="/blog" className={`${pillBase} w-full whitespace-nowrap ${secondaryPill} sm:w-auto`}>
             {copy.blog}
           </Link>
 
           {pathname !== '/dashboard' ? (
-            <Link href="/dashboard" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
+            <Link href="/dashboard" className={`${pillBase} w-full whitespace-nowrap ${secondaryPill} sm:w-auto`}>
               {copy.dashboard}
             </Link>
           ) : null}
 
           {pathname !== '/' ? (
-            <Link href="/" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
+            <Link href="/" className={`${pillBase} w-full whitespace-nowrap ${secondaryPill} sm:w-auto`}>
               {copy.newScan}
             </Link>
           ) : null}
 
           {pathname !== '/reports' ? (
-            <Link href="/reports" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
+            <Link href="/reports" className={`${pillBase} w-full whitespace-nowrap ${secondaryPill} sm:w-auto`}>
               {copy.reports}
             </Link>
           ) : null}
 
           {pathname !== '/compare' ? (
-            <Link href="/compare" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
+            <Link href="/compare" className={`${pillBase} w-full whitespace-nowrap ${secondaryPill} sm:w-auto`}>
               {copy.compare}
             </Link>
           ) : null}
 
           {pathname !== '/pricing' ? (
-            <Link href="/pricing" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
+            <Link href="/pricing" className={`${pillBase} w-full whitespace-nowrap ${secondaryPill} sm:w-auto`}>
               {copy.pricing}
             </Link>
           ) : null}
@@ -539,9 +541,7 @@ export default function AuthActions({ uiLang }: Props) {
             type="button"
             onClick={handleSignOut}
             disabled={isSigningOut}
-            className={`${pillBase} whitespace-nowrap ${dangerPill} ${
-              isSigningOut ? 'cursor-wait opacity-70' : ''
-            }`}
+            className={`${pillBase} w-full whitespace-nowrap ${dangerPill} sm:w-auto`}
           >
             {isSigningOut ? copy.signingOut : copy.logout}
           </button>
