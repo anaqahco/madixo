@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { NextResponse } from 'next/server';
 import { findLatestMatchingUserReport } from '@/lib/madixo-db';
+import { createClient } from '@/lib/supabase/server';
 import { PLAN_LIMITS } from '@/lib/madixo-plans';
 import { getCurrentMadixoPlan } from '@/lib/madixo-plan-store';
 
@@ -1140,6 +1141,30 @@ export async function POST(request: Request) {
           error: inputValidation.error,
         },
         { status: 400 }
+      );
+    }
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError) {
+      throw new Error(authError.message);
+    }
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: 'AUTH_REQUIRED',
+          error:
+            outputLanguage === 'ar'
+              ? 'يجب تسجيل الدخول أولًا لبدء تحليل الفرصة.'
+              : 'You need to sign in first to start the opportunity analysis.',
+        },
+        { status: 401 }
       );
     }
 
