@@ -19,12 +19,12 @@ import { type UiLanguage } from '@/lib/ui-language';
 const EXAMPLES = {
   en: {
     idea: 'AI operations assistant for multi-location service businesses',
-    market: 'United States, United Kingdom, GCC, Europe',
+    market: 'Saudi Arabia, United States, United Kingdom, GCC, Europe',
     customer: 'Service businesses with multiple locations or 5 to 50 staff',
   },
   ar: {
     idea: 'مساعد ذكاء اصطناعي لتشغيل الشركات الخدمية متعددة الفروع',
-    market: 'الولايات المتحدة، المملكة المتحدة، الخليج، أوروبا',
+    market: 'السعودية، الولايات المتحدة، المملكة المتحدة، الخليج، أوروبا',
     customer: 'شركات خدمية لديها عدة فروع أو من 5 إلى 50 موظفًا',
   },
 } as const;
