@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import type { UiLanguage } from '@/lib/ui-language';
 import { getBrowserAppUrl } from '@/lib/app-url';
+import type { UiLanguage } from '@/lib/ui-language';
 
 type Props = {
   uiLang: UiLanguage;
