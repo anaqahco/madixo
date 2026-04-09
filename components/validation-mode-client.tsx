@@ -437,7 +437,7 @@ function SectionCard({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-[28px] border border-[#E5E7EB] bg-white p-6 shadow-sm">
+    <section className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5 md:p-6">
       <h2 className="text-lg font-bold text-[#111827]">{title}</h2>
       <div className="mt-4 text-[#4B5563]">{children}</div>
     </section>
@@ -560,7 +560,7 @@ function AppliedPlanNotice({
   const copy = UI_COPY[uiLang];
 
   return (
-    <section className="rounded-[28px] border border-[#ABEFC6] bg-[#ECFDF3] p-6 shadow-sm">
+    <section className="rounded-[28px] border border-[#ABEFC6] bg-[#ECFDF3] p-4 shadow-sm sm:p-5 md:p-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <h2 className="text-lg font-bold text-[#05603A]">{notice.title}</h2>
@@ -598,11 +598,11 @@ function AppliedPlanNotice({
           </span>
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div className="mt-5 grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
           <button
             type="button"
             onClick={onGoToEvidence}
-            className="rounded-full bg-[#111827] px-5 py-2.5 text-sm font-semibold text-white"
+            className="inline-flex w-full items-center justify-center rounded-full bg-[#111827] px-5 py-2.5 text-sm font-semibold text-white sm:w-auto"
           >
             {copy.goToEvidence}
           </button>
@@ -610,14 +610,14 @@ function AppliedPlanNotice({
           <button
             type="button"
             onClick={onGoToDecisionView}
-            className="rounded-full border border-[#111827] bg-white px-5 py-2.5 text-sm font-semibold text-[#111827]"
+            className="inline-flex w-full items-center justify-center rounded-full border border-[#111827] bg-white px-5 py-2.5 text-sm font-semibold text-[#111827] sm:w-auto"
           >
             {copy.goToDecisionView}
           </button>
         </div>
       </div>
 
-      <div className="mt-5 grid gap-6 lg:grid-cols-3">
+      <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5 lg:gap-6">
         <div className="rounded-[22px] bg-white p-5">
           <h3 className="text-sm font-semibold text-[#111827]">
             {copy.changedNowTitle}
@@ -1087,14 +1087,14 @@ export default function ValidationModeClient({
 
   return (
     <main className="min-h-screen bg-[#F3F4F6] text-[#111827]" dir={copy.dir}>
-      <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:py-6 md:px-6 md:py-8">
+      <div className="mx-auto w-full max-w-6xl px-4 py-5 md:px-6 md:py-8">
         <SiteHeader
           uiLang={uiLang}
           onLanguageChange={handleLanguageChange}
           logo={<MadixoLogo />}
         />
 
-        <div className="mt-5 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:mt-6 sm:p-6 md:rounded-[32px] md:p-8">
+        <div className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
@@ -1108,14 +1108,14 @@ export default function ValidationModeClient({
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="grid w-full gap-2 sm:flex sm:w-auto sm:flex-wrap sm:gap-3">
               <button
                 type="button"
                 onClick={() =>
                   void loadValidationSnapshot(uiLang, { forceRegenerate: true })
                 }
                 disabled={state === 'loading'}
-                className="rounded-full border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-semibold text-[#374151] disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-semibold text-[#374151] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
               >
                 {copy.regenerate}
               </button>
@@ -1123,7 +1123,7 @@ export default function ValidationModeClient({
                 type="button"
                 onClick={handleExportPdf}
                 disabled={!plan || exportState === 'loading' || state === 'loading'}
-                className="rounded-full bg-[#111827] px-5 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex w-full items-center justify-center rounded-full bg-[#111827] px-5 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
               >
                 {exportState === 'loading'
                   ? copy.exportingPdf
@@ -1141,7 +1141,7 @@ export default function ValidationModeClient({
             </span>
           </div>
 
-          <div className="mt-6 rounded-[24px] border border-[#E5E7EB] bg-[#F9FAFB] p-4 md:p-5">
+          <div className="mt-6 rounded-[24px] border border-[#E5E7EB] bg-[#F9FAFB] p-4 sm:p-5">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6B7280]">
@@ -1163,7 +1163,7 @@ export default function ValidationModeClient({
               />
             </div>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {stepItems.map((item, index) => {
                 const stepNumber = index + 1;
                 const isActive = stepNumber === currentStep;
@@ -1189,7 +1189,7 @@ export default function ValidationModeClient({
         </div>
 
         {state === 'loading' ? (
-          <div className="mt-6 rounded-[24px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:rounded-[28px] md:p-8">
+          <div className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-3xl">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
@@ -1210,7 +1210,7 @@ export default function ValidationModeClient({
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6B7280]">
                   {copy.loadingCountdown}
                 </p>
-                <p className="mt-3 text-3xl font-black text-[#111827] sm:text-4xl">
+                <p className="mt-3 text-4xl font-black text-[#111827]">
                   {loadingCountdownSeconds}
                 </p>
                 <p className="mt-1 text-sm text-[#4B5563]">
@@ -1219,7 +1219,7 @@ export default function ValidationModeClient({
               </div>
             </div>
 
-            <div className="mt-6 rounded-[24px] border border-[#E5E7EB] bg-[#F9FAFB] p-4 md:p-5">
+            <div className="mt-6 rounded-[24px] border border-[#E5E7EB] bg-[#F9FAFB] p-4 sm:p-5">
               <div className="flex items-center justify-between gap-4">
                 <span className="text-sm font-semibold text-[#1D4ED8]">
                   {loadingProgressPercent}%
@@ -1270,7 +1270,7 @@ export default function ValidationModeClient({
           <div className="mt-6 space-y-6">
             <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1.15fr_0.85fr]">
               <SectionCard title={copy.opportunitySummary}>
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2 md:gap-4">
                   {summaryRows.map((row) => (
                     <div
                       key={row.label}
@@ -1316,7 +1316,7 @@ export default function ValidationModeClient({
               </SectionCard>
             </div>
 
-            <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5 lg:gap-6">
               <SectionCard title={copy.continueSignals}>
                 {plan.continueSignals.length ? (
                   <BulletList items={plan.continueSignals} />
@@ -1459,7 +1459,7 @@ export default function ValidationModeClient({
                   type="button"
                   onClick={() => void handleSaveWorkspace()}
                   disabled={saveState === 'saving'}
-                  className="rounded-full bg-[#111827] px-5 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex w-full items-center justify-center rounded-full bg-[#111827] px-5 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                 >
                   {saveState === 'saving'
                     ? copy.savingWorkspace
