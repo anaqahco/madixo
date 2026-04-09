@@ -35,7 +35,7 @@ function MadixoLogo() {
       width={210}
       height={54}
       priority
-      className="h-auto w-[175px] md:w-[210px]"
+      className="h-auto w-[148px] sm:w-[175px] md:w-[210px]"
     />
   );
 }
@@ -48,7 +48,7 @@ export default function AuthShellHeader({
   const isArabic = uiLang === 'ar';
 
   const pillBase =
-    'rounded-full border px-[15px] py-[10px] text-[14px] font-semibold leading-none transition-colors duration-200';
+    'inline-flex min-h-[42px] items-center justify-center rounded-full border px-4 py-2.5 text-[13px] font-semibold leading-none transition-colors duration-200 sm:min-h-[44px] sm:px-[15px] sm:py-[10px] sm:text-[14px]';
   const secondaryPill =
     'border-[#DCE4EE] bg-white text-[#374151] hover:bg-[#F8FAFC]';
   const primaryPill =
@@ -56,9 +56,9 @@ export default function AuthShellHeader({
 
   return (
     <div className="mx-auto w-full max-w-6xl">
-      <div className="rounded-[28px] border border-[#E5E7EB] bg-white/95 px-5 py-4 shadow-[0_8px_30px_rgba(17,24,39,0.04)] backdrop-blur supports-[backdrop-filter]:bg-white/85 md:px-7 md:py-4">
+      <div className="rounded-[24px] border border-[#E5E7EB] bg-white/95 px-4 py-3 shadow-[0_8px_30px_rgba(17,24,39,0.04)] backdrop-blur supports-[backdrop-filter]:bg-white/85 sm:px-5 sm:py-4 md:rounded-[28px] md:px-7 md:py-4">
         <div
-          className={`flex min-h-[64px] items-center justify-between gap-5 md:min-h-[72px] ${
+          className={`flex min-h-[56px] items-center justify-between gap-4 sm:min-h-[64px] md:min-h-[72px] md:gap-5 ${
             isArabic ? 'flex-row-reverse' : 'flex-row'
           }`}
         >
@@ -71,7 +71,7 @@ export default function AuthShellHeader({
 
         <div className="mt-4 border-t border-[#EEF2F7] pt-4">
           <div
-            className={`flex flex-wrap items-center gap-2.5 ${
+            className={`flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 md:justify-start ${
               isArabic ? 'justify-end' : 'justify-start'
             }`}
           >
