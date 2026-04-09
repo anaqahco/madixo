@@ -60,26 +60,26 @@ export default function BlogIndexPageClient({
 
   return (
     <>
-      <section className="mx-auto max-w-6xl px-6 pb-10 pt-10 text-center">
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-10 pt-10 text-center">
         <p className="text-sm font-medium text-[#6B7280]">{copy.eyebrow}</p>
-        <h1 className="mt-3 text-4xl font-bold tracking-tight text-[#111827] md:text-5xl">
+        <h1 className="mt-3 text-3xl font-bold sm:text-4xl tracking-tight text-[#111827] md:text-5xl">
           {copy.title}
         </h1>
-        <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-[#475467] md:text-lg">
+        <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 sm:text-base sm:leading-8 text-[#475467] md:text-lg">
           {copy.description}
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link href="/" className="rounded-full bg-[#111827] px-6 py-3 text-sm font-semibold text-white hover:opacity-90">
+          <Link href="/" className="rounded-full bg-[#111827] px-4 sm:px-6 py-3 text-sm font-semibold text-white hover:opacity-90">
             {copy.openMadixo}
           </Link>
-          <Link href="/pricing" className="rounded-full border border-[#D9E2F0] bg-white px-6 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]">
+          <Link href="/pricing" className="rounded-full border border-[#D9E2F0] bg-white px-4 sm:px-6 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]">
             {copy.pricing}
           </Link>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-10">
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-10">
         <div className="mb-4 flex items-center justify-between gap-4">
           <h2 className="text-xl font-bold tracking-tight text-[#111827]">{copy.filters}</h2>
         </div>
@@ -113,14 +113,14 @@ export default function BlogIndexPageClient({
       </section>
 
       {selectedCategory === 'all' ? (
-        <section className="mx-auto max-w-6xl px-6 pb-16">
+        <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-16">
           <div className="mb-6 flex items-center justify-between gap-4">
-            <h2 className="text-2xl font-bold tracking-tight text-[#111827]">{copy.featured}</h2>
+            <h2 className="text-xl font-bold sm:text-2xl tracking-tight text-[#111827]">{copy.featured}</h2>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
             {featuredPosts.map((post) => (
-              <article key={post.slug} className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-6 shadow-sm">
+              <article key={post.slug} className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="rounded-full border border-[#D9E2F0] bg-white px-3 py-1 text-xs font-semibold text-[#4B5563]">
                     {categoryLabel(post.category, uiLang)}
@@ -133,19 +133,19 @@ export default function BlogIndexPageClient({
                   </span>
                 </div>
 
-                <h3 className="mt-5 text-2xl font-bold leading-tight text-[#111827]">
+                <h3 className="mt-5 text-xl font-bold sm:text-2xl leading-tight text-[#111827]">
                   {localizeText(post.title, uiLang)}
                 </h3>
 
-                <p className="mt-4 text-base leading-8 text-[#475467]">
+                <p className="mt-4 text-sm leading-7 sm:text-base sm:leading-8 text-[#475467]">
                   {localizeText(post.excerpt, uiLang)}
                 </p>
 
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <Link href={`/blog/${post.slug}`} className="rounded-full bg-[#111827] px-5 py-3 text-sm font-semibold text-white hover:opacity-90">
+                  <Link href={`/blog/${post.slug}`} className="inline-flex w-full items-center justify-center rounded-full bg-[#111827] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 sm:w-auto">
                     {copy.readArticle}
                   </Link>
-                  <Link href="/pricing" className="rounded-full border border-[#D9E2F0] bg-white px-5 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]">
+                  <Link href="/pricing" className="inline-flex w-full items-center justify-center rounded-full border border-[#D9E2F0] bg-white px-5 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB] sm:w-auto">
                     {copy.pricing}
                   </Link>
                 </div>
@@ -155,14 +155,14 @@ export default function BlogIndexPageClient({
         </section>
       ) : null}
 
-      <section className="mx-auto max-w-6xl px-6 pb-24">
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-24">
         <div className="mb-6 flex items-center justify-between gap-4">
-          <h2 className="text-2xl font-bold tracking-tight text-[#111827]">{copy.allArticles}</h2>
+          <h2 className="text-xl font-bold sm:text-2xl tracking-tight text-[#111827]">{copy.allArticles}</h2>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {posts.map((post) => (
-            <article key={post.slug} className="rounded-[28px] border border-[#D9E2F0] bg-white p-6 shadow-sm">
+            <article key={post.slug} className="rounded-[28px] border border-[#D9E2F0] bg-white p-5 shadow-sm sm:p-6">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-3 py-1 text-xs font-semibold text-[#4B5563]">
                   {categoryLabel(post.category, uiLang)}
