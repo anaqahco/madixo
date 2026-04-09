@@ -1,41 +1,36 @@
-function cleanBaseUrl(value: string | null | undefined) {
-  if (!value) return '';
-  return value.trim().replace(/\/$/, '');
+const DEFAULT_APP_URL = 'https://madixo.ai';
+
+function normalizeBaseUrl(value: string | null | undefined) {
+  if (!value) return null;
+
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  try {
+    return new URL(trimmed).origin;
+  } catch {
+    return null;
+  }
 }
 
-function ensureLeadingSlash(path: string) {
-  if (!path) return '';
-  return path.startsWith('/') ? path : `/${path}`;
-}
-
-export { cleanBaseUrl };
-
-export function getPublicAppUrl() {
+export function getConfiguredAppUrl() {
   return (
-    cleanBaseUrl(process.env.NEXT_PUBLIC_APP_URL) ||
-    cleanBaseUrl(process.env.NEXT_PUBLIC_SITE_URL) ||
-    cleanBaseUrl(process.env.APP_URL) ||
-    ''
+    normalizeBaseUrl(process.env.NEXT_PUBLIC_APP_URL) ??
+    normalizeBaseUrl(process.env.APP_URL) ??
+    DEFAULT_APP_URL
   );
 }
 
-export function getBrowserAppUrl() {
-  return getPublicAppUrl();
+export function buildAbsoluteAppUrl(path: string) {
+  const base = getConfiguredAppUrl();
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return new URL(normalizedPath, base).toString();
 }
 
-export function buildAbsoluteAppUrl(path = '') {
-  const baseUrl =
-    cleanBaseUrl(process.env.APP_URL) ||
-    cleanBaseUrl(process.env.NEXT_PUBLIC_APP_URL) ||
-    cleanBaseUrl(process.env.NEXT_PUBLIC_SITE_URL);
-
-  if (!baseUrl) {
-    throw new Error(
-      'Missing APP_URL or NEXT_PUBLIC_APP_URL. Set the production domain in environment variables.'
-    );
-  }
-
-  if (!path) return baseUrl;
-
-  return `${baseUrl}${ensureLeadingSlash(path)}`;
+export function getBrowserAppUrl() {
+  return (
+    normalizeBaseUrl(process.env.NEXT_PUBLIC_APP_URL) ??
+    normalizeBaseUrl(process.env.APP_URL) ??
+    DEFAULT_APP_URL
+  );
 }
