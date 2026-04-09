@@ -3,8 +3,8 @@
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
 import { buildAbsoluteAppUrl } from '@/lib/app-url';
+import { createClient } from '@/lib/supabase/server';
 
 type UiLanguage = 'ar' | 'en';
 
@@ -266,13 +266,15 @@ export async function signup(formData: FormData) {
     });
   }
 
-  const callbackUrl = buildAbsoluteAppUrl(`/auth/callback?next=${encodeURIComponent(next)}`);
+  const emailRedirectTo = buildAbsoluteAppUrl(
+    `/auth/callback?next=${encodeURIComponent(next)}`
+  );
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: callbackUrl,
+      emailRedirectTo,
       data: {
         language,
       },
@@ -313,7 +315,6 @@ export async function requestPasswordReset(formData: FormData) {
 
   const next = getSafeNext(formData.get('next'));
   const email = getSafeText(formData.get('email'));
-  const callbackUrl = buildAbsoluteAppUrl(`/auth/callback?flow=recovery&next=${encodeURIComponent(next)}`);
 
   if (!email) {
     backToForgotPassword({
@@ -322,8 +323,12 @@ export async function requestPasswordReset(formData: FormData) {
     });
   }
 
+  const redirectTo = buildAbsoluteAppUrl(
+    `/auth/callback?flow=recovery&next=${encodeURIComponent(next)}`
+  );
+
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: callbackUrl,
+    redirectTo,
   });
 
   if (error) {
