@@ -79,8 +79,8 @@ export default function SiteFooter({ uiLang }: Props) {
 
   return (
     <footer dir={copy.dir} className="border-t border-[#E5E7EB] bg-[#FAFAFB]">
-      <div className="mx-auto max-w-6xl px-6 py-8 md:py-10">
-        <div className="rounded-[28px] border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-8">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:py-10">
+        <div className="rounded-[24px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-6 md:rounded-[28px] md:p-8">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center lg:gap-12">
             <div className={isArabic ? 'text-right' : 'text-left'}>
               <Link href="/" className="inline-flex items-center">
@@ -93,7 +93,7 @@ export default function SiteFooter({ uiLang }: Props) {
                 />
               </Link>
 
-              <p className="mt-4 max-w-2xl text-sm leading-8 text-[#4B5563] md:text-base">
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-[#4B5563] md:text-base md:leading-8">
                 {copy.description}
               </p>
 
@@ -104,14 +104,14 @@ export default function SiteFooter({ uiLang }: Props) {
               >
                 <Link
                   href="/"
-                  className="inline-flex rounded-full border border-[#111827] bg-[#111827] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                  className="inline-flex w-full justify-center rounded-full border border-[#111827] bg-[#111827] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto"
                 >
                   {copy.cta}
                 </Link>
 
                 <Link
                   href="/pricing"
-                  className="inline-flex rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-5 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-[#EEF3F9]"
+                  className="inline-flex w-full justify-center rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-5 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-[#EEF3F9] sm:w-auto"
                 >
                   {copy.secondary}
                 </Link>
@@ -124,7 +124,7 @@ export default function SiteFooter({ uiLang }: Props) {
               </p>
               <a
                 href={`mailto:${copy.emailValue}`}
-                className={`mt-2 block text-lg font-semibold text-[#111827] hover:underline md:text-[1.75rem] ${
+                className={`mt-2 block break-all text-lg font-semibold text-[#111827] hover:underline md:text-[1.75rem] ${
                   isArabic ? 'text-right' : 'text-left'
                 }`}
               >
@@ -138,7 +138,7 @@ export default function SiteFooter({ uiLang }: Props) {
 
           <div className="mt-8 border-t border-[#E5E7EB] pt-6">
             {isArabic ? (
-              <div className="ml-auto grid w-fit grid-cols-[max-content_max-content] gap-x-16 gap-y-8 text-right md:gap-x-24">
+              <div className="grid gap-8 text-right sm:ml-auto sm:w-fit sm:grid-cols-[max-content_max-content] sm:gap-x-16 md:gap-x-24">
                 <div>
                   <h2 className="text-sm font-semibold text-[#111827]">{copy.company}</h2>
                   <div className="mt-4 flex flex-col gap-3">
@@ -158,7 +158,7 @@ export default function SiteFooter({ uiLang }: Props) {
                 </div>
               </div>
             ) : (
-              <div className="mr-auto grid w-fit grid-cols-[max-content_max-content] gap-x-16 gap-y-8 text-left md:gap-x-24">
+              <div className="grid gap-8 text-left sm:mr-auto sm:w-fit sm:grid-cols-[max-content_max-content] sm:gap-x-16 md:gap-x-24">
                 <div>
                   <h2 className="text-sm font-semibold text-[#111827]">{copy.product}</h2>
                   <div className="mt-4 flex flex-col gap-3">
