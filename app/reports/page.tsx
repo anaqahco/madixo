@@ -659,7 +659,7 @@ export default function ReportsPage() {
           </div>
         ) : null}
 
-        <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
               {copy.savedWorkspace}
@@ -667,16 +667,16 @@ export default function ReportsPage() {
 
             <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-6xl">{copy.myReports}</h1>
 
-            <p className="mt-4 max-w-2xl text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">{copy.workspaceDescription}</p>
+            <p className="mt-3 max-w-2xl text-base leading-7 text-[#4B5563] md:mt-4 md:text-lg md:leading-8">{copy.workspaceDescription}</p>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+            <div className="w-full rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm sm:w-auto">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">{copy.totalReports}</p>
               <p className="mt-1 text-2xl font-bold">{reports.length}</p>
             </div>
 
-            <div className="rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm">
+            <div className="w-full rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm sm:w-auto">
               <label htmlFor="sort-reports" className="block text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
                 {copy.sortBy}
               </label>
@@ -697,9 +697,9 @@ export default function ReportsPage() {
         </div>
 
         {reports.length ? (
-          <div className="mb-6 rounded-[24px] border border-[#E5E7EB] bg-white p-4 shadow-sm">
+          <div className="mb-6 rounded-[22px] border border-[#E5E7EB] bg-white p-3 shadow-sm sm:p-4">
             <p className="text-sm font-semibold text-[#6B7280]">{copy.filterByStatus}</p>
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-3 flex flex-nowrap gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:flex-wrap sm:overflow-visible sm:pb-0">
               {statusFilters.map((option) => (
                 <button
                   key={option.value}
@@ -723,13 +723,13 @@ export default function ReportsPage() {
         ) : null}
 
         {loading ? (
-          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:rounded-[32px] md:px-12 md:py-14">
+          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:px-12 md:py-14">
             <div className="mx-auto max-w-2xl text-center">
               <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
                 {copy.loadingReports}
               </div>
               <h2 className="mt-6 text-2xl font-bold sm:text-3xl md:text-4xl">{copy.loadingWorkspace}</h2>
-              <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">{copy.loadingWorkspaceDescription}</p>
+              <p className="mt-4 text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">{copy.loadingWorkspaceDescription}</p>
 
               {showSlowNotice ? (
                 <div className="mx-auto mt-8 max-w-xl rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-start">
@@ -747,20 +747,20 @@ export default function ReportsPage() {
             </div>
           </div>
         ) : reports.length === 0 ? (
-          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:rounded-[32px] md:px-12 md:py-14">
+          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-10 shadow-sm sm:px-8 sm:py-12 md:px-12 md:py-14">
             <div className="mx-auto max-w-2xl text-center">
               <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
                 {copy.noSavedReports}
               </div>
               <h2 className="mt-6 text-2xl font-bold sm:text-3xl md:text-4xl">{copy.noReportsSavedYet}</h2>
-              <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">{copy.noReportsDescription}</p>
+              <p className="mt-4 text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">{copy.noReportsDescription}</p>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                <Link href="/" className="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto">
+                <Link href="/" className="inline-block rounded-full bg-black px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90">
                   {copy.startNewScan}
                 </Link>
                 <Link
                   href="/compare"
-                  className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-5 py-3 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB] sm:w-auto"
+                  className="inline-block rounded-full border border-[#E5E7EB] bg-white px-5 py-3 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
                 >
                   {copy.openComparePage}
                 </Link>
@@ -768,7 +768,7 @@ export default function ReportsPage() {
             </div>
           </div>
         ) : visibleReports.length === 0 ? (
-          <div className="rounded-[32px] border border-[#E5E7EB] bg-white px-8 py-10 text-center text-[#6B7280] shadow-sm">{copy.noMatchingReports}</div>
+          <div className="rounded-[28px] border border-[#E5E7EB] bg-white px-5 py-8 text-center text-sm text-[#6B7280] shadow-sm sm:px-8 sm:py-10 sm:text-base">{copy.noMatchingReports}</div>
         ) : (
           <div className="grid gap-6">
             {visibleReports.map((report) => {
@@ -785,7 +785,7 @@ export default function ReportsPage() {
               const validateHref = `/validate/${report.id}`;
 
               return (
-                <div key={report.id} className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:rounded-[32px] md:p-7">
+                <div key={report.id} className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5 md:p-7">
                   <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
                     <div className="max-w-4xl">
                       <div className="flex flex-wrap items-center gap-3">
@@ -807,21 +807,21 @@ export default function ReportsPage() {
 
                       <MixedText as="h2" text={safeQuery} className="mt-4 text-xl font-bold leading-tight sm:text-2xl md:text-3xl" />
 
-                      <div className="mt-4 grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:gap-3">
-                        <span className="rounded-full bg-[#F3F4F6] px-4 py-2 text-sm font-medium text-[#374151] break-words">
+                      <div className="mt-4 flex flex-wrap gap-3">
+                        <span className="rounded-full bg-[#F3F4F6] px-4 py-2 text-sm font-medium text-[#374151]">
                           {copy.market}: <MixedText as="span" text={safeMarket} />
                         </span>
-                        <span className="rounded-full bg-[#F3F4F6] px-4 py-2 text-sm font-medium text-[#374151] break-words">
+                        <span className="rounded-full bg-[#F3F4F6] px-4 py-2 text-sm font-medium text-[#374151]">
                           {copy.customer}: <MixedText as="span" text={safeCustomer} />
                         </span>
                       </div>
 
-                      <MixedText as="p" text={report.result.summary} className="mt-5 max-w-3xl text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8" />
+                      <MixedText as="p" text={report.result.summary} className="mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:mt-5 md:text-lg md:leading-8" />
                     </div>
                   </div>
 
                   <div className="mt-6 flex flex-col gap-3 border-t border-[#F3F4F6] pt-5 md:flex-row md:items-center md:justify-between">
-                    <div className="flex flex-wrap gap-3">
+                    <div className="grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
                       <Link
                         href={validateHref}
                         className="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto"
@@ -837,17 +837,17 @@ export default function ReportsPage() {
                       </Link>
                     </div>
 
-                    <div className="flex flex-wrap gap-3">
+                    <div className="grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
                       <Link
                         href="/compare"
-                        className="rounded-full border border-[#D1D5DB] bg-white px-5 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
+                        className="inline-flex w-full items-center justify-center rounded-full border border-[#D1D5DB] bg-white px-5 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB] sm:w-auto"
                       >
                         {copy.compare}
                       </Link>
 
                       <Link
                         href={resultsHref}
-                        className="rounded-full border border-[#D1D5DB] bg-white px-5 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB]"
+                        className="inline-flex w-full items-center justify-center rounded-full border border-[#D1D5DB] bg-white px-5 py-2.5 text-sm font-semibold text-[#374151] transition hover:bg-[#F9FAFB] sm:w-auto"
                       >
                         {copy.rerunAnalysis}
                       </Link>
@@ -856,14 +856,14 @@ export default function ReportsPage() {
                         type="button"
                         onClick={() => handleDelete(report.id)}
                         disabled={deletingId === report.id}
-                        className="rounded-full border border-red-200 bg-white px-5 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="inline-flex w-full items-center justify-center rounded-full border border-red-200 bg-white px-5 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                       >
                         {deletingId === report.id ? copy.deleting : copy.delete}
                       </button>
                     </div>
                   </div>
 
-                  <div className="mt-5 grid gap-3 sm:gap-4 md:grid-cols-3">
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
                     <div className="rounded-2xl bg-[#F9FAFB] p-4">
                       <p className="text-sm font-semibold text-[#6B7280]">{copy.whyThisOpportunity}</p>
                       <MixedText as="p" text={report.result.whyThisOpportunity} className="mt-2 text-sm leading-7 text-[#4B5563]" />
