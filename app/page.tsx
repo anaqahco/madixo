@@ -770,9 +770,9 @@ export default function HomePage() {
 
     supabase.auth
       .getUser()
-      .then(({ data, error }) => {
+      .then((result: { data: { user: unknown | null }; error: unknown | null }) => {
         if (!mounted) return;
-        applyUserState(!error && Boolean(data.user));
+        applyUserState(!result.error && Boolean(result.data.user));
       })
       .catch(() => {
         if (!mounted) return;
