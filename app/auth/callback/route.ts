@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { createClient } from '@/lib/supabase/server';
 import { buildAbsoluteAppUrl } from '@/lib/app-url';
+import { createClient } from '@/lib/supabase/server';
 import {
   MADIXO_PLAN_COOKIE,
   syncPlanCookieFromUser,
@@ -88,14 +88,18 @@ export async function GET(request: Request) {
     if (!error) {
       const cookiePlan = (await syncPlanCookieFromUser()) ?? 'free';
 
-      let destination = buildAbsoluteAppUrl(`/auth/verified?next=${encodeURIComponent(next)}`);
+      let destination = buildAbsoluteAppUrl(
+        `/auth/verified?next=${encodeURIComponent(next)}`
+      );
 
       if (flow === 'oauth') {
         destination = buildAbsoluteAppUrl(next);
       }
 
       if (flow === 'recovery') {
-        destination = buildAbsoluteAppUrl(`/reset-password?next=${encodeURIComponent(next)}`);
+        destination = buildAbsoluteAppUrl(
+          `/reset-password?next=${encodeURIComponent(next)}`
+        );
       }
 
       const response = NextResponse.redirect(destination);
@@ -119,7 +123,9 @@ export async function GET(request: Request) {
         : copy.verificationError;
 
   const response = NextResponse.redirect(
-    buildAbsoluteAppUrl(`/auth/error?next=${encodeURIComponent(next)}&message=${encodeURIComponent(message)}`)
+    buildAbsoluteAppUrl(
+      `/auth/error?next=${encodeURIComponent(next)}&message=${encodeURIComponent(message)}`
+    )
   );
   clearOAuthCookies(response);
   return response;
