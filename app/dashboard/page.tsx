@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import MixedText from '@/components/mixed-text';
 import { useUiLanguageState } from '@/components/ui-language-provider';
 import SiteHeader from '@/components/site-header';
@@ -470,8 +470,17 @@ export default function DashboardPage() {
   const [preferredLanguage, setPreferredLanguage] = useUiLanguageState();
   const [currentPlanLabel, setCurrentPlanLabel] = useState('');
   const [planUsage, setPlanUsage] = useState<PlanUsage | null>(null);
+  const planSectionRef = useRef<HTMLElement | null>(null);
+  const focusSectionRef = useRef<HTMLElement | null>(null);
+  const recentIdeasSectionRef = useRef<HTMLElement | null>(null);
 
   const copy = UI_COPY[preferredLanguage];
+
+  function scrollToSection(target: HTMLElement | null) {
+    if (!target) return;
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
 
   const refreshDashboard = async () => {
@@ -572,7 +581,7 @@ export default function DashboardPage() {
   return (
     <main
       dir={copy.dir}
-      className="min-h-screen bg-[#FAFAFB] px-4 pb-12 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6"
+      className="min-h-screen bg-[#FAFAFB] px-4 pb-20 pt-4 text-[#111827] sm:px-6 sm:pb-16 sm:pt-6"
     >
       <SiteHeader
         uiLang={preferredLanguage}
@@ -625,7 +634,7 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          <section className="rounded-[28px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-6 md:p-8">
+          <section className="hidden rounded-[28px] border border-[#E5E7EB] bg-white p-5 shadow-sm lg:block lg:p-6 xl:p-8">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
               {copy.quickActions}
             </p>
@@ -661,9 +670,53 @@ export default function DashboardPage() {
           </section>
         </div>
 
+        <section className="mt-4 rounded-[24px] border border-[#E5E7EB] bg-white p-4 shadow-sm lg:hidden">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                {preferredLanguage === 'ar' ? 'تنقل سريع' : 'Quick navigation'}
+              </p>
+              <p className="mt-2 text-sm font-semibold text-[#111827]">
+                {preferredLanguage === 'ar'
+                  ? 'الوصول السريع للباقات والأولوية الحالية وآخر الفرص.'
+                  : 'Jump quickly to your plan, current priority, and latest opportunities.'}
+              </p>
+            </div>
+
+            <span className="inline-flex rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-1 text-[11px] font-semibold text-[#374151]">
+              {currentPlanLabel || (preferredLanguage === 'ar' ? 'المجانية' : 'Free')}
+            </span>
+          </div>
+
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={() => scrollToSection(planSectionRef.current)}
+              className="inline-flex w-full items-center justify-center rounded-full border border-[#111827] bg-[#111827] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+            >
+              {preferredLanguage === 'ar' ? 'الباقة الحالية' : 'Current plan'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => scrollToSection(focusSectionRef.current)}
+              className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3 text-sm font-semibold text-[#111827] transition hover:bg-white"
+            >
+              {copy.focusNow}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => scrollToSection(recentIdeasSectionRef.current)}
+              className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 py-3 text-sm font-semibold text-[#111827] transition hover:bg-[#F9FAFB] sm:col-span-2"
+            >
+              {copy.recentIdeas}
+            </button>
+          </div>
+        </section>
 
         {planUsage ? (
-          <section className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8">
+          <section ref={planSectionRef} className="mt-6 scroll-mt-24 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8">
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
@@ -810,7 +863,7 @@ export default function DashboardPage() {
             </section>
 
             <section className="mt-6 grid gap-4 sm:gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-              <div className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8">
+              <div ref={focusSectionRef} className="scroll-mt-24 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
@@ -930,7 +983,7 @@ export default function DashboardPage() {
                 ) : null}
               </div>
 
-              <div className="rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8">
+              <div ref={recentIdeasSectionRef} className="scroll-mt-24 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
                   {copy.recentIdeas}
                 </p>
