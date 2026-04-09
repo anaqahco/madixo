@@ -772,7 +772,7 @@ export default function PricingPage() {
   return (
     <main
       dir={uiLang === 'ar' ? 'rtl' : 'ltr'}
-      className="min-h-screen bg-[#F9FAFB] px-4 py-6 md:px-6 md:py-8"
+      className="min-h-screen bg-[#F9FAFB] px-4 py-5 sm:px-5 sm:py-6 md:px-6 md:py-8"
     >
       <SiteHeader
         uiLang={uiLang}
@@ -783,16 +783,16 @@ export default function PricingPage() {
         logo={<MadixoLogo />}
       />
 
-      <section className="mx-auto mt-6 max-w-7xl rounded-[32px] border border-[#D9E2F0] bg-[#F7F9FC] p-6 shadow-sm md:p-8">
+      <section className="mx-auto mt-5 max-w-7xl rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:mt-6 sm:p-6 md:rounded-[32px] md:p-8">
         <span className="inline-flex rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-3 py-1 text-xs font-semibold text-[#6B7280]">
           {copy.eyebrow}
         </span>
 
-        <h1 className="mt-4 text-4xl font-bold tracking-tight text-[#111827] md:text-6xl">
+        <h1 className="mt-4 text-3xl font-bold tracking-tight text-[#111827] sm:text-[2.5rem] md:text-6xl">
           {copy.title}
         </h1>
 
-        <p className="mt-4 max-w-4xl text-base leading-8 text-[#4B5563] md:text-lg">
+        <p className="mt-4 max-w-4xl text-sm leading-7 text-[#4B5563] sm:text-base md:text-lg">
           {copy.description}
         </p>
 
@@ -843,7 +843,7 @@ export default function PricingPage() {
           </div>
         ) : null}
 
-        <div className="mt-8 grid gap-5 lg:grid-cols-3">
+        <div className="mt-7 grid gap-4 lg:grid-cols-3">
           {copy.plans.map((plan) => {
             const isCurrent = currentPlan === plan.key;
             const isBusy = isSubmitting === plan.key;
@@ -873,7 +873,7 @@ export default function PricingPage() {
               <article
                 key={plan.key}
                 className={[
-                  'rounded-[28px] border p-5 shadow-sm transition',
+                  'rounded-[24px] border p-4 shadow-sm transition sm:rounded-[28px] sm:p-5',
                   plan.highlighted
                     ? 'border-[#111827] bg-[#0F172A] text-white'
                     : 'border-[#E5E7EB] bg-white text-[#111827]',
@@ -920,7 +920,7 @@ export default function PricingPage() {
 
                 <div className="mt-4">
                   <div className="flex items-end gap-2">
-                    <span className="text-4xl font-bold">{plan.price}</span>
+                    <span className="text-[2rem] font-bold sm:text-4xl">{plan.price}</span>
                     <span
                       className={
                         plan.highlighted ? 'text-sm text-white/70' : 'text-sm text-[#6B7280]'
@@ -1010,13 +1010,13 @@ export default function PricingPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 flex flex-wrap gap-3">
+                <div className="mt-5 flex flex-col gap-2.5 sm:mt-6 sm:flex-row sm:flex-wrap sm:gap-3">
                   {plan.disabled ? (
                     <button
                       type="button"
                       disabled
                       className={[
-                        'inline-flex rounded-full px-5 py-3 text-sm font-semibold opacity-60',
+                        'inline-flex w-full justify-center rounded-full px-5 py-3 text-sm font-semibold opacity-60 sm:w-auto',
                         plan.highlighted
                           ? 'border border-white/20 bg-white/10 text-white'
                           : 'border border-[#D9E2F0] bg-[#F8FAFD] text-[#6B7280]',
@@ -1030,7 +1030,7 @@ export default function PricingPage() {
                       onClick={() => handleSelectPlan(plan.key)}
                       disabled={isBusy}
                       className={[
-                        'inline-flex rounded-full px-5 py-3 text-sm font-semibold transition',
+                        'inline-flex w-full justify-center rounded-full px-5 py-3 text-sm font-semibold transition sm:w-auto',
                         plan.highlighted
                           ? 'border border-[#111827] bg-white text-[#111827] hover:opacity-90'
                           : 'border border-[#111827] bg-[#111827] text-white hover:opacity-90',
@@ -1046,7 +1046,7 @@ export default function PricingPage() {
                       onClick={handleOpenBillingPortal}
                       disabled={isManagingBilling}
                       className={[
-                        'inline-flex rounded-full px-5 py-3 text-sm font-semibold transition',
+                        'inline-flex w-full justify-center rounded-full px-5 py-3 text-sm font-semibold transition sm:w-auto',
                         plan.highlighted
                           ? 'border border-white/20 bg-white/10 text-white hover:bg-white/15'
                           : 'border border-[#D9E2F0] bg-[#F8FAFD] text-[#374151] hover:bg-[#EEF3F9]',
@@ -1062,13 +1062,38 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="mx-auto mt-6 max-w-7xl rounded-[32px] border border-[#D9E2F0] bg-[#F7F9FC] p-6 shadow-sm md:p-8">
+      <section className="mx-auto mt-5 max-w-7xl rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:mt-6 sm:p-6 md:rounded-[32px] md:p-8">
         <h2 className="text-2xl font-bold text-[#111827] md:text-3xl">{copy.compareTitle}</h2>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-[#4B5563] md:text-base">
           {copy.compareDescription}
         </p>
 
-        <div className="mt-6 overflow-hidden rounded-[24px] border border-[#E5E7EB]">
+        <div className="mt-6 space-y-3 md:hidden">
+          {copy.comparison.map((row) => (
+            <article
+              key={row.label}
+              className="rounded-[22px] border border-[#E5E7EB] bg-white p-4 shadow-sm"
+            >
+              <h3 className="text-sm font-bold text-[#111827]">{row.label}</h3>
+              <div className="mt-3 space-y-2 text-sm leading-6 text-[#374151]">
+                <div className="rounded-[16px] border border-[#E5E7EB] bg-[#FAFBFD] px-3 py-2">
+                  <span className="block text-[11px] font-semibold text-[#6B7280]">{copy.comparisonHeaders.free}</span>
+                  <span className="mt-1 block">{row.free}</span>
+                </div>
+                <div className="rounded-[16px] border border-[#E5E7EB] bg-[#FAFBFD] px-3 py-2">
+                  <span className="block text-[11px] font-semibold text-[#6B7280]">{copy.comparisonHeaders.pro}</span>
+                  <span className="mt-1 block">{row.pro}</span>
+                </div>
+                <div className="rounded-[16px] border border-[#E5E7EB] bg-[#FAFBFD] px-3 py-2">
+                  <span className="block text-[11px] font-semibold text-[#6B7280]">{copy.comparisonHeaders.team}</span>
+                  <span className="mt-1 block">{row.team}</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-6 hidden overflow-hidden rounded-[24px] border border-[#E5E7EB] md:block">
           <div className="grid grid-cols-4 border-b border-[#D9E2F0] bg-[#F8FAFD] text-sm font-semibold text-[#111827]">
             <div className="px-4 py-3">{copy.comparisonHeaders.item}</div>
             <div className="px-4 py-3">{copy.comparisonHeaders.free}</div>
@@ -1093,13 +1118,13 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="mx-auto mt-6 max-w-7xl rounded-[32px] border border-[#0F172A] bg-[#0F172A] p-6 text-white shadow-sm md:p-8">
+      <section className="mx-auto mt-5 max-w-7xl rounded-[28px] border border-[#0F172A] bg-[#0F172A] p-5 text-white shadow-sm sm:mt-6 sm:p-6 md:rounded-[32px] md:p-8">
         <h2 className="text-2xl font-bold md:text-3xl">{copy.footerTitle}</h2>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-white/80 md:text-base">
           {copy.footerDescription}
         </p>
 
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-5 flex flex-col gap-2.5 sm:mt-6 sm:flex-row sm:flex-wrap sm:gap-3">
           <Link
             href="/"
             className="inline-flex rounded-full border border-white bg-white px-5 py-3 text-sm font-semibold text-[#111827] transition hover:opacity-90"
