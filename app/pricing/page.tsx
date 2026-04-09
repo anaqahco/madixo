@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import SiteHeader from '@/components/site-header';
 import SiteFooter from '@/components/site-footer';
@@ -605,6 +605,9 @@ export default function PricingPage() {
   const [isManagingBilling, setIsManagingBilling] = useState(false);
   const [checkoutNotice, setCheckoutNotice] = useState<string | null>(null);
   const searchParams = useSearchParams();
+  const usageSectionRef = useRef<HTMLDivElement | null>(null);
+  const spotlightPlanRef = useRef<HTMLElement | null>(null);
+  const compareSectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     fetchCurrentPlanClient().then((payload) => {
@@ -617,6 +620,13 @@ export default function PricingPage() {
   const copy = COPY[uiLang];
   const reason = searchParams.get('reason');
   const reasonText = getReasonText(reason, uiLang);
+  const spotlightPlanKey = useMemo<PlanKey>(() => (currentPlan === 'free' ? 'pro' : currentPlan), [currentPlan]);
+
+  function scrollToSection(target: HTMLElement | null) {
+    if (!target) return;
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   useEffect(() => {
     const checkoutStatus = searchParams.get('checkout');
@@ -772,7 +782,7 @@ export default function PricingPage() {
   return (
     <main
       dir={uiLang === 'ar' ? 'rtl' : 'ltr'}
-      className="min-h-screen bg-[#F9FAFB] px-4 py-5 sm:px-5 sm:py-6 md:px-6 md:py-8"
+      className="min-h-screen bg-[#F9FAFB] px-4 pb-24 pt-5 sm:px-5 sm:pb-8 sm:pt-6 md:px-6 md:py-8"
     >
       <SiteHeader
         uiLang={uiLang}
@@ -813,7 +823,7 @@ export default function PricingPage() {
           </div>
         ) : null}
         {planUsage ? (
-          <div className="mt-4 grid gap-3 rounded-[24px] border border-[#D9E2F0] bg-[#F8FAFD] p-4 md:grid-cols-3">
+          <div ref={usageSectionRef} className="mt-4 grid gap-3 rounded-[24px] border border-[#D9E2F0] bg-[#F8FAFD] p-4 md:grid-cols-3">
             <div className="rounded-[18px] border border-[#D9E2F0] bg-[#FAFBFD] px-4 py-3">
               <p className="text-xs font-semibold text-[#6B7280]">{uiLang === 'ar' ? 'استهلاك التحليلات' : 'Analysis usage'}</p>
               <p className="mt-2 text-sm font-bold text-[#111827]">
@@ -843,7 +853,67 @@ export default function PricingPage() {
           </div>
         ) : null}
 
-        <div className="mt-7 grid gap-4 lg:grid-cols-3">
+        <div className="mt-5 rounded-[24px] border border-[#D9E2F0] bg-white p-4 shadow-sm md:hidden">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                {uiLang === 'ar' ? 'التنقل السريع' : 'Quick navigation'}
+              </p>
+              <p className="mt-2 text-sm font-semibold text-[#111827]">
+                {uiLang === 'ar' ? 'الوصول السريع للأهم في صفحة الباقات.' : 'Jump quickly to the most useful parts of this page.'}
+              </p>
+            </div>
+
+            <span className="inline-flex rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-3 py-1 text-[11px] font-semibold text-[#374151]">
+              {copy.currentPlan}: {copy.plans.find((plan) => plan.key === currentPlan)?.name ?? copy.plans[0].name}
+            </span>
+          </div>
+
+          <div className="mt-4 grid gap-2">
+            <button
+              type="button"
+              onClick={() => scrollToSection(spotlightPlanRef.current)}
+              className="inline-flex w-full items-center justify-center rounded-full bg-[#111827] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+            >
+              {uiLang === 'ar'
+                ? currentPlan === 'free'
+                  ? 'شاهد الاحترافية'
+                  : 'شاهد باقتك الحالية'
+                : currentPlan === 'free'
+                  ? 'View Pro plan'
+                  : 'View your plan'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => scrollToSection(compareSectionRef.current)}
+              className="inline-flex w-full items-center justify-center rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-3 text-sm font-semibold text-[#374151] transition hover:bg-white"
+            >
+              {uiLang === 'ar' ? 'قارن الباقات' : 'Compare plans'}
+            </button>
+
+            {billing?.customerId ? (
+              <button
+                type="button"
+                onClick={handleOpenBillingPortal}
+                disabled={isManagingBilling}
+                className="inline-flex w-full items-center justify-center rounded-full border border-[#D9E2F0] bg-white px-4 py-3 text-sm font-semibold text-[#111827] transition hover:bg-[#F8FAFD] disabled:opacity-60"
+              >
+                {isManagingBilling ? copy.openingBilling : copy.manageBilling}
+              </button>
+            ) : planUsage ? (
+              <button
+                type="button"
+                onClick={() => scrollToSection(usageSectionRef.current)}
+                className="inline-flex w-full items-center justify-center rounded-full border border-[#D9E2F0] bg-white px-4 py-3 text-sm font-semibold text-[#111827] transition hover:bg-[#F8FAFD]"
+              >
+                {uiLang === 'ar' ? 'راجع استهلاك باقتك' : 'Review your usage'}
+              </button>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="mt-7 grid gap-4 scroll-mt-24 lg:grid-cols-3">
           {copy.plans.map((plan) => {
             const isCurrent = currentPlan === plan.key;
             const isBusy = isSubmitting === plan.key;
@@ -872,6 +942,7 @@ export default function PricingPage() {
             return (
               <article
                 key={plan.key}
+                ref={plan.key === spotlightPlanKey ? spotlightPlanRef : undefined}
                 className={[
                   'rounded-[24px] border p-4 shadow-sm transition sm:rounded-[28px] sm:p-5',
                   plan.highlighted
@@ -1062,7 +1133,7 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="mx-auto mt-5 max-w-7xl rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:mt-6 sm:p-6 md:rounded-[32px] md:p-8">
+      <section ref={compareSectionRef} className="mx-auto mt-5 max-w-7xl scroll-mt-24 rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:mt-6 sm:p-6 md:rounded-[32px] md:p-8">
         <h2 className="text-2xl font-bold text-[#111827] md:text-3xl">{copy.compareTitle}</h2>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-[#4B5563] md:text-base">
           {copy.compareDescription}
