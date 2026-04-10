@@ -4,7 +4,7 @@ import LegalPageTemplate from '@/components/legal/legal-page-template';
 export const metadata: Metadata = {
   title: 'Refund Policy',
   description:
-    'Review Madixo refund terms for subscriptions, renewals, billing errors, cancellation timing, and support requests.',
+    'Review Madixo refund terms for purchases, subscription renewals, cancellations, and billing support.',
   alternates: {
     canonical: '/refund-policy',
   },
@@ -14,51 +14,46 @@ const COPY = {
   en: {
     dir: 'ltr',
     eyebrow: 'Refund Policy',
-    title: 'How cancellations, renewals, and refunds are handled.',
+    title: 'How refunds, renewals, and cancellations work.',
     description:
-      'This policy explains when Madixo charges are typically refundable, how subscription cancellations work, and how billing issues or duplicate charges should be reported.',
+      'This policy explains the refund window for Madixo purchases and subscription renewals, how cancellations work, and how to contact support for billing help.',
     lastUpdatedLabel: 'Last updated',
     lastUpdatedValue: 'April 10, 2026',
     sections: [
       {
-        title: '1. General rule',
+        title: '1. 14-day refund window',
         body:
-          'Because Madixo is a digital software service that provides immediate access to premium features, workspaces, reports, and related functionality, charges are generally non-refundable once a paid billing period has started, except where required by law or where we expressly approve a refund under this policy.',
+          'Customers may request a refund within 14 days of the initial purchase date, or within 14 days of the most recent subscription renewal date.',
       },
       {
-        title: '2. Subscription cancellations',
+        title: '2. Subscription renewals',
         body:
-          'You may cancel your subscription at any time before the next renewal date. When you cancel, premium access typically continues until the end of the already-paid billing period, and the subscription will not renew again unless reactivated.',
+          'For subscription plans, the 14-day refund window applies from the date of the latest renewal charge. If a refund request is approved within that window, the affected charge will be refunded to the original payment method where possible.',
       },
       {
-        title: '3. Billing errors and duplicate charges',
+        title: '3. Cancellations',
         body:
-          'If you believe you were charged in error, charged more than once for the same purchase, or experienced a clear billing malfunction, contact us as soon as possible. If we confirm an error, we will correct the charge and issue an appropriate refund or credit.',
+          'You may cancel your subscription at any time to prevent future renewals. Cancellation stops the next billing cycle and does not by itself automatically refund a charge that has already been processed. If you want a refund for a recent charge, please submit a refund request within the 14-day window described above.',
       },
       {
-        title: '4. First-time purchase review',
+        title: '4. Billing errors and duplicate charges',
         body:
-          'For an initial paid subscription purchase, we may review refund requests submitted within 7 days of the first charge when there is a material technical problem that prevented normal use of premium features and our team could not resolve it within a reasonable time. Approval is discretionary unless a refund is required by law.',
+          'If you believe you were charged in error or charged more than once for the same purchase, contact us as soon as possible so we can review the transaction and help resolve the issue quickly.',
       },
       {
-        title: '5. Non-refundable situations',
+        title: '5. How to request a refund',
         body:
-          'Refunds are generally not provided for partial billing periods, unused time remaining after cancellation, change of mind after substantial use, failure to cancel before renewal, or dissatisfaction based only on business outcomes, market conditions, or decisions made using AI-generated analyses or recommendations.',
+          'To request a refund, email support@madixo.ai and include the billing email address used for the purchase, the transaction date, the amount charged, and a short explanation. Refund requests are reviewed in line with the billing and refund rules that apply to purchases processed for Madixo.',
       },
       {
-        title: '6. Chargebacks and account protection',
+        title: '6. Processing time',
         body:
-          'Before filing a chargeback with your bank or card issuer, please contact us so we can review the issue first. Where a chargeback is filed, we may suspend or restrict affected accounts while the matter is investigated and resolved.',
-      },
-      {
-        title: '7. How to request a refund',
-        body:
-          'To request a refund review, email support@madixo.ai and include the account email address, the date of the charge, the amount, and a short explanation of the issue. We may request additional information to verify the payment and assess the request fairly.',
+          'If a refund is approved, it is generally returned to the original payment method where possible. Processing times can vary depending on the payment provider or bank.',
       },
     ] as const,
     contactTitle: 'Need help with a charge?',
     contactBody:
-      'For billing questions, renewal timing, duplicate charges, or refund reviews, contact support@madixo.ai and include the billing email used for your account.',
+      'For billing questions, renewal timing, duplicate charges, or refund requests, contact support@madixo.ai and include the billing email used for your account.',
     contactCta: 'Email billing support',
     secondaryCta: 'Back to home',
     pricingCta: 'See plans',
@@ -66,51 +61,46 @@ const COPY = {
   ar: {
     dir: 'rtl',
     eyebrow: 'سياسة الاسترجاع',
-    title: 'كيف يتم التعامل مع الإلغاء والتجديد والاسترجاع.',
+    title: 'كيف يعمل الاسترجاع والتجديد والإلغاء.',
     description:
-      'توضح هذه السياسة متى تكون رسوم Madixo قابلة للاسترجاع عادة، وكيف يعمل إلغاء الاشتراك، وكيف يجب الإبلاغ عن مشاكل الفوترة أو التكرار في الخصم.',
+      'توضح هذه السياسة مدة الاسترجاع لعمليات الشراء وتجديدات الاشتراك في Madixo، وكيف يعمل الإلغاء، وكيف تتواصل مع الدعم بخصوص الفوترة.',
     lastUpdatedLabel: 'آخر تحديث',
     lastUpdatedValue: '10 أبريل 2026',
     sections: [
       {
-        title: '1. القاعدة العامة',
+        title: '1. مدة الاسترجاع: 14 يومًا',
         body:
-          'نظرًا لأن Madixo خدمة برمجية رقمية تمنح وصولًا فوريًا إلى الميزات المدفوعة ومساحات العمل والتقارير والوظائف المرتبطة بها، فإن الرسوم لا تكون قابلة للاسترجاع عادة بعد بدء فترة الفوترة المدفوعة، إلا عندما يكون الاسترجاع مطلوبًا نظامًا أو عندما نوافق عليه صراحة وفق هذه السياسة.',
+          'يمكن للعميل طلب استرجاع خلال 14 يومًا من تاريخ أول عملية شراء، أو خلال 14 يومًا من تاريخ آخر تجديد للاشتراك.',
       },
       {
-        title: '2. إلغاء الاشتراك',
+        title: '2. تجديدات الاشتراك',
         body:
-          'يمكنك إلغاء اشتراكك في أي وقت قبل تاريخ التجديد القادم. وعند الإلغاء، يستمر الوصول المدفوع عادة حتى نهاية الفترة التي تم دفعها بالفعل، ثم يتوقف التجديد التلقائي ما لم يتم تفعيله مرة أخرى.',
+          'في الباقات الاشتراكية، تُحسب مدة الاسترجاع البالغة 14 يومًا من تاريخ آخر عملية تجديد تم خصمها. وإذا تمت الموافقة على طلب الاسترجاع داخل هذه المدة، فسيتم رد المبلغ إلى وسيلة الدفع الأصلية متى كان ذلك ممكنًا.',
       },
       {
-        title: '3. أخطاء الفوترة والخصومات المكررة',
+        title: '3. الإلغاء',
         body:
-          'إذا كنت تعتقد أنه تم خصم مبلغ بالخطأ، أو تم الخصم أكثر من مرة لنفس العملية، أو حدث خلل واضح في الفوترة، فتواصل معنا بأسرع وقت ممكن. وإذا تأكدنا من وجود خطأ، فسنصحح العملية ونصدر الاسترجاع أو الرصيد المناسب.',
+          'يمكنك إلغاء اشتراكك في أي وقت لمنع التجديدات القادمة. الإلغاء يوقف دورة الفوترة التالية، لكنه لا يعني تلقائيًا استرجاع عملية تم خصمها بالفعل. إذا كنت تريد استرجاع خصم حديث، فيجب تقديم طلب الاسترجاع خلال مدة 14 يومًا الموضحة أعلاه.',
       },
       {
-        title: '4. مراجعة أول عملية شراء مدفوعة',
+        title: '4. أخطاء الفوترة والخصومات المكررة',
         body:
-          'بالنسبة لأول اشتراك مدفوع، قد نراجع طلبات الاسترجاع المقدمة خلال 7 أيام من أول عملية خصم عندما توجد مشكلة تقنية جوهرية منعت الاستخدام الطبيعي للميزات المدفوعة ولم يتمكن فريقنا من حلها خلال مدة معقولة. وتبقى الموافقة خاضعة لتقديرنا ما لم يكن الاسترجاع مطلوبًا نظامًا.',
+          'إذا كنت تعتقد أنه تم الخصم بالخطأ أو تم الخصم أكثر من مرة لنفس العملية، فتواصل معنا بأسرع وقت ممكن حتى نراجع العملية ونساعد في حل المشكلة بسرعة.',
       },
       {
-        title: '5. الحالات غير القابلة للاسترجاع',
+        title: '5. طريقة طلب الاسترجاع',
         body:
-          'لا يتم عادة تقديم استرجاع عن الفترات الجزئية من الفوترة، أو الوقت غير المستخدم بعد الإلغاء، أو التراجع بعد استخدام جوهري، أو عدم الإلغاء قبل التجديد، أو عدم الرضا المبني فقط على نتائج الأعمال أو ظروف السوق أو القرارات التي اتخذت بالاعتماد على تحليلات أو توصيات مولدة بالذكاء الاصطناعي.',
+          'لطلب استرجاع، راسل support@madixo.ai واذكر البريد المستخدم في الفوترة، وتاريخ العملية، والمبلغ الذي تم خصمه، وشرحًا مختصرًا. تتم مراجعة طلبات الاسترجاع وفق قواعد الفوترة والاسترجاع المطبقة على عمليات الشراء الخاصة بـ Madixo.',
       },
       {
-        title: '6. الاعتراضات البنكية وحماية الحساب',
+        title: '6. مدة المعالجة',
         body:
-          'قبل فتح اعتراض بنكي أو لدى جهة إصدار البطاقة، يرجى التواصل معنا أولًا حتى نراجع المشكلة مباشرة. وعند فتح اعتراض بنكي، قد نقوم بتعليق أو تقييد الحسابات المتأثرة إلى أن يتم التحقيق في الموضوع وحله.',
-      },
-      {
-        title: '7. طريقة طلب مراجعة الاسترجاع',
-        body:
-          'لطلب مراجعة استرجاع، راسل support@madixo.ai واذكر البريد المستخدم في الحساب وتاريخ الخصم والمبلغ وشرحًا مختصرًا للمشكلة. وقد نطلب معلومات إضافية للتحقق من الدفع وتقييم الطلب بشكل عادل.',
+          'إذا تمت الموافقة على الاسترجاع، فعادة يتم رد المبلغ إلى وسيلة الدفع الأصلية متى كان ذلك ممكنًا. وقد تختلف مدة ظهور المبلغ حسب جهة الدفع أو البنك.',
       },
     ] as const,
     contactTitle: 'هل تحتاج مساعدة بخصوص عملية خصم؟',
     contactBody:
-      'للأسئلة المتعلقة بالفوترة أو توقيت التجديد أو الخصومات المكررة أو مراجعة طلب استرجاع، تواصل مع support@madixo.ai واذكر البريد المرتبط بالفوترة في حسابك.',
+      'للأسئلة المتعلقة بالفوترة أو توقيت التجديد أو الخصومات المكررة أو طلبات الاسترجاع، تواصل مع support@madixo.ai واذكر البريد المستخدم في الفوترة.',
     contactCta: 'راسل دعم الفوترة',
     secondaryCta: 'العودة للرئيسية',
     pricingCta: 'شاهد الباقات',
