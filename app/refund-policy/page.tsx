@@ -110,3 +110,5 @@ const COPY = {
 export default function RefundPolicyPage() {
   return <LegalPageTemplate copy={COPY} />;
 }
+
+
