@@ -51,7 +51,7 @@ type BillingInfo = {
   provider: 'paddle';
   configured: boolean;
   checkoutEnabled: boolean;
-  environment: 'sandbox' | 'live';
+  environment: 'sandbox' | 'production';
   status: BillingStatus;
   customerId: string | null;
   subscriptionId: string | null;
@@ -69,7 +69,7 @@ type CurrentPlanPayload = {
 
 type CheckoutPayload = {
   clientToken: string;
-  environment: 'sandbox' | 'live';
+  environment: 'sandbox' | 'production';
   priceId: string;
   customerEmail: string;
   successUrl: string;
@@ -105,12 +105,29 @@ type PaddleCheckoutOpenOptions = {
   };
 };
 
+
+type PaddleEventPayload = {
+  name?: string;
+  id?: string;
+  transaction_id?: string;
+  status?: string;
+  data?: unknown;
+  error?: {
+    code?: string;
+    message?: string;
+  } | null;
+};
+
 type PaddleGlobal = {
   Environment: {
-    set: (environment: 'sandbox' | 'live') => void;
+    set: (environment: 'sandbox' | 'production') => void;
   };
   Initialize: (options: {
     token: string;
+    eventCallback?: (event: PaddleEventPayload) => void;
+  }) => void;
+  Update?: (options: {
+    eventCallback?: (event: PaddleEventPayload) => void;
   }) => void;
   Checkout: {
     open: (options: PaddleCheckoutOpenOptions) => void;
@@ -122,8 +139,10 @@ declare global {
     Paddle?: PaddleGlobal;
     __madixoPaddleInitialized?: {
       token: string;
-      environment: 'sandbox' | 'live';
+      environment: 'sandbox' | 'production';
     };
+    __madixoPaddleLastEvent?: PaddleEventPayload;
+    __madixoPaddleEvents?: PaddleEventPayload[];
   }
 }
 
@@ -169,6 +188,45 @@ async function loadPaddleScript() {
   return paddleScriptPromise;
 }
 
+function logMadixoPaddle(label: string, payload?: unknown) {
+  if (payload === undefined) {
+    console.log(`[Madixo Paddle] ${label}`);
+    return;
+  }
+
+  console.log(`[Madixo Paddle] ${label}`, payload);
+}
+
+function pushMadixoPaddleEvent(event: PaddleEventPayload) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  window.__madixoPaddleLastEvent = event;
+  window.__madixoPaddleEvents = [...(window.__madixoPaddleEvents ?? []).slice(-19), event];
+}
+
+function createMadixoPaddleEventCallback() {
+  return (event: PaddleEventPayload) => {
+    pushMadixoPaddleEvent(event);
+
+    const summary = {
+      name: event.name ?? null,
+      status: event.status ?? null,
+      checkoutId: event.id ?? null,
+      transactionId: event.transaction_id ?? null,
+      errorCode: event.error?.code ?? null,
+      errorMessage: event.error?.message ?? null,
+    };
+
+    logMadixoPaddle('Event', summary);
+
+    if (event.error?.code || event.error?.message) {
+      console.error('[Madixo Paddle] Event error details', event);
+    }
+  };
+}
+
 function getMadixoPaddleLocale(_language: UiLanguage): 'en' {
   return 'en';
 }
@@ -183,7 +241,23 @@ async function openMadixoPaddleCheckout(
     throw new Error('PADDLE_NOT_READY');
   }
 
+  const eventCallback = createMadixoPaddleEventCallback();
   const initialized = window.__madixoPaddleInitialized;
+
+  logMadixoPaddle('Open requested', {
+    pageOrigin: window.location.origin,
+    checkoutEnvironment: checkout.environment,
+    priceId: checkout.priceId,
+    successUrl: checkout.successUrl,
+    successOrigin: (() => {
+      try {
+        return new URL(checkout.successUrl).origin;
+      } catch {
+        return null;
+      }
+    })(),
+    customerEmail: checkout.customerEmail,
+  });
 
   if (!initialized) {
     if (checkout.environment === 'sandbox') {
@@ -192,27 +266,49 @@ async function openMadixoPaddleCheckout(
 
     window.Paddle.Initialize({
       token: checkout.clientToken,
+      eventCallback,
     });
 
     window.__madixoPaddleInitialized = {
       token: checkout.clientToken,
       environment: checkout.environment,
     };
+
+    logMadixoPaddle('Initialized', {
+      tokenPrefix: `${checkout.clientToken.slice(0, 5)}...`,
+      environment: checkout.environment,
+    });
+  } else {
+    window.Paddle.Update?.({
+      eventCallback,
+    });
+
+    logMadixoPaddle('Reused existing initialization', {
+      tokenPrefix: `${initialized.token.slice(0, 5)}...`,
+      environment: initialized.environment,
+    });
   }
 
-  window.Paddle.Checkout.open({
-    items: [{ priceId: checkout.priceId, quantity: 1 }],
-    customer: {
-      email: checkout.customerEmail,
-    },
-    customData: checkout.customData,
-    settings: {
-      displayMode: 'overlay',
-      locale: getMadixoPaddleLocale(language),
-      successUrl: checkout.successUrl,
-      theme: 'light',
-    },
-  });
+  try {
+    window.Paddle.Checkout.open({
+      items: [{ priceId: checkout.priceId, quantity: 1 }],
+      customer: {
+        email: checkout.customerEmail,
+      },
+      customData: checkout.customData,
+      settings: {
+        displayMode: 'overlay',
+        locale: getMadixoPaddleLocale(language),
+        successUrl: checkout.successUrl,
+        theme: 'light',
+      },
+    });
+
+    logMadixoPaddle('Checkout.open called successfully');
+  } catch (error) {
+    console.error('[Madixo Paddle] Checkout.open failed', error);
+    throw error;
+  }
 }
 
 const COPY = {
@@ -757,6 +853,14 @@ export default function PricingPage() {
       if (!payload.checkout) {
         throw new Error(copy.checkoutNotReady);
       }
+
+      console.log('[Madixo Paddle] Checkout payload from server', {
+        environment: payload.checkout.environment,
+        priceId: payload.checkout.priceId,
+        successUrl: payload.checkout.successUrl,
+        pageOrigin: window.location.origin,
+        tokenPrefix: `${payload.checkout.clientToken.slice(0, 5)}...`,
+      });
 
       setCheckoutNotice(null);
       await openMadixoPaddleCheckout(payload.checkout, uiLang);
