@@ -13,7 +13,7 @@ export type MadixoBillingInfo = {
   provider: 'paddle';
   configured: boolean;
   checkoutEnabled: boolean;
-  environment: 'sandbox' | 'live';
+  environment: 'sandbox' | 'production';
   status: MadixoBillingStatus;
   customerId: string | null;
   subscriptionId: string | null;
@@ -23,16 +23,20 @@ export type MadixoBillingInfo = {
   lastUpdatedAt: string | null;
 };
 
-export function getMadixoBillingEnvironment(): 'sandbox' | 'live' {
-  const explicit = process.env.NEXT_PUBLIC_PADDLE_ENV;
+export function getMadixoBillingEnvironment(): 'sandbox' | 'production' {
+  const explicit = process.env.NEXT_PUBLIC_PADDLE_ENV?.trim().toLowerCase();
 
-  if (explicit === 'sandbox' || explicit === 'live') {
-    return explicit;
+  if (explicit === 'sandbox') {
+    return 'sandbox';
+  }
+
+  if (explicit === 'production' || explicit === 'live') {
+    return 'production';
   }
 
   return process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN?.startsWith('test_')
     ? 'sandbox'
-    : 'live';
+    : 'production';
 }
 
 export function getMadixoPaddleApiBaseUrl() {
