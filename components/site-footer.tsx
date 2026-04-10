@@ -20,6 +20,9 @@ const COPY = {
     comparisons: 'Comparisons',
     about: 'About',
     contactPage: 'Contact',
+    terms: 'Terms',
+    privacy: 'Privacy',
+    refund: 'Refunds',
     emailLabel: 'Email',
     emailValue: 'support@madixo.ai',
     emailHint: 'Support, billing, and product feedback.',
@@ -40,6 +43,9 @@ const COPY = {
     comparisons: 'المقارنات',
     about: 'من نحن',
     contactPage: 'تواصل معنا',
+    terms: 'الشروط',
+    privacy: 'الخصوصية',
+    refund: 'الاسترجاع',
     emailLabel: 'البريد الإلكتروني',
     emailValue: 'support@madixo.ai',
     emailHint: 'للدعم، والفوترة، وملاحظات المنتج.',
@@ -75,6 +81,9 @@ export default function SiteFooter({ uiLang }: Props) {
   const companyLinks = [
     { href: '/about', label: copy.about },
     { href: '/contact', label: copy.contactPage },
+    { href: '/terms', label: copy.terms },
+    { href: '/privacy', label: copy.privacy },
+    { href: '/refund-policy', label: copy.refund },
   ];
 
   return (
