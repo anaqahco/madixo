@@ -31,6 +31,8 @@ type DisplayInputs = {
 
 const ANALYSIS_CACHE_KEY = 'madixo_analysis_cache_v2';
 const MAX_CACHED_ANALYSES = 20;
+const CLIENT_ANALYSIS_TIMEOUT_MS = 85000;
+const LOADING_DELAY_NOTICE_MS = 35000;
 
 type CachedAnalysisEntry = {
   key: string;
@@ -337,6 +339,10 @@ const UI_COPY = {
       'Madixo is evaluating demand, competition, positioning, and first-offer logic for your opportunity.',
     loadingFinal:
       'Madixo is finalizing your report and validating the final response.',
+    loadingDelayedTitle: 'The analysis is taking longer than usual',
+    loadingDelayedBody:
+      'We are still trying to complete the report. This can happen with longer inputs or heavier requests.',
+    retryNow: 'Retry now',
 
     loadingStages: [
       {
@@ -364,6 +370,9 @@ const UI_COPY = {
     unableToLoad: 'Unable to load the opportunity analysis.',
     retryOrReturn:
       'You can retry the same analysis or return to start a new scan.',
+    analysisDelayTag: 'Longer than usual',
+    analysisDelayTitle: 'The analysis is taking longer than usual',
+    analysisDelayError: 'The analysis is taking longer than usual. Please retry in a moment.',
 
     opportunityAnalysis: 'Opportunity Analysis',
     reportHeader: 'MADIXO OPPORTUNITY REPORT',
@@ -438,6 +447,10 @@ const UI_COPY = {
       'يقوم Madixo بتقييم الطلب والمنافسة والتموضع ومنطق العرض الأول لهذه الفرصة.',
     loadingFinal:
       'يقوم Madixo بإنهاء التقرير والتحقق من المخرجات النهائية.',
+    loadingDelayedTitle: 'التحليل يستغرق وقتًا أطول من المعتاد',
+    loadingDelayedBody:
+      'ما زلنا نكمل تجهيز التقرير. قد يحدث هذا مع بعض الطلبات الأطول أو الأكثر تعقيدًا.',
+    retryNow: 'إعادة المحاولة الآن',
 
     loadingStages: [
       {
@@ -465,6 +478,9 @@ const UI_COPY = {
     unableToLoad: 'تعذر تحميل تحليل الفرصة.',
     retryOrReturn:
       'يمكنك إعادة نفس التحليل أو العودة لبدء تحليل جديد.',
+    analysisDelayTag: 'أطول من المعتاد',
+    analysisDelayTitle: 'التحليل يستغرق وقتًا أطول من المعتاد',
+    analysisDelayError: 'التحليل يستغرق وقتًا أطول من المعتاد. أعد المحاولة بعد لحظات.',
 
     opportunityAnalysis: 'تحليل الفرصة',
     reportHeader: 'تقرير فرص MADIXO',
@@ -1152,6 +1168,7 @@ export default function ResultsPage() {
   const [requestNonce, setRequestNonce] = useState(0);
   const [loadingProgress, setLoadingProgress] = useState(6);
   const [loadingStageIndex, setLoadingStageIndex] = useState(0);
+  const [showDelayNotice, setShowDelayNotice] = useState(false);
   const [currentPlan, setCurrentPlan] = useState<PlanKey>('free');
   const [currentPlanReady, setCurrentPlanReady] = useState(false);
   const initialUiLanguage = useInitialUiLanguage();
@@ -1185,6 +1202,7 @@ export default function ResultsPage() {
   };
 
   const copy = UI_COPY[uiLang];
+  const isDelayState = error === copy.analysisDelayError;
   const feasibilityCopy = FEASIBILITY_COPY[uiLang];
   const loadingStages = useMemo(() => copy.loadingStages, [copy]);
   const mobileMoreActionsLabel = uiLang === 'ar' ? 'مزيد من الإجراءات' : 'More actions';
@@ -1301,6 +1319,15 @@ export default function ResultsPage() {
 
   useEffect(() => {
     let isActive = true;
+    let requestController: AbortController | null = null;
+    let requestTimeoutId: number | null = null;
+
+    const clearPendingRequestTimeout = () => {
+      if (requestTimeoutId !== null) {
+        window.clearTimeout(requestTimeoutId);
+        requestTimeoutId = null;
+      }
+    };
 
     const runAnalysis = async () => {
       try {
@@ -1314,6 +1341,7 @@ export default function ResultsPage() {
         setCopied(false);
         setLoadingProgress(6);
         setLoadingStageIndex(0);
+        setShowDelayNotice(false);
 
         const authNextPath = `${window.location.pathname}${window.location.search}`;
         const authRedirectUrl = `/login?mode=signup&next=${encodeURIComponent(authNextPath)}&message=${encodeURIComponent(copy.authRequiredToAnalyze)}`;
@@ -1422,6 +1450,11 @@ export default function ResultsPage() {
           return;
         }
 
+        requestController = new AbortController();
+        requestTimeoutId = window.setTimeout(() => {
+          requestController?.abort('analysis_timeout');
+        }, CLIENT_ANALYSIS_TIMEOUT_MS);
+
         const response = await fetch('/api/analyze', {
           method: 'POST',
           headers: {
@@ -1433,9 +1466,12 @@ export default function ResultsPage() {
             customer,
             uiLang,
           }),
+          signal: requestController.signal,
         });
 
-        const data = await response.json();
+        clearPendingRequestTimeout();
+
+        const data = await response.json().catch(() => ({}));
 
         if (response.status === 401 || data?.error === 'AUTH_REQUIRED' || data?.code === 'AUTH_REQUIRED') {
           router.replace(authRedirectUrl);
@@ -1445,6 +1481,10 @@ export default function ResultsPage() {
         if (!response.ok || !data.ok) {
           if (data?.code === 'INVALID_INPUT' || data?.code === 'INPUT_TOO_WEAK') {
             throw new Error(data.error || copy.failedToAnalyzeOpportunity);
+          }
+
+          if (data?.code === 'ANALYSIS_TIMEOUT') {
+            throw new Error(copy.analysisDelayError);
           }
 
           if (data?.reason === 'analysis_limit' || data?.code === 'ANALYSIS_LIMIT') {
@@ -1488,12 +1528,23 @@ export default function ResultsPage() {
       } catch (err) {
         if (!isActive) return;
 
+        clearPendingRequestTimeout();
+
         setLoadingProgress(100);
 
+        const isAbortError =
+          err instanceof DOMException
+            ? err.name === 'AbortError'
+            : err instanceof Error
+              ? err.name === 'AbortError'
+              : false;
+
         const message =
-          err instanceof Error
-            ? err.message
-            : copy.genericLoadingError;
+          isAbortError
+            ? copy.analysisDelayError
+            : err instanceof Error
+              ? err.message
+              : copy.genericLoadingError;
 
         window.setTimeout(() => {
           if (!isActive) return;
@@ -1507,6 +1558,8 @@ export default function ResultsPage() {
 
     return () => {
       isActive = false;
+      clearPendingRequestTimeout();
+      requestController?.abort();
     };
   }, [query, market, customer, reportIdParam, requestNonce, uiLang]);
 
@@ -1549,6 +1602,21 @@ export default function ResultsPage() {
     return () => {
       window.clearInterval(interval);
     };
+  }, [loading, requestNonce]);
+
+  useEffect(() => {
+    if (!loading) {
+      setShowDelayNotice(false);
+      return;
+    }
+
+    setShowDelayNotice(false);
+
+    const timeout = window.setTimeout(() => {
+      setShowDelayNotice(true);
+    }, LOADING_DELAY_NOTICE_MS);
+
+    return () => window.clearTimeout(timeout);
   }, [loading, requestNonce]);
 
   useEffect(() => {
@@ -2202,6 +2270,21 @@ ${copy.risks}:
               <div className="mt-8 text-center text-sm text-[#6B7280]">
                 {copy.loadingLead}
               </div>
+
+              {showDelayNotice ? (
+                <div className="mx-auto mt-6 max-w-2xl rounded-3xl border border-[#FDE68A] bg-[#FFFBEB] p-5 text-start">
+                  <div className="text-sm font-semibold text-[#B45309]">{copy.loadingDelayedTitle}</div>
+                  <p className="mt-2 text-sm leading-7 text-[#92400E]">{copy.loadingDelayedBody}</p>
+                  <div className="mt-4">
+                    <button
+                      onClick={handleRetry}
+                      className="rounded-full bg-[#111827] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+                    >
+                      {copy.retryNow}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -2237,17 +2320,17 @@ ${copy.risks}:
             </button>
           </div>
 
-          <div className="rounded-[32px] border border-red-200 bg-white px-8 py-12 text-center shadow-sm md:px-12">
+          <div className={`rounded-[32px] border bg-white px-8 py-12 text-center shadow-sm md:px-12 ${isDelayState ? 'border-[#FDE68A]' : 'border-red-200'}`}>
             <div className="mx-auto max-w-3xl">
-              <div className="inline-flex items-center rounded-full border border-red-200 bg-red-50 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-red-600">
-                {copy.analysisError}
+              <div className={`inline-flex items-center rounded-full border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] ${isDelayState ? 'border-[#FDE68A] bg-[#FFFBEB] text-[#B45309]' : 'border-red-200 bg-red-50 text-red-600'}`}>
+                {isDelayState ? copy.analysisDelayTag : copy.analysisError}
               </div>
 
               <h1 className="mt-6 text-3xl font-bold md:text-5xl">
-                {copy.analysisFailed}
+                {isDelayState ? copy.analysisDelayTitle : copy.analysisFailed}
               </h1>
 
-              <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-red-600 md:text-xl">
+              <p className={`mx-auto mt-5 max-w-2xl text-lg leading-8 md:text-xl ${isDelayState ? 'text-[#92400E]' : 'text-red-600'}`}>
                 {error || copy.unableToLoad}
               </p>
 
