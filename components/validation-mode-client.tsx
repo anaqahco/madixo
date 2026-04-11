@@ -25,6 +25,7 @@ import {
   getPlanChecklist,
 } from '@/lib/madixo-validation';
 import { getClientUiLanguage, setClientUiLanguage } from '@/lib/ui-language';
+import { createClient as createBrowserSupabaseClient } from '@/lib/supabase/client';
 
 type Props = {
   report: SavedMadixoReport;
@@ -721,10 +722,57 @@ function QuickNavCard({
   );
 }
 
+
+async function getBrowserAccessToken() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    const supabase = createBrowserSupabaseClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    return session?.access_token ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function buildRequestHeaders(contentType = true) {
+  const headers: Record<string, string> = {};
+
+  if (contentType) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  const accessToken = await getBrowserAccessToken();
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  return headers;
+}
+
+function shouldRetryValidationRequest(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error || '');
+  return /auth session missing|failed to fetch|network|timeout|timed out|temporary|502|503|504|try again/i.test(
+    message.toLowerCase()
+  );
+}
+
+function waitForValidationRetry(ms: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
 async function fetchEvidenceEntries(reportId: string, uiLang: UiLanguage) {
   const response = await fetch(
     `/api/evidence?reportId=${encodeURIComponent(reportId)}&uiLang=${uiLang}`,
-    { cache: 'no-store' }
+    {
+      cache: 'no-store',
+      headers: await buildRequestHeaders(false),
+    }
   );
 
   const payload = (await response.json()) as {
@@ -745,6 +793,7 @@ async function fetchSavedSynthesis(reportId: string, uiLang: UiLanguage) {
   const response = await fetch(`/api/evidence-synthesis?${params.toString()}`, {
     method: 'GET',
     cache: 'no-store',
+    headers: await buildRequestHeaders(false),
   });
 
   const payload = (await response.json()) as {
@@ -851,27 +900,44 @@ export default function ValidationModeClient({
   const saveWorkspaceRequest = async (
     nextWorkspace: ValidationWorkspaceState
   ) => {
-    const response = await fetch('/api/validation-workspace', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        reportId: report.id,
-        uiLang,
-        workspace: nextWorkspace,
-      }),
-    });
+    let lastError: unknown;
 
-    const payload = (await response.json()) as {
-      ok?: boolean;
-      error?: string;
-      workspace?: ValidationWorkspaceState;
-    };
+    for (let attempt = 1; attempt <= 2; attempt += 1) {
+      try {
+        const response = await fetch('/api/validation-workspace', {
+          method: 'POST',
+          headers: await buildRequestHeaders(),
+          body: JSON.stringify({
+            reportId: report.id,
+            uiLang,
+            workspace: nextWorkspace,
+          }),
+        });
 
-    if (!response.ok || !payload.ok || !payload.workspace) {
-      throw new Error(payload.error || copy.workspaceFailed);
+        const payload = (await response.json()) as {
+          ok?: boolean;
+          error?: string;
+          workspace?: ValidationWorkspaceState;
+        };
+
+        if (!response.ok || !payload.ok || !payload.workspace) {
+          throw new Error(payload.error || copy.workspaceFailed);
+        }
+
+        return normalizeValidationWorkspaceState(payload.workspace);
+      } catch (error) {
+        lastError = error;
+
+        if (attempt < 2 && shouldRetryValidationRequest(error)) {
+          await waitForValidationRetry(800);
+          continue;
+        }
+      }
     }
 
-    return normalizeValidationWorkspaceState(payload.workspace);
+    throw lastError instanceof Error
+      ? lastError
+      : new Error(copy.workspaceFailed);
   };
 
   const commitWorkspaceSave = async (mode: 'auto' | 'manual') => {
@@ -916,59 +982,76 @@ export default function ValidationModeClient({
       setError('');
     }
 
-    const response = await fetch('/api/validate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        report,
-        uiLang: language,
-        forceRegenerate: options?.forceRegenerate === true,
-      }),
-    });
+    let lastError: unknown;
 
-    const payload = (await response.json()) as {
-      ok?: boolean;
-      error?: string;
-      plan?: ValidationPlan;
-      workspace?: ValidationWorkspaceState;
-      source?: 'saved' | 'generated';
-    };
+    for (let attempt = 1; attempt <= 2; attempt += 1) {
+      try {
+        const response = await fetch('/api/validate', {
+          method: 'POST',
+          headers: await buildRequestHeaders(),
+          body: JSON.stringify({
+            report,
+            uiLang: language,
+            forceRegenerate: options?.forceRegenerate === true,
+          }),
+        });
 
-    if (!response.ok || !payload.ok || !payload.plan) {
-      throw new Error(payload.error || copy.failed);
+        const payload = (await response.json()) as {
+          ok?: boolean;
+          error?: string;
+          plan?: ValidationPlan;
+          workspace?: ValidationWorkspaceState;
+          source?: 'saved' | 'generated';
+        };
+
+        if (!response.ok || !payload.ok || !payload.plan) {
+          throw new Error(payload.error || copy.failed);
+        }
+
+        const normalizedPlan = normalizeValidationPlan(payload.plan, language);
+
+        if (!normalizedPlan) {
+          throw new Error(payload.error || copy.failed);
+        }
+
+        const nextWorkspace = normalizeValidationWorkspaceState(payload.workspace);
+
+        const [entriesResult, synthesisResult] = await Promise.allSettled([
+          fetchEvidenceEntries(report.id, language),
+          fetchSavedSynthesis(report.id, language),
+        ]);
+
+        setPlan(normalizedPlan);
+        setWorkspace(nextWorkspace);
+        lastSavedWorkspaceRef.current = serializeWorkspaceState(nextWorkspace);
+        setPlanSource(payload.source || 'generated');
+        setEvidenceEntries(
+          entriesResult.status === 'fulfilled'
+            ? entriesResult.value
+            : options?.fallbackSnapshot?.evidenceEntries ?? []
+        );
+        setEvidenceSynthesis(
+          synthesisResult.status === 'fulfilled'
+            ? synthesisResult.value
+            : options?.fallbackSnapshot?.evidenceSynthesis ?? null
+        );
+        setIterationRefreshToken((current) => current + 1);
+        setState('ready');
+        setSaveState('idle');
+        setWorkspaceError('');
+        setError('');
+        return;
+      } catch (error) {
+        lastError = error;
+
+        if (attempt < 2 && shouldRetryValidationRequest(error)) {
+          await waitForValidationRetry(1000);
+          continue;
+        }
+      }
     }
 
-    const normalizedPlan = normalizeValidationPlan(payload.plan, language);
-
-    if (!normalizedPlan) {
-      throw new Error(payload.error || copy.failed);
-    }
-
-    const nextWorkspace = normalizeValidationWorkspaceState(payload.workspace);
-
-    const [entriesResult, synthesisResult] = await Promise.allSettled([
-      fetchEvidenceEntries(report.id, language),
-      fetchSavedSynthesis(report.id, language),
-    ]);
-
-    setPlan(normalizedPlan);
-    setWorkspace(nextWorkspace);
-    lastSavedWorkspaceRef.current = serializeWorkspaceState(nextWorkspace);
-    setPlanSource(payload.source || 'generated');
-    setEvidenceEntries(
-      entriesResult.status === 'fulfilled'
-        ? entriesResult.value
-        : options?.fallbackSnapshot?.evidenceEntries ?? []
-    );
-    setEvidenceSynthesis(
-      synthesisResult.status === 'fulfilled'
-        ? synthesisResult.value
-        : options?.fallbackSnapshot?.evidenceSynthesis ?? null
-    );
-    setIterationRefreshToken((current) => current + 1);
-    setState('ready');
-    setSaveState('idle');
-    setWorkspaceError('');
+    throw lastError instanceof Error ? lastError : new Error(copy.failed);
   };
 
   useEffect(() => {
