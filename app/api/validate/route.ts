@@ -277,12 +277,20 @@ async function requestPlan(
   return plan;
 }
 
-async function getAuthenticatedUser() {
+function getBearerToken(request: Request) {
+  const value = request.headers.get('authorization');
+  if (!value) return null;
+
+  const match = value.match(/^Bearer\s+(.+)$/i);
+  return match?.[1]?.trim() || null;
+}
+
+async function getAuthenticatedUser(accessToken?: string | null) {
   const supabase = await createClient();
   const {
     data: { user },
     error,
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser(accessToken || undefined);
 
   if (error) {
     throw new Error(error.message);
@@ -312,8 +320,9 @@ export async function POST(request: Request) {
     const report = body.report;
     const uiLang = normalizeUiLanguage(body.uiLang, 'en');
     const forceRegenerate = body.forceRegenerate === true;
+    const accessToken = getBearerToken(request);
 
-    const user = await getAuthenticatedUser();
+    const user = await getAuthenticatedUser(accessToken);
 
     if (!user) {
       return NextResponse.json(
@@ -331,10 +340,10 @@ export async function POST(request: Request) {
 
     if (!forceRegenerate) {
       try {
-        const existing = await getUserValidationPlan(report.id, uiLang);
+        const existing = await getUserValidationPlan(report.id, uiLang, accessToken);
 
         if (existing) {
-          const evidenceEntries = await getUserEvidenceEntries(report.id, uiLang);
+          const evidenceEntries = await getUserEvidenceEntries(report.id, uiLang, accessToken);
 
           return NextResponse.json({
             ok: true,
@@ -377,7 +386,7 @@ export async function POST(request: Request) {
             ok: false,
             error:
               uiLang === 'ar'
-                ? 'فشل إنشاء مساحة التحقق. حاول مرة أخرى.'
+                ? 'جار تجهيز مساحة التحقق. حاول مرة أخرى بعد لحظات.'
                 : message,
           },
           { status: 502 }
@@ -390,6 +399,7 @@ export async function POST(request: Request) {
         reportId: report.id,
         uiLang,
         plan,
+        accessToken,
       });
 
       return NextResponse.json({
@@ -431,7 +441,10 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: message,
+        error:
+          message === 'Auth session missing!'
+            ? 'جار تجهيز مساحة التحقق. حاول مرة أخرى بعد لحظات.'
+            : message,
       },
       { status: 500 }
     );
