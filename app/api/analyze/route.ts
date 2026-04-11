@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import { NextResponse } from 'next/server';
 import { findLatestMatchingUserReport } from '@/lib/madixo-db';
 import { createClient } from '@/lib/supabase/server';
-import { PLAN_LIMITS } from '@/lib/madixo-plans';
+import { PLAN_LIMITS, parsePlan } from '@/lib/madixo-plans';
 import { getCurrentMadixoPlan } from '@/lib/madixo-plan-store';
 
 const client = new OpenAI({
