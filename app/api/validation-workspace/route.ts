@@ -5,6 +5,14 @@ import {
 } from '@/lib/madixo-validation';
 import { saveUserValidationWorkspace } from '@/lib/madixo-validation-db';
 
+function getBearerToken(request: Request) {
+  const value = request.headers.get('authorization');
+  if (!value) return null;
+
+  const match = value.match(/^Bearer\s+(.+)$/i);
+  return match?.[1]?.trim() || null;
+}
+
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as {
@@ -24,6 +32,7 @@ export async function POST(request: Request) {
     }
 
     const uiLang = normalizeUiLanguage(body.uiLang, 'en');
+    const accessToken = getBearerToken(request);
     const workspace =
       typeof body.workspace === 'object' && body.workspace !== null
         ? normalizeValidationWorkspaceState(body.workspace)
@@ -34,6 +43,7 @@ export async function POST(request: Request) {
         reportId: body.reportId,
         uiLang,
         workspace,
+        accessToken,
       });
 
       return NextResponse.json({
@@ -65,7 +75,10 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: message,
+        error:
+          message === 'Auth session missing!'
+            ? 'جار حفظ مساحة التحقق. حاول مرة أخرى بعد لحظات.'
+            : message,
       },
       { status: 500 }
     );
