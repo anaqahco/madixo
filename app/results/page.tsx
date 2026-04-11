@@ -169,143 +169,134 @@ async function getBrowserAccessToken(): Promise<string | null> {
   }
 }
 
-async function buildAuthenticatedJsonHeaders(accessToken?: string | null) {
-  const resolvedAccessToken = accessToken ?? (await getBrowserAccessToken());
+async function buildAuthenticatedJsonHeaders(accessTokenOverride?: string | null) {
+  const accessToken =
+    typeof accessTokenOverride === 'string' ? accessTokenOverride : await getBrowserAccessToken();
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
 
-  if (resolvedAccessToken) {
-    headers.Authorization = `Bearer ${resolvedAccessToken}`;
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
   }
 
   return headers;
 }
 
-async function buildAuthenticatedRequestHeaders(accessToken?: string | null) {
-  const resolvedAccessToken = accessToken ?? (await getBrowserAccessToken());
+async function buildAuthenticatedRequestHeaders(accessTokenOverride?: string | null) {
+  const accessToken =
+    typeof accessTokenOverride === 'string' ? accessTokenOverride : await getBrowserAccessToken();
+
   const headers: Record<string, string> = {};
 
-  if (resolvedAccessToken) {
-    headers.Authorization = `Bearer ${resolvedAccessToken}`;
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
   }
 
   return headers;
 }
 
-type BrowserAuthBootstrap = {
+type ClientAuthBootstrap = {
+  user: any | null;
   accessToken: string | null;
-  user: { id: string } | null;
+  reason: 'session' | 'user' | 'missing' | 'timeout';
 };
 
-type SupabaseSessionShape = {
-  data: {
-    session:
-      | {
-          access_token?: string | null;
-          user?: { id: string } | null;
-        }
-      | null;
-  };
-  error?: { message?: string } | null;
-};
-
-type SupabaseUserShape = {
-  data: {
-    user: { id: string } | null;
-  };
-  error?: { message?: string } | null;
-};
-
-function sleep(ms: number) {
+function wait(ms: number) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
-function withTimeout<T>(promise: Promise<T>, ms: number, code: string): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    const timeoutId = window.setTimeout(() => {
-      const error = new Error(code) as Error & { code?: string };
-      error.code = code;
-      reject(error);
-    }, ms);
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, timeoutMessage: string): Promise<T> {
+  let timeoutId: number | null = null;
 
-    promise
-      .then((value) => {
-        window.clearTimeout(timeoutId);
-        resolve(value);
-      })
-      .catch((error) => {
-        window.clearTimeout(timeoutId);
-        reject(error);
-      });
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = window.setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
   });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
+    }
+  }
 }
 
-function getAuthErrorCode(error: unknown) {
-  if (!error || typeof error !== 'object') {
-    return null;
-  }
-
-  const maybeCode = (error as { code?: unknown }).code;
-  if (typeof maybeCode === 'string' && maybeCode.trim()) {
-    return maybeCode;
-  }
-
-  const maybeMessage = (error as { message?: unknown }).message;
-  if (typeof maybeMessage === 'string' && maybeMessage.trim()) {
-    return maybeMessage;
-  }
-
-  return null;
-}
-
-async function bootstrapAnalyzeAuth(): Promise<BrowserAuthBootstrap> {
+async function bootstrapClientAuthOnce(): Promise<ClientAuthBootstrap> {
   const supabase = createSupabaseClient();
-  let lastError: unknown = null;
 
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    try {
-      const sessionResult = await withTimeout<SupabaseSessionShape>(
-        supabase.auth.getSession() as Promise<SupabaseSessionShape>,
-        12000,
-        'AUTH_SESSION_TIMEOUT'
-      );
+  try {
+    const sessionResult: any = await withTimeout(
+      supabase.auth.getSession(),
+      10000,
+      'AUTH_SESSION_TIMEOUT'
+    );
 
-      const session = sessionResult.data?.session ?? null;
+    const session = sessionResult?.data?.session ?? null;
+    const accessToken = session?.access_token ?? null;
+    const user = session?.user ?? null;
 
-      if (session?.access_token) {
-        return {
-          accessToken: session.access_token,
-          user: session.user ?? null,
-        };
-      }
-
-      const userResult = await withTimeout<SupabaseUserShape>(
-        supabase.auth.getUser() as Promise<SupabaseUserShape>,
-        12000,
-        'AUTH_USER_TIMEOUT'
-      );
-
-      const user = userResult.data?.user ?? null;
-
-      if (user) {
-        return {
-          accessToken: null,
-          user,
-        };
-      }
-
-      lastError = new Error('AUTH_REQUIRED');
-    } catch (error) {
-      lastError = error;
+    if (user || accessToken) {
+      return {
+        user,
+        accessToken,
+        reason: 'session',
+      };
     }
-
-    if (attempt === 0) {
-      await sleep(1200);
+  } catch (error) {
+    if (error instanceof Error && error.message === 'AUTH_SESSION_TIMEOUT') {
+      return {
+        user: null,
+        accessToken: null,
+        reason: 'timeout',
+      };
     }
   }
 
-  throw lastError ?? new Error('AUTH_REQUIRED');
+  try {
+    const userResult: any = await withTimeout(
+      supabase.auth.getUser(),
+      10000,
+      'AUTH_USER_TIMEOUT'
+    );
+
+    const user = userResult?.data?.user ?? null;
+    const accessToken = await getBrowserAccessToken();
+
+    if (user || accessToken) {
+      return {
+        user,
+        accessToken,
+        reason: 'user',
+      };
+    }
+  } catch (error) {
+    if (error instanceof Error && error.message === 'AUTH_USER_TIMEOUT') {
+      return {
+        user: null,
+        accessToken: null,
+        reason: 'timeout',
+      };
+    }
+  }
+
+  return {
+    user: null,
+    accessToken: null,
+    reason: 'missing',
+  };
+}
+
+async function bootstrapClientAuth(): Promise<ClientAuthBootstrap> {
+  const firstAttempt = await bootstrapClientAuthOnce();
+
+  if (firstAttempt.user || firstAttempt.accessToken) {
+    return firstAttempt;
+  }
+
+  await wait(1200);
+  return bootstrapClientAuthOnce();
 }
 
 function isBrowser() {
@@ -1475,30 +1466,9 @@ export default function ResultsPage() {
         const authNextPath = `${window.location.pathname}${window.location.search}`;
         const authRedirectUrl = `/login?mode=signup&next=${encodeURIComponent(authNextPath)}&message=${encodeURIComponent(copy.authRequiredToAnalyze)}`;
 
-        let authBootstrap: BrowserAuthBootstrap;
+        const authState = await bootstrapClientAuth();
 
-        try {
-          authBootstrap = await bootstrapAnalyzeAuth();
-        } catch (bootstrapError) {
-          const authCode = getAuthErrorCode(bootstrapError);
-
-          console.warn('[Madixo results] auth bootstrap issue before analyze', authCode || bootstrapError);
-
-          if (authCode === 'AUTH_REQUIRED') {
-            router.replace(authRedirectUrl);
-            return;
-          }
-
-          if (authCode === 'AUTH_SESSION_TIMEOUT' || authCode === 'AUTH_USER_TIMEOUT') {
-            throw new Error(uiLang === 'ar'
-              ? 'جار تجهيز جلستك بأمان. أعد المحاولة بعد لحظة.'
-              : 'Your session is still getting ready. Please try again in a moment.');
-          }
-
-          throw new Error(authCode || copy.genericLoadingError);
-        }
-
-        if (!authBootstrap.user && !authBootstrap.accessToken) {
+        if (!authState.user && !authState.accessToken) {
           router.replace(authRedirectUrl);
           return;
         }
@@ -1506,7 +1476,7 @@ export default function ResultsPage() {
         if (reportIdParam) {
           const response = await fetch(`/api/reports?id=${encodeURIComponent(reportIdParam)}`, {
             cache: 'no-store',
-            headers: await buildAuthenticatedRequestHeaders(authBootstrap.accessToken),
+            headers: await buildAuthenticatedRequestHeaders(authState.accessToken),
           });
 
           const payload = (await response.json().catch(() => ({}))) as SingleReportApiPayload;
@@ -1599,7 +1569,7 @@ export default function ResultsPage() {
 
         const response = await fetch('/api/analyze', {
           method: 'POST',
-          headers: await buildAuthenticatedJsonHeaders(authBootstrap.accessToken),
+          headers: await buildAuthenticatedJsonHeaders(authState.accessToken),
           body: JSON.stringify({
             query,
             market,
