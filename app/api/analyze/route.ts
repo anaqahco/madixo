@@ -11,6 +11,16 @@ const client = new OpenAI({
 
 const MODEL = process.env.OPENAI_MODEL || 'gpt-5';
 
+function getAnalyzeTimeoutMs() {
+  const value = Number(process.env.OPENAI_ANALYZE_TIMEOUT_MS || '70000');
+
+  if (!Number.isFinite(value) || value < 15000) {
+    return 70000;
+  }
+
+  return Math.floor(value);
+}
+
 const ARABIC_WRITING_RULES = `
 - اكتب بالعربية الفصحى البسيطة والمباشرة، وبأسلوب مفهوم لأي متحدث بالعربية في أي بلد عربي.
 - اختر الكلمات الأكثر شيوعًا ووضوحًا، وتجنب الكلمات المحلية أو الغامضة أو المترجمة حرفيًا من الإنجليزية.
@@ -31,6 +41,8 @@ function getMaxOutputTokens() {
 }
 
 const MAX_OUTPUT_TOKENS = getMaxOutputTokens();
+const ANALYZE_TIMEOUT_MS = getAnalyzeTimeoutMs();
+const SAFE_MAX_OUTPUT_TOKENS = Math.min(MAX_OUTPUT_TOKENS, 5200);
 
 const ANALYSIS_USAGE_COOKIE = 'madixo_analysis_usage_v1';
 
@@ -99,6 +111,39 @@ function buildAnalysisUsageKey(params: {
     c: normalizeComparableText(params.customer),
     l: params.language,
   });
+}
+
+
+class AnalyzeTimeoutError extends Error {
+  constructor() {
+    super('ANALYSIS_TIMEOUT');
+    this.name = 'AnalyzeTimeoutError';
+  }
+}
+
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new AnalyzeTimeoutError());
+    }, timeoutMs);
+
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      }
+    );
+  });
+}
+
+function getAnalyzeTimeoutMessage(language: OutputLanguage) {
+  return language === 'ar'
+    ? 'التحليل يستغرق وقتًا أطول من المعتاد. أعد المحاولة بعد لحظات.'
+    : 'The analysis is taking longer than usual. Please try again in a moment.';
 }
 
 
@@ -1096,6 +1141,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  let outputLanguage: OutputLanguage = 'en';
+
   try {
     const body = (await request.json()) as AnalyzeRequestBody;
 
@@ -1114,7 +1161,7 @@ export async function POST(request: Request) {
     const requestedUiLang =
       body.uiLang === 'ar' || body.uiLang === 'en' ? body.uiLang : undefined;
 
-    const outputLanguage =
+    outputLanguage =
       requestedUiLang ||
       detectOutputLanguage({
         query,
@@ -1248,7 +1295,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const response = await client.responses.create({
+    const response: any = await withTimeout<any>(client.responses.create({
       model: MODEL,
       instructions:
         outputLanguage === 'ar'
@@ -1260,7 +1307,7 @@ export async function POST(request: Request) {
         customer,
         outputLanguage,
       }),
-      max_output_tokens: MAX_OUTPUT_TOKENS,
+      max_output_tokens: SAFE_MAX_OUTPUT_TOKENS,
       truncation: 'auto',
       text: {
         format: {
@@ -1268,7 +1315,7 @@ export async function POST(request: Request) {
           ...reportSchema,
         },
       },
-    });
+    }), ANALYZE_TIMEOUT_MS);
 
     if (response.status === 'failed') {
       return NextResponse.json(
@@ -1365,6 +1412,17 @@ export async function POST(request: Request) {
 
     return successResponse;
   } catch (error) {
+    if (error instanceof AnalyzeTimeoutError) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: 'ANALYSIS_TIMEOUT',
+          error: getAnalyzeTimeoutMessage(outputLanguage),
+        },
+        { status: 504 }
+      );
+    }
+
     return NextResponse.json(
       {
         ok: false,
