@@ -221,8 +221,15 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: s
   }
 }
 
+type SupabaseUserResult = Awaited<
+  ReturnType<ReturnType<typeof createSupabaseClient>['auth']['getUser']>
+>;
+type SupabaseSessionResult = Awaited<
+  ReturnType<ReturnType<typeof createSupabaseClient>['auth']['getSession']>
+>;
+
 type BrowserAuthState = {
-  user: Awaited<ReturnType<ReturnType<typeof createSupabaseClient>['auth']['getUser']>>['data']['user'] | null;
+  user: SupabaseUserResult['data']['user'] | null;
   accessToken: string | null;
   authError: string | null;
 };
@@ -231,7 +238,7 @@ async function loadBrowserAuthStateOnce(): Promise<BrowserAuthState> {
   try {
     const supabase = createSupabaseClient();
 
-    const sessionResult = await withTimeout(
+    const sessionResult: SupabaseSessionResult = await withTimeout<SupabaseSessionResult>(
       supabase.auth.getSession(),
       AUTH_USER_TIMEOUT_MS,
       'AUTH_SESSION_TIMEOUT'
@@ -247,7 +254,7 @@ async function loadBrowserAuthStateOnce(): Promise<BrowserAuthState> {
       };
     }
 
-    const userResult = await withTimeout(
+    const userResult: SupabaseUserResult = await withTimeout<SupabaseUserResult>(
       supabase.auth.getUser(),
       AUTH_USER_TIMEOUT_MS,
       'AUTH_USER_TIMEOUT'
