@@ -27,13 +27,13 @@ type ValidationEvidenceRow = {
   updated_at: string;
 };
 
-async function getRequiredUser() {
+async function getRequiredUser(accessToken?: string | null) {
   const supabase = await createClient();
 
   const {
     data: { user },
     error,
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser(accessToken || undefined);
 
   if (error) {
     throw new Error(error.message);
@@ -95,9 +95,10 @@ async function invalidateDerivedValidationState(params: {
 
 export async function getUserEvidenceEntries(
   reportId: string,
-  uiLang: UiLanguage
+  uiLang: UiLanguage,
+  accessToken?: string | null
 ): Promise<ValidationEvidenceEntry[]> {
-  const { supabase, user } = await getRequiredUser();
+  const { supabase, user } = await getRequiredUser(accessToken);
 
   const { data, error } = await supabase
     .from('validation_evidence')
