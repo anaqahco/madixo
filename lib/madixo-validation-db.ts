@@ -46,13 +46,13 @@ type ValidationPlansRow = {
   updated_at: string;
 };
 
-async function getRequiredUser() {
+async function getRequiredUser(accessToken?: string | null) {
   const supabase = await createClient();
 
   const {
     data: { user },
     error,
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser(accessToken || undefined);
 
   if (error) {
     throw new Error(error.message);
@@ -291,9 +291,10 @@ function buildAppliedPlan(params: {
 
 export async function getUserValidationPlan(
   reportId: string,
-  uiLang: UiLanguage
+  uiLang: UiLanguage,
+  accessToken?: string | null
 ): Promise<SavedValidationPlan | null> {
-  const { supabase, user } = await getRequiredUser();
+  const { supabase, user } = await getRequiredUser(accessToken);
 
   const { data, error } = await supabase
     .from('validation_plans')
@@ -318,8 +319,9 @@ export async function saveUserValidationPlan(params: {
   reportId: string;
   uiLang: UiLanguage;
   plan: ValidationPlan;
+  accessToken?: string | null;
 }): Promise<SavedValidationPlan> {
-  const { supabase, user } = await getRequiredUser();
+  const { supabase, user } = await getRequiredUser(params.accessToken);
 
   const payload = {
     user_id: user.id,
@@ -347,8 +349,9 @@ export async function saveUserValidationWorkspace(params: {
   reportId: string;
   uiLang: UiLanguage;
   workspace: ValidationWorkspaceState;
+  accessToken?: string | null;
 }): Promise<SavedValidationPlan> {
-  const { supabase, user } = await getRequiredUser();
+  const { supabase, user } = await getRequiredUser(params.accessToken);
 
   const normalized = normalizeValidationWorkspaceState(params.workspace);
 
