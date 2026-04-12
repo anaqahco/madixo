@@ -341,6 +341,57 @@ type DynamicContentCard = {
   browseHref: string;
 };
 
+
+const HOME_FAQ_COPY = {
+  ar: {
+    eyebrow: 'الأسئلة الشائعة',
+    title: 'أسئلة شائعة قبل أن تبدأ في استخدام Madixo',
+    description:
+      'هذه الأسئلة السريعة تساعد الزائر على فهم ما يفعله Madixo، ومتى يكون مناسبًا، وما الذي يحدث بعد تحليل الفرصة.',
+    items: [
+      {
+        question: 'ما هو Madixo بالضبط؟',
+        answer:
+          'Madixo هو مساحة عمل لتحليل الفرص واختبار أفكار المشاريع. يساعدك على فهم الفكرة، توليد قراءة جدوى أولية، بناء خطة تحقق، وتوثيق الأدلة قبل اتخاذ قرار التنفيذ.',
+      },
+      {
+        question: 'هل Madixo مجرد أداة لتوليد الأفكار؟',
+        answer:
+          'لا. Madixo ليس مجرد مولد أفكار. هو منتج مخصص لتحليل الفرص، ودراسة الجدوى الأولية، ومساحة التحقق، وجمع الأدلة، وتحديد الخطوة العملية التالية.',
+      },
+      {
+        question: 'ماذا يحدث بعد تحليل الفرصة؟',
+        answer:
+          'بعد تقرير التحليل يمكنك الانتقال إلى دراسة الجدوى الأولية، ثم مساحة التحقق، ثم توثيق الأدلة والمقابلات والاعتراضات، ثم تحديث الاتجاه الحالي والخطوة التالية.',
+      },
+    ],
+  },
+  en: {
+    eyebrow: 'FAQ',
+    title: 'Common questions before you start using Madixo',
+    description:
+      'These quick questions help a new visitor understand what Madixo does, when it fits, and what happens after the initial opportunity analysis.',
+    items: [
+      {
+        question: 'What exactly is Madixo?',
+        answer:
+          'Madixo is a workspace for opportunity analysis and business idea validation. It helps you understand an idea, generate an early feasibility view, build a validation plan, and capture evidence before you commit.',
+      },
+      {
+        question: 'Is Madixo just an idea generator?',
+        answer:
+          'No. Madixo is not just an idea generator. It is built for opportunity analysis, early feasibility, validation workflow, evidence capture, and choosing the next practical move.',
+      },
+      {
+        question: 'What happens after the opportunity analysis?',
+        answer:
+          'After the report, you can move into early feasibility, then into the validation workspace, then log interviews, objections, and signals, and finally update the current direction and next move.',
+      },
+    ],
+  },
+} as const;
+
+
 function PricingCard({
   name,
   tag,
@@ -605,6 +656,7 @@ export default function HomePageClient() {
 
 
   const copy = UI_COPY[preferredLanguage];
+  const faqCopy = HOME_FAQ_COPY[preferredLanguage];
   const isArabic = preferredLanguage === 'ar';
   const inputAlignClass = isArabic ? 'text-right' : 'text-left';
   const sectionId = 'how-it-works';
@@ -1368,6 +1420,37 @@ export default function HomePageClient() {
           </div>
         </div>
       </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
+        <div className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6 md:p-8">
+          <div className="text-center">
+            <p className="text-sm font-medium text-[#6B7280]">{faqCopy.eyebrow}</p>
+            <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
+              {faqCopy.title}
+            </h2>
+            <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
+              {faqCopy.description}
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {faqCopy.items.map((item) => (
+              <div
+                key={item.question}
+                className="rounded-2xl border border-[#D9E2F0] bg-white p-5 shadow-sm sm:p-6"
+              >
+                <h3 className="text-lg font-semibold tracking-tight text-[#111827] sm:text-xl">
+                  {item.question}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-[#4B5563] sm:text-base sm:leading-8">
+                  {item.answer}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
 
       <section className="mx-auto max-w-6xl px-4 pb-20 text-center sm:px-6 sm:pb-24">
         <h2 className="text-3xl font-bold md:text-4xl">{copy.closingTitle}</h2>
