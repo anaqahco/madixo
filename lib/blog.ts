@@ -694,6 +694,295 @@ export const BLOG_POSTS: BlogPost[] = [
     },
   ],
 },
+
+{
+  slug: 'should-you-do-an-early-feasibility-study-before-launch',
+  category: 'feasibility',
+  title: {
+    ar: 'هل فكرتك تحتاج دراسة جدوى أولية فعلًا قبل الإطلاق؟',
+    en: 'Does Your Idea Really Need an Early Feasibility Study Before Launch',
+  },
+  excerpt: {
+    ar: 'ليست كل فكرة تحتاج نموذجًا ماليًا طويلًا من البداية، لكن كثيرًا من الأفكار تحتاج قراءة جدوى أولية قصيرة قبل الالتزام بالتنفيذ أو الصرف.',
+    en: 'Not every idea needs a long financial model at the start, but many ideas do need a short early feasibility read before you commit to execution or major spending.',
+  },
+  seoDescription: {
+    ar: 'تعرف على متى تحتاج دراسة جدوى أولية قبل الإطلاق، وما الذي يجب أن تتأكد منه في السوق والتكلفة والهامش قبل أن تمضي أبعد في التنفيذ.',
+    en: 'Learn when you need an early feasibility study before launch and what to confirm about the market, costs, and margin before you go further.',
+  },
+  coverEyebrow: { ar: 'دراسة الجدوى', en: 'Feasibility' },
+  keywords: [
+    'early feasibility study',
+    'idea feasibility before launch',
+    'startup feasibility',
+    'دراسة جدوى أولية قبل الإطلاق',
+    'business idea feasibility',
+  ],
+  publishedAt: '2026-04-12',
+  updatedAt: '2026-04-12',
+  readingTimeMinutes: 6,
+  featured: true,
+  relatedUseCases: ['madixo-for-first-time-founders', 'madixo-for-ecommerce-and-product-ideas'],
+  relatedComparisons: ['madixo-vs-feasibility-template-spreadsheets'],
+  relatedPosts: ['feasibility-study-vs-business-plan', 'how-to-analyze-a-business-idea-before-spending-money'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'بعض المؤسسين يسمعون كلمة "دراسة جدوى" فيتصورون مباشرة ملفًا معقدًا وجداول طويلة وتوقعات كثيرة. لكن في المراحل المبكرة، ما تحتاجه غالبًا ليس دراسة نهائية، بل قراءة أولية تختبر إن كانت الفكرة تبدو قابلة للمضي أصلًا.',
+        en: 'Some founders hear “feasibility study” and immediately imagine a complex file full of long tables and projections. But in early stages, what you usually need is not a final study but an early read that tests whether the idea is workable at all.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'متى تحتاج هذه القراءة الأولية؟', en: 'When do you need this early read?' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'عندما تكون تكلفة البداية أو التوريد أو التشغيل ليست بسيطة.',
+          en: 'When startup, sourcing, or operating costs are not trivial.',
+        },
+        {
+          ar: 'عندما تكون الربحية غير واضحة من أول نظرة.',
+          en: 'When margin and monetization are not obvious at first glance.',
+        },
+        {
+          ar: 'عندما تبدو الفكرة جذابة لكنك غير متأكد من واقعية تنفيذها.',
+          en: 'When the idea feels attractive but you are not sure it is realistic to execute.',
+        },
+        {
+          ar: 'عندما تحتاج أن تقرر: أستمر، أعدل، أم أتوقف مبكرًا؟',
+          en: 'When you need to decide whether to continue, adjust, or stop early.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'الهدف هنا ليس بناء ملف مالي نهائي لإقناع جهة خارجية، بل معرفة هل المؤشرات الأولية منطقية بما يكفي لتبرير الخطوة التالية.',
+        en: 'The goal is not to build a final financial file for an outside stakeholder, but to know whether the early signals are reasonable enough to justify the next move.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'ما الذي يجب أن يشمله هذا التقييم؟', en: 'What should this assessment include?' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'وضوح السوق والشريحة الأولى.',
+          en: 'Clarity of the market and the first segment.',
+        },
+        {
+          ar: 'تصور أولي للتكلفة والتشغيل.',
+          en: 'An early view of costs and operations.',
+        },
+        {
+          ar: 'احتمال وجود هامش أو عائد معقول.',
+          en: 'The possibility of a reasonable margin or return.',
+        },
+        {
+          ar: 'أهم المخاطر التي قد تكسر الفكرة مبكرًا.',
+          en: 'The main risks that could break the idea early.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'لهذا لا تبدأ Madixo من الجداول فقط. تبدأ من تحليل الفرصة أولًا، ثم تضيف دراسة جدوى أولية عندما تكون بحاجة إلى قراءة أقرب للواقع قبل الإطلاق.',
+        en: 'That is why Madixo does not start from spreadsheets alone. It starts with opportunity analysis first, then adds early feasibility when you need a more realistic read before launch.',
+      },
+    },
+  ],
+},
+{
+  slug: 'how-to-turn-a-business-idea-into-a-validation-plan',
+  category: 'idea-validation',
+  title: {
+    ar: 'كيف تحول فكرة مشروع إلى خطة تحقق عملية',
+    en: 'How to Turn a Business Idea into a Practical Validation Plan',
+  },
+  excerpt: {
+    ar: 'كثير من الأفكار تتوقف عند مرحلة التحليل أو الحماس. هذه المقالة تشرح كيف تحول الفكرة إلى خطوات تحقق واضحة ومحددة بزمن وإشارة نجاح.',
+    en: 'Many ideas stop at the analysis or excitement stage. This guide shows how to turn an idea into clear validation steps with timing and success signals.',
+  },
+  seoDescription: {
+    ar: 'تعرف على طريقة عملية لتحويل فكرة مشروع إلى خطة تحقق تشمل الفرضية، التجربة، الإشارة المطلوبة، وكيف تراجع القرار بعد كل جولة.',
+    en: 'Learn a practical way to turn a business idea into a validation plan with a hypothesis, an experiment, the signal you need, and how to review the decision after each round.',
+  },
+  coverEyebrow: { ar: 'اختبار الفكرة', en: 'Idea Validation' },
+  keywords: [
+    'validation plan',
+    'business idea validation plan',
+    'test plan for startup idea',
+    'خطة تحقق للفكرة',
+    'validate business idea',
+  ],
+  publishedAt: '2026-04-12',
+  updatedAt: '2026-04-12',
+  readingTimeMinutes: 6,
+  featured: true,
+  relatedUseCases: ['madixo-for-first-time-founders', 'madixo-for-service-businesses'],
+  relatedComparisons: ['madixo-vs-asking-chatgpt-only', 'madixo-vs-generic-market-research-notes'],
+  relatedPosts: ['how-to-test-business-demand-before-launch', 'how-to-validate-a-business-idea-before-building'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'بعد تحليل الفكرة تأتي المشكلة التالية: ماذا أفعل الآن عمليًا؟ هنا تضيع كثير من المشاريع بين قراءة جميلة وبين تنفيذ مبكر غير منظم. الحل هو تحويل الفكرة إلى خطة تحقق واضحة، لا إلى قائمة عشوائية من المهام.',
+        en: 'After analyzing the idea, the next problem appears: what do I do now in practice? Many projects get lost between a nice report and premature unstructured action. The answer is to turn the idea into a clear validation plan, not a random task list.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'ابدأ بفرضية واحدة واضحة', en: 'Start with one clear hypothesis' },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'لا تبدأ بعشر فرضيات في وقت واحد. اختر أهم نقطة تريد التأكد منها الآن: هل المشكلة متكررة؟ هل الشريحة الأولى مهتمة؟ هل العرض الأول مفهوم؟ هل السعر مقبول؟',
+        en: 'Do not start with ten hypotheses at once. Choose the one point you need to confirm now: is the problem repeated, is the first segment interested, is the first offer understandable, or is the price acceptable?',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'صمم تجربة قصيرة لاختبارها', en: 'Design a short experiment to test it' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'مقابلات قصيرة مع شريحة محددة.',
+          en: 'Short interviews with a defined segment.',
+        },
+        {
+          ar: 'صفحة بسيطة أو عرض أولي واضح.',
+          en: 'A simple page or a clear first offer.',
+        },
+        {
+          ar: 'رسائل مباشرة أو إعلان اختبار صغير.',
+          en: 'Direct messages or a small test ad.',
+        },
+        {
+          ar: 'دعوة لتجربة أولية أو حجز مبدئي.',
+          en: 'An invitation to a pilot or early reservation.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'المهم أن تكون التجربة مرتبطة بفرضية محددة، لا مجرد نشاط يعطيك إحساسًا أنك تتحرك.',
+        en: 'What matters is that the experiment is tied to a specific hypothesis, not just activity that makes you feel productive.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'حدد إشارة النجاح مسبقًا', en: 'Define the success signal in advance' },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'قبل أن تبدأ، اسأل نفسك: ما الإشارة التي ستجعلني أقول إن هذه الجولة ناجحة؟ قد تكون عددًا معينًا من الردود الجادة، طلبات متابعة، أسئلة عن السعر، أو موافقات على تجربة صغيرة.',
+        en: 'Before you start, ask yourself what signal would make this round successful. It could be a number of serious replies, follow-up requests, pricing questions, or agreements to join a small test.',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'في Madixo تتحول هذه الخطوات إلى مساحة تحقق منظمة: فرضية، تجربة، نتائج، أدلة، ثم خطوة تالية أفضل بدل إعادة البدء من الصفر في كل مرة.',
+        en: 'In Madixo, those steps become a structured validation workspace: hypothesis, experiment, outcomes, evidence, and the best next move instead of restarting from zero every time.',
+      },
+    },
+  ],
+},
+{
+  slug: 'signs-your-business-idea-is-not-ready-to-launch-yet',
+  category: 'idea-validation',
+  title: {
+    ar: 'علامات أن فكرتك ليست جاهزة للإطلاق بعد',
+    en: 'Signs Your Business Idea Is Not Ready to Launch Yet',
+  },
+  excerpt: {
+    ar: 'أحيانًا يكون التأخير الصحيح أفضل من الإطلاق السريع. هذه المقالة توضح الإشارات التي تعني أن الفكرة ما زالت تحتاج فهمًا أو تحققًا إضافيًا قبل السوق.',
+    en: 'Sometimes the right delay is better than a fast launch. This article explains the signals that show your idea still needs more clarity or validation before market launch.',
+  },
+  seoDescription: {
+    ar: 'تعرف على أبرز العلامات التي تعني أن فكرتك ليست جاهزة للإطلاق بعد، من غموض الشريحة إلى ضعف الإشارات السلوكية وعدم وضوح الربحية أو العرض.',
+    en: 'Learn the main signs that your idea is not ready to launch yet, from a vague segment to weak behavioral signals and unclear margin or offer structure.',
+  },
+  coverEyebrow: { ar: 'اختبار الفكرة', en: 'Idea Validation' },
+  keywords: [
+    'idea not ready to launch',
+    'startup launch signs',
+    'validate before launch',
+    'متى الفكرة ليست جاهزة للإطلاق',
+    'launch readiness',
+  ],
+  publishedAt: '2026-04-12',
+  updatedAt: '2026-04-12',
+  readingTimeMinutes: 5,
+  featured: false,
+  relatedUseCases: ['madixo-for-ecommerce-and-product-ideas', 'madixo-for-service-businesses'],
+  relatedComparisons: ['madixo-vs-generic-market-research-notes'],
+  relatedPosts: ['how-to-know-if-market-demand-is-real', 'how-to-choose-your-best-first-customer'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'الحماس قد يدفعك إلى الإطلاق بسرعة، لكن السرعة ليست دائمًا ميزة. أحيانًا تكون أفضل خطوة هي أن تؤجل الإطلاق قليلًا حتى لا تدخل السوق بعرض غير واضح أو بشريحة غير دقيقة أو بتكلفة لم تفهمها بعد.',
+        en: 'Excitement can push you toward a quick launch, but speed is not always an advantage. Sometimes the best move is to delay slightly so you do not enter the market with an unclear offer, a vague segment, or a cost structure you still do not understand.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'أبرز العلامات التحذيرية', en: 'The clearest warning signs' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'لا تستطيع وصف العميل الأول بجملة واضحة.',
+          en: 'You cannot describe the first customer in one clear sentence.',
+        },
+        {
+          ar: 'ردود السوق كانت مجاملات أكثر من سلوك جاد.',
+          en: 'Market reactions were more compliments than serious behavior.',
+        },
+        {
+          ar: 'العرض الأول ما زال يتغير كل يوم بلا سبب واضح.',
+          en: 'Your first offer keeps changing every day without a clear reason.',
+        },
+        {
+          ar: 'لا يوجد فهم أولي للتكلفة أو الهامش أو نقطة الحساسية في السعر.',
+          en: 'There is no early understanding of cost, margin, or pricing sensitivity.',
+        },
+        {
+          ar: 'لا تعرف ما الذي يجب اختباره أولًا في السوق.',
+          en: 'You do not know what to test first in the market.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'هذه العلامات لا تعني أن الفكرة سيئة بالضرورة، لكنها تعني أن قرار الإطلاق ما زال مبكرًا. الأفضل هنا أن تعود خطوة إلى الوراء: حلل الفكرة، ضيق الشريحة، وابنِ جولة تحقق أقصر وأوضح.',
+        en: 'These signs do not necessarily mean the idea is bad, but they do mean the launch decision is still early. The better move is to step back, analyze the idea, narrow the segment, and build a shorter clearer validation round.',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'هذا بالضبط ما يفيد فيه Madixo: لا يدفعك إلى التنفيذ السريع فقط، بل يساعدك على معرفة هل الوقت مناسب للإطلاق أم أن الفكرة تحتاج جولة فهم وتحسين أخرى قبل ذلك.',
+        en: 'This is exactly where Madixo helps: it does not only push you toward execution, it helps you decide whether the timing is right for launch or whether the idea still needs another round of learning and improvement.',
+      },
+    },
+  ],
+},
 ];
 
 export const USE_CASES: UseCasePage[] = [
@@ -730,7 +1019,7 @@ export const USE_CASES: UseCasePage[] = [
       ar: 'قرار أوضح حول الاستمرار أو التعديل أو التوقف بدل الوقوع في تنفيذ مبكر وغير محسوب.',
       en: 'A clearer decision on whether to continue, adjust, or stop instead of drifting into early unstructured execution.',
     },
-    relatedPosts: ['how-to-validate-a-business-idea-before-building', 'when-to-use-madixo-instead-of-asking-chatgpt-only'],
+    relatedPosts: ['how-to-validate-a-business-idea-before-building', 'when-to-use-madixo-instead-of-asking-chatgpt-only', 'how-to-turn-a-business-idea-into-a-validation-plan'],
   },
   {
     slug: 'madixo-for-service-businesses',
@@ -765,7 +1054,7 @@ export const USE_CASES: UseCasePage[] = [
       ar: 'خفض مخاطرة التوسع المبكر وبناء عرض أوضح وسعر أقرب للواقع.',
       en: 'Lower the risk of scaling too early and build a clearer offer with more realistic pricing.',
     },
-    relatedPosts: ['difference-between-opportunity-analysis-and-feasibility-study', 'how-to-choose-your-best-first-customer'],
+    relatedPosts: ['difference-between-opportunity-analysis-and-feasibility-study', 'how-to-choose-your-best-first-customer', 'how-to-turn-a-business-idea-into-a-validation-plan'],
   },
   {
     slug: 'madixo-for-agencies-and-consultants',
@@ -800,7 +1089,7 @@ export const USE_CASES: UseCasePage[] = [
       ar: 'عملية أكثر مهنية من مجرد تقرير جامد أو ملاحظات متفرقة.',
       en: 'A more professional process than a static report or scattered notes.',
     },
-    relatedPosts: ['how-to-document-market-notes-that-improve-decisions'],
+    relatedPosts: ['how-to-document-market-notes-that-improve-decisions', 'how-to-turn-a-business-idea-into-a-validation-plan'],
   },
   {
     slug: 'madixo-for-ecommerce-and-product-ideas',
@@ -835,7 +1124,7 @@ export const USE_CASES: UseCasePage[] = [
       ar: 'تقليل احتمال الالتزام المبكر في منتج أو مخزون قبل أن تتأكد من وضوح الاتجاه.',
       en: 'Reduce the chance of overcommitting to a product or inventory before the direction is clear.',
     },
-    relatedPosts: ['difference-between-opportunity-analysis-and-feasibility-study', 'how-to-know-if-market-demand-is-real'],
+    relatedPosts: ['difference-between-opportunity-analysis-and-feasibility-study', 'how-to-know-if-market-demand-is-real', 'signs-your-business-idea-is-not-ready-to-launch-yet'],
   },
 ];
 
@@ -866,7 +1155,7 @@ export const COMPARISONS: ComparisonPage[] = [
     notFor: [
       { ar: 'من يريد فقط عصفًا ذهنيًا سريعًا دون حفظ أو متابعة', en: 'People who only want fast brainstorming without persistence' },
     ],
-    relatedPosts: ['when-to-use-madixo-instead-of-asking-chatgpt-only'],
+    relatedPosts: ['when-to-use-madixo-instead-of-asking-chatgpt-only', 'how-to-turn-a-business-idea-into-a-validation-plan'],
   },
   {
     slug: 'madixo-vs-feasibility-template-spreadsheets',
@@ -893,7 +1182,7 @@ export const COMPARISONS: ComparisonPage[] = [
     notFor: [
       { ar: 'من يريد نموذجًا محاسبيًا نهائيًا شديد التفصيل', en: 'People looking for a final highly detailed accounting model' },
     ],
-    relatedPosts: ['difference-between-opportunity-analysis-and-feasibility-study'],
+    relatedPosts: ['difference-between-opportunity-analysis-and-feasibility-study', 'feasibility-study-vs-business-plan', 'should-you-do-an-early-feasibility-study-before-launch'],
   },
   {
     slug: 'madixo-vs-generic-market-research-notes',
@@ -920,7 +1209,7 @@ export const COMPARISONS: ComparisonPage[] = [
     notFor: [
       { ar: 'من يريد فقط مكانًا خامًا لتجميع النصوص دون تحليل لاحق', en: 'People who only need a raw place to store text without later analysis' },
     ],
-    relatedPosts: ['how-to-document-market-notes-that-improve-decisions'],
+    relatedPosts: ['how-to-document-market-notes-that-improve-decisions', 'signs-your-business-idea-is-not-ready-to-launch-yet', 'how-to-test-business-demand-before-launch'],
   },
 ];
 
