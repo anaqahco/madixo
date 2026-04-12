@@ -216,8 +216,8 @@ function validateReport(value: unknown): value is SavedMadixoReport {
   );
 }
 
-const PRIMARY_PLAN_TIMEOUT_MS = 32000;
-const COMPACT_PLAN_TIMEOUT_MS = 22000;
+const PRIMARY_PLAN_TIMEOUT_MS = 24000;
+const COMPACT_PLAN_TIMEOUT_MS = 16000;
 
 async function requestPlanWithTimeout(
   report: SavedMadixoReport,
@@ -244,7 +244,7 @@ async function requestPlan(
         ? 'أنت Madixo، نظام عملي يساعد المؤسس على اختبار أي مشروع بشكل واقعي ومحافظ. أخرج فقط JSON مطابقًا للمخطط. لا تبالغ في اليقين. لا تفترض نوع مشروع معين. لا تفرض 7 أيام أو 7 خطوات. اجعل المخرجات واضحة وبسيطة ومناسبة للمبتدئ والمتقدم. اكتب بالعربية الفصحى البسيطة والمباشرة، وبأسلوب مفهوم لأي متحدث بالعربية في أي بلد عربي. اختر الكلمات الأكثر شيوعًا ووضوحًا، وتجنب الكلمات المحلية أو الغامضة أو المترجمة حرفيًا من الإنجليزية. اجعل الجمل قصيرة وطبيعية، وابتعد عن لغة المستشارين والمصطلحات الثقيلة. لا تخلط العربية والإنجليزية داخل الجمل العادية. إذا ورد اسم منصة أو علامة تجارية معروفة، فاكتبه بصيغته العربية الشائعة داخل الجملة العربية متى كان ذلك طبيعيًا، ولا تستخدم الحروف اللاتينية إلا إذا كان الاسم أو الاختصار لا يُفهم عادة بدونها. إذا أمكن قول الفكرة بكلمتين بسيطتين بدل تعبير تحليلي ثقيل، فاختر الصياغة الأبسط. قبل إخراج الإجابة، راجع النص بصمت وبسّطه لغويًا إذا وجدت كلمة قد لا تكون واضحة لمعظم المستخدمين العرب.'
         : 'You are Madixo, a practical system that helps founders validate any type of project in a realistic, conservative way. Output only JSON matching the schema. Do not overstate certainty. Do not assume a specific project type. Do not force 7 days or 7 steps. Keep the output clear, simple, and commercially grounded.',
     input: buildInput(report, uiLang, compact),
-    max_output_tokens: compact ? 950 : 1500,
+    max_output_tokens: compact ? 800 : 1150,
     truncation: 'disabled',
     text: {
       format: {
@@ -431,12 +431,17 @@ export async function POST(request: Request) {
     }
 
     let plan: ValidationPlan;
+    const preferCompactFirst = !forceRegenerate;
 
     try {
-      plan = await requestPlanWithTimeout(report, uiLang, false, PRIMARY_PLAN_TIMEOUT_MS);
+      plan = preferCompactFirst
+        ? await requestPlanWithTimeout(report, uiLang, true, COMPACT_PLAN_TIMEOUT_MS)
+        : await requestPlanWithTimeout(report, uiLang, false, PRIMARY_PLAN_TIMEOUT_MS);
     } catch (firstError) {
       try {
-        plan = await requestPlanWithTimeout(report, uiLang, true, COMPACT_PLAN_TIMEOUT_MS);
+        plan = preferCompactFirst
+          ? await requestPlanWithTimeout(report, uiLang, false, PRIMARY_PLAN_TIMEOUT_MS)
+          : await requestPlanWithTimeout(report, uiLang, true, COMPACT_PLAN_TIMEOUT_MS);
       } catch (secondError) {
         const message =
           secondError instanceof Error
