@@ -23,6 +23,11 @@ export default function UseCaseDetailPageClient({ page, relatedPosts }: Props) {
           start: 'ابدأ تحليل الفرصة',
           pricing: 'شاهد الباقات',
           related: 'مقالات مرتبطة',
+          continueTitle: 'خطوات مفيدة بعد هذه الحالة',
+          continueDescription:
+            'بعد فهم الحالة المناسبة لك، يمكنك الانتقال إلى المقارنات أو المقالات لفهم البدائل وطريقة العمل بشكل أوسع قبل التنفيذ.',
+          blog: 'تصفح المقالات',
+          comparisons: 'شاهد المقارنات',
         }
       : {
           back: 'Back to use cases',
@@ -33,6 +38,11 @@ export default function UseCaseDetailPageClient({ page, relatedPosts }: Props) {
           start: 'Start opportunity analysis',
           pricing: 'See plans',
           related: 'Related articles',
+          continueTitle: 'Useful next steps after this use case',
+          continueDescription:
+            'After finding the use case that fits you, move into comparisons or articles to understand alternatives and the practical workflow in more depth before execution.',
+          blog: 'Browse articles',
+          comparisons: 'See comparisons',
         };
 
   return (
@@ -95,6 +105,21 @@ export default function UseCaseDetailPageClient({ page, relatedPosts }: Props) {
           </div>
         </section>
       ) : null}
+
+      <section className="mt-14 rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6">
+        <h2 className="text-xl font-bold sm:text-2xl tracking-tight text-[#111827]">{copy.continueTitle}</h2>
+        <p className="mt-3 max-w-3xl text-sm leading-7 sm:text-base sm:leading-8 text-[#475467]">
+          {copy.continueDescription}
+        </p>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <Link href="/blog" className="inline-flex w-full items-center justify-center rounded-full border border-[#D9E2F0] bg-white px-5 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB] sm:w-auto">
+            {copy.blog}
+          </Link>
+          <Link href="/compare-to" className="inline-flex w-full items-center justify-center rounded-full border border-[#D9E2F0] bg-white px-5 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB] sm:w-auto">
+            {copy.comparisons}
+          </Link>
+        </div>
+      </section>
     </article>
   );
 }
