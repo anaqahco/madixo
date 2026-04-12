@@ -8,12 +8,32 @@ import {
 import BlogIndexPageClient from '@/components/blog-index-page';
 
 export const metadata: Metadata = {
-  title: 'Madixo Blog',
+  title: 'Madixo Blog | Business Idea Validation, Feasibility, and Market Learning',
   description:
-    'Articles about opportunity analysis, early feasibility, market validation, and using Madixo more effectively.',
+    'Read practical articles about validating business ideas, understanding market demand, early feasibility studies, and using Madixo to make clearer startup decisions.',
   alternates: {
     canonical: '/blog',
   },
+  openGraph: {
+    title: 'Madixo Blog | Business Idea Validation, Feasibility, and Market Learning',
+    description:
+      'Practical guides on business idea validation, market demand, early feasibility, and clearer next-step decisions.',
+    url: '/blog',
+    type: 'website',
+  },
+  twitter: {
+    title: 'Madixo Blog | Business Idea Validation, Feasibility, and Market Learning',
+    description:
+      'Practical guides on business idea validation, market demand, early feasibility, and clearer next-step decisions.',
+  },
+  keywords: [
+    'Madixo blog',
+    'business idea validation',
+    'early feasibility study',
+    'market demand',
+    'startup idea analysis',
+    'validate a business idea',
+  ],
 };
 
 type SearchParams = Promise<{ category?: string }>;
