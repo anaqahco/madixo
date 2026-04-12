@@ -42,6 +42,22 @@ function getBearerToken(request: Request) {
   return match?.[1]?.trim() || null;
 }
 
+async function withAuthTimeout<T>(promise: Promise<T>, timeoutMs: number, timeoutMessage: string): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+
 function toMetadataRecord(value: unknown): SafeMetadata {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     return {};
@@ -118,7 +134,7 @@ async function getPayloadForRequest(
       const {
         data: { user },
         error,
-      } = await supabase.auth.getUser(accessToken);
+      } = await withAuthTimeout(supabase.auth.getUser(accessToken), 6000, 'AUTH_TOKEN_TIMEOUT');
 
       if (!error && user) {
         return buildPayloadFromMetadata(toMetadataRecord(user.user_metadata), language);
@@ -128,7 +144,11 @@ async function getPayloadForRequest(
     }
   }
 
-  return getCurrentMadixoPlanPayload(language);
+  try {
+    return await withAuthTimeout(getCurrentMadixoPlanPayload(language), 6000, 'AUTH_COOKIE_TIMEOUT');
+  } catch {
+    return getCurrentMadixoPlanPayload(language);
+  }
 }
 
 export async function GET(request: Request) {
