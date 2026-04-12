@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { UiLanguageProvider } from '@/components/ui-language-provider';
+import { GoogleAnalytics } from '@/components/google-analytics';
 import { getDirection, getServerUiLanguageFromCookie } from '@/lib/ui-language';
 import './globals.css';
 
@@ -89,6 +90,7 @@ export default async function RootLayout({
   return (
     <html lang={uiLang} dir={dir} suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <GoogleAnalytics />
         <UiLanguageProvider initialUiLang={uiLang}>{children}</UiLanguageProvider>
       </body>
     </html>
