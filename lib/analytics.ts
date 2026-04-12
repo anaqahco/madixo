@@ -4,7 +4,7 @@ type AnalyticsParams = Record<string, AnalyticsPrimitive>;
 
 declare global {
   interface Window {
-    gtag?: (command: string, eventName: string, params?: Record<string, AnalyticsPrimitive>) => void;
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
