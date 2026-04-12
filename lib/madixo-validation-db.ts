@@ -46,24 +46,55 @@ type ValidationPlansRow = {
   updated_at: string;
 };
 
+async function withAuthTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  timeoutMessage: string
+): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+
 async function getRequiredUser(accessToken?: string | null) {
   const supabase = await createClient();
 
   if (accessToken) {
-    const {
-      data: tokenUserData,
-      error: tokenUserError,
-    } = await supabase.auth.getUser(accessToken);
+    try {
+      const {
+        data: tokenUserData,
+        error: tokenUserError,
+      } = await withAuthTimeout(
+        supabase.auth.getUser(accessToken),
+        6000,
+        'AUTH_TOKEN_TIMEOUT'
+      );
 
-    if (!tokenUserError && tokenUserData.user) {
-      return { supabase, user: tokenUserData.user };
+      if (!tokenUserError && tokenUserData.user) {
+        return { supabase, user: tokenUserData.user };
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'AUTH_TOKEN_TIMEOUT';
+      if (message !== 'AUTH_TOKEN_TIMEOUT') {
+        throw new Error(message);
+      }
     }
   }
 
   const {
     data: cookieUserData,
     error: cookieUserError,
-  } = await supabase.auth.getUser();
+  } = await withAuthTimeout(supabase.auth.getUser(), 6000, 'AUTH_COOKIE_TIMEOUT');
 
   if (!cookieUserError && cookieUserData.user) {
     return { supabase, user: cookieUserData.user };
@@ -294,6 +325,91 @@ function buildAppliedPlan(params: {
       },
     }
   );
+}
+
+export async function getUserValidationPlanForUserId(params: {
+  userId: string;
+  reportId: string;
+  uiLang: UiLanguage;
+}): Promise<SavedValidationPlan | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('validation_plans')
+    .select('*')
+    .eq('user_id', params.userId)
+    .eq('report_id', params.reportId)
+    .eq('ui_lang', params.uiLang)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  return mapRowToSavedValidationPlan(data as ValidationPlansRow);
+}
+
+export async function saveUserValidationPlanForUserId(params: {
+  userId: string;
+  reportId: string;
+  uiLang: UiLanguage;
+  plan: ValidationPlan;
+}): Promise<SavedValidationPlan> {
+  const supabase = await createClient();
+
+  const payload = {
+    user_id: params.userId,
+    report_id: params.reportId,
+    ui_lang: params.uiLang,
+    plan_json: sanitizeValidationPlan(params.plan),
+  };
+
+  const { data, error } = await supabase
+    .from('validation_plans')
+    .upsert(payload, {
+      onConflict: 'user_id,report_id,ui_lang',
+    })
+    .select('*')
+    .single();
+
+  if (error || !data) {
+    throw new Error(error?.message || 'Failed to save validation plan.');
+  }
+
+  return mapRowToSavedValidationPlan(data as ValidationPlansRow);
+}
+
+export async function saveUserValidationWorkspaceForUserId(params: {
+  userId: string;
+  reportId: string;
+  uiLang: UiLanguage;
+  workspace: ValidationWorkspaceState;
+}): Promise<SavedValidationPlan> {
+  const supabase = await createClient();
+  const normalized = normalizeValidationWorkspaceState(params.workspace);
+
+  const { data, error } = await supabase
+    .from('validation_plans')
+    .update({
+      notes: normalized.notes,
+      decision_state: normalized.decisionState,
+      completed_checklist_indexes: normalized.completedChecklistIndexes,
+    })
+    .eq('user_id', params.userId)
+    .eq('report_id', params.reportId)
+    .eq('ui_lang', params.uiLang)
+    .select('*')
+    .single();
+
+  if (error || !data) {
+    throw new Error(error?.message || 'Failed to save validation workspace.');
+  }
+
+  return mapRowToSavedValidationPlan(data as ValidationPlansRow);
 }
 
 export async function getUserValidationPlan(
