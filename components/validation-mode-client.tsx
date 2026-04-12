@@ -764,9 +764,36 @@ async function buildRequestHeaders(contentType = true) {
   return headers;
 }
 
+async function fetchJsonWithTimeout<T>(
+  input: RequestInfo | URL,
+  init: RequestInit,
+  timeoutMs: number
+): Promise<{ response: Response; payload: T }> {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(input, {
+      ...init,
+      signal: controller.signal,
+    });
+
+    const payload = (await response.json()) as T;
+    return { response, payload };
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw new Error('VALIDATION_FETCH_TIMEOUT');
+    }
+
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
 function shouldRetryValidationRequest(error: unknown) {
   const message = error instanceof Error ? error.message : String(error || '');
-  return /auth session missing|failed to fetch|network|timeout|timed out|temporary|502|503|504|try again/i.test(
+  return /auth session missing|failed to fetch|network|timeout|timed out|temporary|502|503|504|try again|validation_fetch_timeout|جار تجهيز|استغرق تجهيز مساحة التحقق/i.test(
     message.toLowerCase()
   );
 }
@@ -993,25 +1020,28 @@ export default function ValidationModeClient({
 
     let lastError: unknown;
 
-    for (let attempt = 1; attempt <= 2; attempt += 1) {
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
       try {
-        const response = await fetch('/api/validate', {
-          method: 'POST',
-          headers: await buildRequestHeaders(),
-          body: JSON.stringify({
-            report,
-            uiLang: language,
-            forceRegenerate: options?.forceRegenerate === true,
-          }),
-        });
-
-        const payload = (await response.json()) as {
+        const timeoutMs = attempt === 1 ? 50000 : 22000;
+        const { response, payload } = await fetchJsonWithTimeout<{
           ok?: boolean;
           error?: string;
           plan?: ValidationPlan;
           workspace?: ValidationWorkspaceState;
           source?: 'saved' | 'generated';
-        };
+        }>(
+          '/api/validate',
+          {
+            method: 'POST',
+            headers: await buildRequestHeaders(),
+            body: JSON.stringify({
+              report,
+              uiLang: language,
+              forceRegenerate: options?.forceRegenerate === true,
+            }),
+          },
+          timeoutMs
+        );
 
         if (!response.ok || !payload.ok || !payload.plan) {
           throw new Error(payload.error || copy.failed);
@@ -1053,8 +1083,8 @@ export default function ValidationModeClient({
       } catch (error) {
         lastError = error;
 
-        if (attempt < 2 && shouldRetryValidationRequest(error)) {
-          await waitForValidationRetry(1000);
+        if (attempt < 3 && shouldRetryValidationRequest(error)) {
+          await waitForValidationRetry(attempt === 1 ? 1400 : 900);
           continue;
         }
       }
