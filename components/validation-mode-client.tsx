@@ -723,18 +723,27 @@ function QuickNavCard({
 }
 
 
-async function getBrowserAccessToken() {
+async function getBrowserAccessToken(timeoutMs = 1800) {
   if (typeof window === 'undefined') {
     return null;
   }
 
   try {
     const supabase = createBrowserSupabaseClient();
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const sessionResult = (await Promise.race([
+      supabase.auth.getSession(),
+      new Promise<never>((_, reject) => {
+        window.setTimeout(() => reject(new Error('AUTH_SESSION_TIMEOUT')), timeoutMs);
+      }),
+    ])) as {
+      data?: {
+        session?: {
+          access_token?: string | null;
+        } | null;
+      };
+    };
 
-    return session?.access_token ?? null;
+    return sessionResult?.data?.session?.access_token ?? null;
   } catch {
     return null;
   }
