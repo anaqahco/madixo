@@ -940,6 +940,240 @@ export const BLOG_POSTS: BlogPost[] = [
     },
   ],
 },
+
+{
+  slug: 'when-to-stop-collecting-opinions-and-start-validating',
+  category: 'idea-validation',
+  title: {
+    ar: 'متى تتوقف عن جمع الآراء وتبدأ التحقق العملي',
+    en: 'When to Stop Collecting Opinions and Start Validating',
+  },
+  excerpt: {
+    ar: 'الاستماع مهم، لكن كثرة الآراء قد تربكك أكثر مما تفيدك. هذه المقالة تساعدك على معرفة اللحظة التي تنتقل فيها من السماع إلى تجربة عملية تكشف القرار.',
+    en: 'Listening matters, but too many opinions can confuse you more than help you. This article helps you see when to move from listening into a practical validation step.',
+  },
+  seoDescription: {
+    ar: 'تعرف على الوقت المناسب للتوقف عن جمع الآراء العامة والبدء في التحقق العملي من الفكرة بخطوة صغيرة تكشف وجود الطلب أو ضعفه.',
+    en: 'Learn when to stop collecting general opinions and begin practical validation with a small step that reveals whether demand is real or weak.',
+  },
+  coverEyebrow: { ar: 'اختبار الفكرة', en: 'Idea Validation' },
+  keywords: [
+    'متى أبدأ اختبار الفكرة',
+    'stop collecting opinions',
+    'idea validation steps',
+    'business idea feedback',
+    'validate instead of asking',
+  ],
+  publishedAt: '2026-04-12T21:15:00.000Z',
+  updatedAt: '2026-04-12T21:15:00.000Z',
+  readingTimeMinutes: 5,
+  featured: false,
+  relatedUseCases: ['madixo-for-first-time-founders', 'madixo-for-service-businesses'],
+  relatedComparisons: ['madixo-vs-asking-chatgpt-only'],
+  relatedPosts: ['how-to-test-business-demand-before-launch', 'signs-your-business-idea-is-not-ready-to-launch-yet'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'في البداية تحتاج أن تسمع. لكن هناك نقطة تتحول فيها الآراء الكثيرة إلى ضباب. كل شخص يعطيك رأيًا مختلفًا، وأنت لا تقترب من القرار بل تبتعد عنه. هنا يجب أن يتغير السؤال من: ماذا يظن الناس؟ إلى: ماذا سيفعل الناس فعلاً؟',
+        en: 'At the beginning, you do need to listen. But there is a point where too many opinions turn into fog. Everyone gives you a different take, and instead of getting closer to a decision, you move further away. At that point, the question must change from “what do people think?” to “what will people actually do?”',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'متى يكون الوقت مناسبًا للانتقال؟', en: 'When is it time to move on?' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'عندما تبدأ تسمع نفس المشكلة أو نفس الاعتراض أكثر من مرة.',
+          en: 'When you keep hearing the same problem or objection more than once.',
+        },
+        {
+          ar: 'عندما تصبح الآراء عامة جدًا ولا تضيف قرارًا جديدًا.',
+          en: 'When the feedback becomes too general and no longer adds a better decision.',
+        },
+        {
+          ar: 'عندما يمكنك صياغة فرضية واضحة يمكن اختبارها بخطوة صغيرة.',
+          en: 'When you can write a clear assumption that can be tested with one small step.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'التحقق العملي لا يعني بناء المنتج كاملًا. قد يعني عرضًا أوليًا، صفحة بسيطة، رسالة موجهة لشريحة محددة، أو تجربة حجز مبدئي. الهدف ليس الإقناع، بل كشف السلوك الحقيقي.',
+        en: 'Practical validation does not mean building the full product. It may mean a first offer, a simple page, a targeted message to one segment, or a lightweight pre-booking test. The goal is not persuasion. The goal is to reveal real behavior.',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'في Madixo يمكنك أخذ الفكرة أو الملاحظة وتحويلها إلى سؤال أوضح، ثم ربطها بخطوة تحقق بدلاً من البقاء في دائرة آراء لا تنتهي.',
+        en: 'In Madixo, you can turn the idea or the market note into a clearer question, then connect it to a validation step instead of staying stuck in an endless loop of opinions.',
+      },
+    },
+  ],
+},
+{
+  slug: 'how-to-choose-the-best-market-to-start-with',
+  category: 'market-research',
+  title: {
+    ar: 'كيف تختار السوق الأول الذي تبدأ به',
+    en: 'How to Choose the Best Market to Start With',
+  },
+  excerpt: {
+    ar: 'ليس كل سوق مناسبًا للبداية حتى لو كانت الفكرة جيدة. هذه المقالة تساعدك على اختيار السوق الأول الأسهل دخولًا والأوضح طلبًا.',
+    en: 'Not every market is the right starting point even when the idea is good. This article helps you choose the first market that is easiest to enter and clearest in demand.',
+  },
+  seoDescription: {
+    ar: 'تعرف على كيف تختار السوق الأول لمشروعك الجديد، من وضوح المشكلة وسهولة الوصول إلى العميل إلى سرعة اختبار الطلب وتكلفة الدخول.',
+    en: 'Learn how to choose the first market for a new business, from problem clarity and customer access to demand testing speed and cost of entry.',
+  },
+  coverEyebrow: { ar: 'فهم السوق', en: 'Market Research' },
+  keywords: [
+    'اختيار السوق الأول',
+    'go to market first segment',
+    'best market to start with',
+    'market entry',
+    'first customer segment',
+  ],
+  publishedAt: '2026-04-12T21:25:00.000Z',
+  updatedAt: '2026-04-12T21:25:00.000Z',
+  readingTimeMinutes: 5,
+  featured: false,
+  relatedUseCases: ['madixo-for-agencies-and-consultants', 'madixo-for-service-businesses'],
+  relatedComparisons: ['madixo-vs-generic-market-research-notes'],
+  relatedPosts: ['how-to-know-if-market-demand-is-real', 'how-to-choose-your-best-first-customer'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'أحد أسباب تعثر البداية هو محاولة دخول سوق واسع جدًا من أول يوم. الفكرة قد تكون مناسبة، لكن اختيار سوق البداية الخاطئ يجعل الاختبار أبطأ، والوصول أصعب، والرسالة أقل وضوحًا.',
+        en: 'One reason early execution stalls is trying to enter a market that is too broad on day one. The idea itself may be fine, but a poor starting market makes testing slower, access harder, and messaging less clear.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'ما الذي يجعل سوق البداية جيدًا؟', en: 'What makes a strong starting market?' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'مشكلة واضحة ومتكررة عند شريحة محددة.',
+          en: 'A clear, repeated problem for a specific segment.',
+        },
+        {
+          ar: 'سهولة الوصول إلى العميل الأول بدون دورة بيع طويلة جدًا.',
+          en: 'An easy path to reach the first customer without an overly long sales cycle.',
+        },
+        {
+          ar: 'إمكانية تجربة عرض صغير واستخراج إشارة سريعة من السوق.',
+          en: 'The ability to test a small offer and get a quick market signal.',
+        },
+        {
+          ar: 'تكلفة دخول معقولة مقارنة بحجم التعلم المتوقع.',
+          en: 'A sensible cost of entry relative to how much you will learn.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'لا تبحث في البداية عن أكبر سوق، بل عن أوضح سوق. السوق الأول الجيد هو الذي يعطيك تعلمًا سريعًا ويكشف هل الفكرة قابلة للتقدم أو تحتاج تعديلًا قبل التوسع.',
+        en: 'At the start, do not chase the biggest market. Chase the clearest one. A strong first market is the one that gives you fast learning and shows whether the idea is worth pushing forward or needs adjustment before expansion.',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'Madixo يساعدك هنا لأنه لا يكتفي بوصف السوق بشكل عام، بل يدفعك إلى اختيار نقطة دخول أوضح: من هو العميل الأول، وما أفضل عرض أول، وما المخاطر التي قد تبطئ البداية.',
+        en: 'Madixo helps here because it does not just describe the market in broad terms. It pushes you toward a clearer entry point: who the first customer is, what the best first offer looks like, and what risks could slow the start.',
+      },
+    },
+  ],
+},
+{
+  slug: 'what-a-good-first-offer-looks-like',
+  category: 'positioning',
+  title: {
+    ar: 'كيف يبدو العرض الأول الجيد لفكرة جديدة',
+    en: 'What a Good First Offer Looks Like for a New Idea',
+  },
+  excerpt: {
+    ar: 'العرض الأول ليس النسخة الكاملة من المشروع. هو صياغة بسيطة وواضحة تسمح لك باختبار القيمة قبل التوسع. هذه المقالة تشرح شكله العملي.',
+    en: 'A first offer is not the full version of the business. It is a simple, clear framing that lets you test value before scaling. This article explains what that looks like in practice.',
+  },
+  seoDescription: {
+    ar: 'تعرف على شكل العرض الأول الجيد لفكرة مشروع جديدة، وكيف تصنع عرضًا بسيطًا وواضحًا يساعدك على اختبار القيمة قبل بناء شيء أكبر.',
+    en: 'Learn what a strong first offer looks like for a new business idea and how to shape a simple, clear offer that tests value before you build something bigger.',
+  },
+  coverEyebrow: { ar: 'تموضع المنتج', en: 'Positioning' },
+  keywords: [
+    'first offer',
+    'عرض أول للمشروع',
+    'offer testing',
+    'MVP offer',
+    'how to position a new idea',
+  ],
+  publishedAt: '2026-04-12T21:35:00.000Z',
+  updatedAt: '2026-04-12T21:35:00.000Z',
+  readingTimeMinutes: 5,
+  featured: false,
+  relatedUseCases: ['madixo-for-ecommerce-and-product-ideas', 'madixo-for-service-businesses'],
+  relatedComparisons: ['madixo-vs-feasibility-template-spreadsheets', 'madixo-vs-asking-chatgpt-only'],
+  relatedPosts: ['how-to-turn-a-business-idea-into-a-validation-plan', 'how-to-choose-your-best-first-customer'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'كثير من الأفكار تتعثر ليس لأن الفكرة ضعيفة، بل لأن أول عرض لها كان واسعًا ومبهماً. العميل لا يحتاج في البداية إلى كل شيء. يحتاج أن يفهم بسرعة: ماذا ستفعل له، ولماذا الآن، وما الخطوة التالية.',
+        en: 'Many ideas stall not because the idea is weak, but because the first offer is too broad and vague. At the beginning, the customer does not need everything. They need to quickly understand what you will do for them, why now, and what the next step is.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'مكونات العرض الأول الجيد', en: 'The parts of a strong first offer' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'شريحة عميل واضحة وليست السوق كله.',
+          en: 'A clear customer segment instead of “everyone.”',
+        },
+        {
+          ar: 'مشكلة واحدة أو نتيجة واحدة يفهمها العميل بسرعة.',
+          en: 'One problem or one outcome the customer understands quickly.',
+        },
+        {
+          ar: 'صيغة تنفيذ بسيطة يمكن تجربتها بدون بناء معقد.',
+          en: 'A simple delivery format you can test without heavy execution.',
+        },
+        {
+          ar: 'دعوة واضحة للفعل: تواصل، تجربة، حجز، أو طلب متابعة.',
+          en: 'A clear call to action: contact, trial, booking, or follow-up request.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'العرض الأول ليس غاية نهائية، بل أداة تعلم. إذا كان واضحًا ومحددًا، ستفهم من السوق بسرعة: هل الناس مهتمون بالفعل؟ ما الذي يربكهم؟ وما الذي يجب تغييره قبل التوسع؟',
+        en: 'The first offer is not the final destination. It is a learning tool. If it is clear and specific, the market will tell you quickly whether people are truly interested, what confuses them, and what must change before expansion.',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'داخل Madixo، يخرج لك أفضل عميل أول وأول عرض مناسب ونقطة الدخول الأقرب، وهذا يجعل الانتقال من الفكرة إلى الاختبار أسرع وأقل عشوائية.',
+        en: 'Inside Madixo, you get a clearer best first customer, first offer, and entry point, which makes the move from idea to testing faster and less random.',
+      },
+    },
+  ],
+},
 ];
 
 export const USE_CASES: UseCasePage[] = [
