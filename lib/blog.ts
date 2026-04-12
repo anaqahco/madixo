@@ -416,6 +416,7 @@ export const BLOG_POSTS: BlogPost[] = [
   featured: true,
   relatedUseCases: ['madixo-for-first-time-founders', 'madixo-for-service-businesses'],
   relatedComparisons: ['madixo-vs-feasibility-template-spreadsheets'],
+    relatedPosts: ['how-to-analyze-a-business-idea-before-spending-money', 'how-to-test-business-demand-before-launch'],
   body: [
     {
       type: 'paragraph',
@@ -512,6 +513,7 @@ export const BLOG_POSTS: BlogPost[] = [
   featured: true,
   relatedUseCases: ['madixo-for-ecommerce-and-product-ideas', 'madixo-for-service-businesses'],
   relatedComparisons: ['madixo-vs-generic-market-research-notes'],
+    relatedPosts: ['how-to-analyze-a-business-idea-before-spending-money', 'how-to-validate-a-business-idea-before-building'],
   body: [
     {
       type: 'paragraph',
@@ -612,6 +614,7 @@ export const BLOG_POSTS: BlogPost[] = [
   featured: true,
   relatedUseCases: ['madixo-for-first-time-founders', 'madixo-for-ecommerce-and-product-ideas'],
   relatedComparisons: ['madixo-vs-asking-chatgpt-only'],
+    relatedPosts: ['how-to-validate-a-business-idea-before-building', 'feasibility-study-vs-business-plan'],
   body: [
     {
       type: 'paragraph',
