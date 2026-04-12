@@ -386,6 +386,310 @@ export const BLOG_POSTS: BlogPost[] = [
       },
     ],
   },
+
+{
+  slug: 'feasibility-study-vs-business-plan',
+  category: 'feasibility',
+  title: {
+    ar: 'دراسة الجدوى أم خطة العمل: ما الفرق ومتى تحتاج كل واحدة؟',
+    en: 'Feasibility Study vs Business Plan: What Is the Difference and When Do You Need Each One',
+  },
+  excerpt: {
+    ar: 'كثير من أصحاب المشاريع يخلطون بين دراسة الجدوى وخطة العمل. هذه المقالة توضح الفرق العملي بينهما، ومتى تبدأ بالأولى قبل أن تنتقل إلى الثانية.',
+    en: 'Many founders mix up a feasibility study and a business plan. This guide explains the practical difference and when to start with one before moving to the other.',
+  },
+  seoDescription: {
+    ar: 'تعرف على الفرق بين دراسة الجدوى وخطة العمل، ومتى تحتاج كل واحدة قبل إطلاق مشروعك، وكيف يساعدك Madixo في القراءة الأولية قبل كتابة الخطة الكاملة.',
+    en: 'Learn the difference between a feasibility study and a business plan, when you need each one before launch, and how Madixo helps with the early decision before writing a full plan.',
+  },
+  coverEyebrow: { ar: 'دراسة الجدوى', en: 'Feasibility' },
+  keywords: [
+    'feasibility study vs business plan',
+    'business plan',
+    'study feasibility',
+    'دراسة الجدوى وخطة العمل',
+    'feasibility study',
+  ],
+  publishedAt: '2026-04-12',
+  updatedAt: '2026-04-12',
+  readingTimeMinutes: 7,
+  featured: true,
+  relatedUseCases: ['madixo-for-first-time-founders', 'madixo-for-service-businesses'],
+  relatedComparisons: ['madixo-vs-feasibility-template-spreadsheets'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'الخلط بين دراسة الجدوى وخطة العمل يسبب مشكلة شائعة: بعض المؤسسين يبدأون بكتابة خطة طويلة قبل أن يتأكدوا أصلًا أن الفكرة تستحق التنفيذ. النتيجة تكون مستندًا مرتبًا، لكن القرار نفسه ما زال غير واضح.',
+        en: 'Mixing up a feasibility study and a business plan creates a common problem: some founders start writing a long plan before confirming the idea is worth executing at all. The result is a neat document, but the decision is still unclear.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'ما وظيفة دراسة الجدوى؟', en: 'What does a feasibility study do?' },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'دراسة الجدوى تسأل: هل تبدو هذه الفكرة معقولة من ناحية السوق والتكلفة والربحية الأولية والمخاطر؟ هي أداة لاتخاذ قرار مبكر، وليست وثيقة تشغيل نهائية.',
+        en: 'A feasibility study asks: does this idea look workable from a market, cost, early profitability, and risk perspective? It is an early decision tool, not a final operating document.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'وما وظيفة خطة العمل؟', en: 'And what does a business plan do?' },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'خطة العمل تأتي بعد أن تقترب أكثر من التنفيذ. هي توضح كيف ستدخل السوق، وكيف ستبيع، وكيف ستشغل المشروع، وما هو النموذج التشغيلي والمالي الذي ستبني عليه.',
+        en: 'A business plan comes later, when you are closer to execution. It explains how you will enter the market, sell, operate, and build the operating and financial model around the venture.',
+      },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'دراسة الجدوى: هل الفكرة تستحق التقدم أصلًا؟',
+          en: 'Feasibility study: is the idea worth moving forward at all?',
+        },
+        {
+          ar: 'خطة العمل: كيف سننفذ الفكرة بعد أن قررنا التقدم؟',
+          en: 'Business plan: how will we execute the idea after deciding to move forward?',
+        },
+        {
+          ar: 'دراسة الجدوى: تركز على القراءة الأولية واتخاذ القرار.',
+          en: 'Feasibility study: focused on the early read and the decision.',
+        },
+        {
+          ar: 'خطة العمل: تركز على التنفيذ والتشغيل والنمو.',
+          en: 'Business plan: focused on execution, operations, and growth.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'لهذا من الأفضل في المراحل الأولى أن تبدأ بتحليل الفرصة ثم دراسة جدوى أولية مختصرة، وبعد ذلك فقط تقرر هل يستحق الأمر بناء خطة عمل كاملة أم لا.',
+        en: 'That is why, in early stages, it is better to start with opportunity analysis and a short early feasibility read, and only then decide whether a full business plan is justified.',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'في Madixo لا تبدأ من قالب جامد. تبدأ من الفكرة نفسها، ثم تنتقل إلى قراءة أولية للجدوى، ثم إلى مساحة تحقق وجمع أدلة قبل أي التزام كبير.',
+        en: 'In Madixo, you do not start from a rigid template. You start from the idea itself, then move into early feasibility, then into validation and evidence capture before making a larger commitment.',
+      },
+    },
+  ],
+},
+{
+  slug: 'how-to-test-business-demand-before-launch',
+  category: 'market-research',
+  title: {
+    ar: 'كيف تختبر الطلب على مشروعك قبل الإطلاق',
+    en: 'How to Test Business Demand Before You Launch',
+  },
+  excerpt: {
+    ar: 'قبل أن تطلق المنتج أو الخدمة، تحتاج أن تعرف هل يوجد طلب حقيقي أم لا. هذه المقالة تشرح كيف تختبر الطلب بطريقة عملية وقليلة التكلفة.',
+    en: 'Before you launch a product or service, you need to know whether real demand exists. This guide shows how to test demand in a practical, low-cost way.',
+  },
+  seoDescription: {
+    ar: 'تعرف على خطوات عملية لاختبار الطلب قبل إطلاق المشروع، من اختيار الشريحة الأولى إلى جمع الإشارات السلوكية وبناء تجربة سوق صغيرة باستخدام Madixo.',
+    en: 'Learn practical steps to test demand before launching, from choosing the first segment to collecting behavioral signals and running a small market test with Madixo.',
+  },
+  coverEyebrow: { ar: 'فهم السوق', en: 'Market Research' },
+  keywords: [
+    'test business demand',
+    'market demand test',
+    'validate demand before launch',
+    'اختبار الطلب قبل الإطلاق',
+    'business demand',
+  ],
+  publishedAt: '2026-04-12',
+  updatedAt: '2026-04-12',
+  readingTimeMinutes: 6,
+  featured: true,
+  relatedUseCases: ['madixo-for-ecommerce-and-product-ideas', 'madixo-for-service-businesses'],
+  relatedComparisons: ['madixo-vs-generic-market-research-notes'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'اختبار الطلب لا يعني أن تطلق مشروعًا كاملًا. المعنى الحقيقي هو أن تصمم تجربة صغيرة تكشف لك: هل السوق مهتم بما يكفي؟ وهل المشكلة أو الرغبة واضحة عند شريحة محددة؟',
+        en: 'Testing demand does not mean launching a full venture. It means designing a small experiment that reveals whether the market is interested enough and whether the problem or desire is clear for a defined segment.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'ابدأ بشريحة واحدة واضحة', en: 'Start with one clear segment' },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'أكثر الأخطاء شيوعًا هو محاولة اختبار الفكرة مع الجميع. الأفضل أن تختار أول شريحة محددة، مثل نوع عميل واضح أو سوق محلي واضح أو حالة استخدام واحدة فقط.',
+        en: 'One of the most common mistakes is trying to test an idea with everyone. It is better to choose one clear starting segment, such as a specific customer type, a clear local market, or one exact use case.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'لا تبحث عن المجاملة، ابحث عن السلوك', en: 'Do not look for compliments, look for behavior' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'هل سأل الشخص عن السعر أو طريقة العمل؟',
+          en: 'Did the person ask about price or delivery?',
+        },
+        {
+          ar: 'هل طلب تفاصيل أكثر أو مثالًا فعليًا؟',
+          en: 'Did they ask for more details or a concrete example?',
+        },
+        {
+          ar: 'هل قارن ما تعرضه ببديل يستخدمه الآن؟',
+          en: 'Did they compare your idea with an alternative they already use?',
+        },
+        {
+          ar: 'هل وافق على تجربة صغيرة أو حجز مبدئي؟',
+          en: 'Did they agree to a small trial or an early reservation?',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'هذه الإشارات أهم بكثير من قول: الفكرة جميلة. لأن الإعجاب العام لا يثبت وجود طلب، بينما السلوك يكشف الجدية.',
+        en: 'These signals matter much more than hearing “nice idea.” General enthusiasm does not prove demand, while behavior exposes seriousness.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'ابنِ تجربة صغيرة قبل الإطلاق', en: 'Build a small pre-launch test' },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'قد تكون التجربة عبارة عن صفحة بسيطة، عرض أولي، إعلان اختبار، مقابلات مركزة، أو رسالة واضحة ترسلها إلى شريحة محددة. الهدف ليس البيع الكامل، بل جمع أدلة قوية بما يكفي لاتخاذ القرار التالي.',
+        en: 'The test can be a simple page, a first offer, a test ad, focused interviews, or a clear message sent to a defined segment. The goal is not full sales yet, but strong enough evidence to guide the next decision.',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'في Madixo يمكنك الانتقال من تحليل الفرصة إلى مساحة تحقق تسجل فيها ما حدث فعلًا، وما تكرر، وما الذي يجب تعديله قبل الإطلاق.',
+        en: 'In Madixo, you can move from opportunity analysis into a validation workspace where you record what actually happened, what repeated, and what should change before launch.',
+      },
+    },
+  ],
+},
+{
+  slug: 'how-to-analyze-a-business-idea-before-spending-money',
+  category: 'idea-validation',
+  title: {
+    ar: 'كيف تحلل فكرة مشروع قبل أن تصرف المال عليها',
+    en: 'How to Analyze a Business Idea Before Spending Money on It',
+  },
+  excerpt: {
+    ar: 'قبل أن تدفع على التطوير أو المخزون أو التوظيف، تحتاج إلى تحليل الفكرة بشكل منظم. هذه المقالة تشرح ما الذي تنظر إليه أولًا، وما الذي يجعل الفكرة أقوى أو أضعف.',
+    en: 'Before spending on development, inventory, or hiring, you need to analyze the idea in a structured way. This article explains what to look at first and what makes an idea stronger or weaker.',
+  },
+  seoDescription: {
+    ar: 'تعرف على طريقة عملية لتحليل فكرة مشروع قبل صرف المال، من المشكلة والسوق إلى المنافسة والربحية الأولية، وكيف يساعدك Madixo على رؤية أوضح قبل التنفيذ.',
+    en: 'Learn a practical way to analyze a business idea before spending money, from the problem and market to competition and early monetization, and how Madixo helps you see the opportunity more clearly.',
+  },
+  coverEyebrow: { ar: 'اختبار الفكرة', en: 'Idea Validation' },
+  keywords: [
+    'analyze business idea',
+    'business idea analysis',
+    'evaluate startup idea',
+    'تحليل فكرة مشروع',
+    'startup idea analysis',
+  ],
+  publishedAt: '2026-04-12',
+  updatedAt: '2026-04-12',
+  readingTimeMinutes: 7,
+  featured: true,
+  relatedUseCases: ['madixo-for-first-time-founders', 'madixo-for-ecommerce-and-product-ideas'],
+  relatedComparisons: ['madixo-vs-asking-chatgpt-only'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'صرف المال مبكرًا لا يجعل الفكرة أفضل. في كثير من الحالات، المشكلة ليست في غياب التنفيذ، بل في غياب التحليل الواضح قبل التنفيذ.',
+        en: 'Spending money early does not make an idea better. In many cases, the problem is not a lack of execution, but a lack of clear analysis before execution.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'حلل الفكرة من خمس زوايا', en: 'Analyze the idea from five angles' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'المشكلة: هل هي واضحة ومتكررة فعلًا؟',
+          en: 'Problem: is it clear and repeated enough?',
+        },
+        {
+          ar: 'العميل: من أول شخص سيشعر بها الآن؟',
+          en: 'Customer: who is the first person who feels it now?',
+        },
+        {
+          ar: 'السوق: هل توجد مؤشرات على طلب أو محاولات حل حالية؟',
+          en: 'Market: are there signals of demand or visible current attempts to solve it?',
+        },
+        {
+          ar: 'المنافسة: ما البدائل التي يستخدمها الناس اليوم؟',
+          en: 'Competition: what alternatives are people using today?',
+        },
+        {
+          ar: 'الربحية الأولية: هل يوجد طريق معقول لتحقيق هامش أو عائد؟',
+          en: 'Early monetization: is there a reasonable path toward margin or return?',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'عندما تكون هذه الصورة غير واضحة، يصبح الإنفاق المبكر على التطوير أو التوريد أو التسويق مخاطرة أكبر مما تتوقع. لهذا نبدأ دائمًا بتحليل الفرصة قبل أي التزام كبير.',
+        en: 'When this picture is unclear, early spending on development, sourcing, or marketing becomes riskier than it looks. That is why opportunity analysis should come before large commitments.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'متى تعتبر الفكرة ضعيفة في هذه المرحلة؟', en: 'When does an idea look weak at this stage?' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'عندما تكون الشريحة الأولى ضبابية جدًا.',
+          en: 'When the first target segment is too vague.',
+        },
+        {
+          ar: 'عندما لا تستطيع وصف المشكلة بلغة العميل نفسه.',
+          en: 'When you cannot describe the problem in the customer’s own language.',
+        },
+        {
+          ar: 'عندما لا ترى بدائل حالية ولا محاولات حل واضحة.',
+          en: 'When you cannot see current alternatives or visible attempts to solve it.',
+        },
+        {
+          ar: 'عندما لا يوجد طريق أولي منطقي للربح أو العرض.',
+          en: 'When there is no early logical path to an offer or monetization.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'Madixo يساعدك هنا لأنه يحول الفكرة إلى قراءة منظمة: الطلب، المنافسة، العميل الأول، المخاطر، ثم الجدوى الأولية وخطة التحقق التالية.',
+        en: 'Madixo helps here by turning the idea into a structured read: demand, competition, first customer, risks, then early feasibility and the next validation move.',
+      },
+    },
+  ],
+},
 ];
 
 export const USE_CASES: UseCasePage[] = [
