@@ -653,6 +653,77 @@ function getBearerToken(request: Request) {
   return match?.[1]?.trim() || null;
 }
 
+async function withAuthTimeout<T>(promise: Promise<T>, timeoutMs: number, timeoutMessage: string): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+
+async function resolveAuthenticatedUser(request: Request) {
+  const supabase = await createClient();
+  const accessToken = getBearerToken(request);
+
+  let authErrorMessage = '';
+
+  if (accessToken) {
+    try {
+      const {
+        data: tokenUserData,
+        error: tokenUserError,
+      } = await withAuthTimeout(supabase.auth.getUser(accessToken), 6000, 'AUTH_TOKEN_TIMEOUT');
+
+      if (!tokenUserError && tokenUserData.user) {
+        return { user: tokenUserData.user, authErrorMessage: '', authSource: 'token' as const };
+      }
+
+      if (tokenUserError) {
+        authErrorMessage = tokenUserError.message;
+      }
+    } catch (error) {
+      authErrorMessage = error instanceof Error ? error.message : 'AUTH_TOKEN_TIMEOUT';
+    }
+  }
+
+  try {
+    const {
+      data: cookieUserData,
+      error: cookieUserError,
+    } = await withAuthTimeout(supabase.auth.getUser(), 6000, 'AUTH_COOKIE_TIMEOUT');
+
+    if (!cookieUserError && cookieUserData.user) {
+      return {
+        user: cookieUserData.user,
+        authErrorMessage,
+        authSource: 'cookie' as const,
+      };
+    }
+
+    if (cookieUserError) {
+      authErrorMessage = cookieUserError.message;
+    }
+  } catch (error) {
+    if (!authErrorMessage) {
+      authErrorMessage = error instanceof Error ? error.message : 'AUTH_COOKIE_TIMEOUT';
+    }
+  }
+
+  return {
+    user: null,
+    authErrorMessage,
+    authSource: 'missing' as const,
+  };
+}
+
 function readPlanFromUserMetadata(user: { user_metadata?: Record<string, unknown> | null } | null) {
   if (!user || !user.user_metadata) {
     return null;
@@ -1162,37 +1233,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const supabase = await createClient();
-    const accessToken = getBearerToken(request);
-
-    let user: Awaited<ReturnType<typeof supabase.auth.getUser>>['data']['user'] | null = null;
-    let authErrorMessage = '';
-
-    if (accessToken) {
-      const {
-        data: tokenUserData,
-        error: tokenUserError,
-      } = await supabase.auth.getUser(accessToken);
-
-      if (!tokenUserError && tokenUserData.user) {
-        user = tokenUserData.user;
-      } else if (tokenUserError) {
-        authErrorMessage = tokenUserError.message;
-      }
-    }
-
-    if (!user) {
-      const {
-        data: cookieUserData,
-        error: authError,
-      } = await supabase.auth.getUser();
-
-      if (authError) {
-        authErrorMessage = authError.message;
-      }
-
-      user = cookieUserData.user;
-    }
+    const { user, authErrorMessage } = await resolveAuthenticatedUser(request);
 
     if (!user) {
       return NextResponse.json(
