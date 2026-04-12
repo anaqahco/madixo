@@ -45,26 +45,44 @@ function normalizeSort(value: string | null): ReportSortOption {
   return 'latest';
 }
 
-async function getRequiredUser() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
 
-  if (error) {
-    throw new Error(error.message);
-  }
+function getBearerToken(request: Request) {
+  const value = request.headers.get('authorization');
+  if (!value) return null;
 
-  if (!user) {
-    throw new Error('AUTH_REQUIRED');
-  }
-
-  return { supabase, user };
+  const match = value.match(/^Bearer\s+(.+)$/i);
+  return match?.[1]?.trim() || null;
 }
 
-async function getReportsAndValidation(sortBy: ReportSortOption) {
-  const { supabase, user } = await getRequiredUser();
+async function getRequiredUser(request: Request) {
+  const supabase = await createClient();
+  const accessToken = getBearerToken(request);
+
+  if (accessToken) {
+    const {
+      data: tokenUserData,
+      error: tokenUserError,
+    } = await supabase.auth.getUser(accessToken);
+
+    if (!tokenUserError && tokenUserData.user) {
+      return { supabase, user: tokenUserData.user };
+    }
+  }
+
+  const {
+    data: cookieUserData,
+    error: cookieUserError,
+  } = await supabase.auth.getUser();
+
+  if (!cookieUserError && cookieUserData.user) {
+    return { supabase, user: cookieUserData.user };
+  }
+
+  throw new Error('AUTH_REQUIRED');
+}
+
+async function getReportsAndValidation(request: Request, sortBy: ReportSortOption) {
+  const { supabase, user } = await getRequiredUser(request);
 
   let query = supabase.from('reports').select('*').eq('user_id', user.id);
 
@@ -125,8 +143,8 @@ async function getReportsAndValidation(sortBy: ReportSortOption) {
   return { reports, validationPlans };
 }
 
-async function getSingleReportAndValidation(id: string) {
-  const { supabase, user } = await getRequiredUser();
+async function getSingleReportAndValidation(request: Request, id: string) {
+  const { supabase, user } = await getRequiredUser(request);
 
   const { data, error } = await supabase
     .from('reports')
@@ -175,7 +193,7 @@ export async function GET(request: NextRequest) {
     const id = request.nextUrl.searchParams.get('id')?.trim() || '';
 
     if (id) {
-      const payload = await getSingleReportAndValidation(id);
+      const payload = await getSingleReportAndValidation(request, id);
 
       return NextResponse.json(
         {
@@ -187,7 +205,7 @@ export async function GET(request: NextRequest) {
     }
 
     const sortBy = normalizeSort(request.nextUrl.searchParams.get('sort'));
-    const payload = await getReportsAndValidation(sortBy);
+    const payload = await getReportsAndValidation(request, sortBy);
 
     return NextResponse.json(
       {
@@ -231,7 +249,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const { supabase, user } = await getRequiredUser();
+    const { supabase, user } = await getRequiredUser(request);
 
     const { error } = await supabase
       .from('reports')
