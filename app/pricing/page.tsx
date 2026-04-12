@@ -2,12 +2,13 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import SiteHeader from '@/components/site-header';
 import SiteFooter from '@/components/site-footer';
 import { useUiLanguageState } from '@/components/ui-language-provider';
 import { setClientUiLanguage, type UiLanguage } from '@/lib/ui-language';
+import { trackEvent } from '@/lib/analytics';
 
 type PlanKey = 'free' | 'pro' | 'team';
 
@@ -704,6 +705,8 @@ export default function PricingPage() {
   const [isSubmitting, setIsSubmitting] = useState<PlanKey | null>(null);
   const [isManagingBilling, setIsManagingBilling] = useState(false);
   const [checkoutNotice, setCheckoutNotice] = useState<string | null>(null);
+  const checkoutReturnTrackedRef = useRef(false);
+  const planUpgradeTrackedRef = useRef(false);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -720,9 +723,20 @@ export default function PricingPage() {
 
   useEffect(() => {
     const checkoutStatus = searchParams.get('checkout');
+    const checkoutPlan = searchParams.get('plan');
 
     if (checkoutStatus !== 'success') {
+      checkoutReturnTrackedRef.current = false;
+      planUpgradeTrackedRef.current = false;
       return;
+    }
+
+    if (!checkoutReturnTrackedRef.current) {
+      trackEvent('checkout_success_returned', {
+        ui_lang: uiLang,
+        plan: checkoutPlan || 'unknown',
+      });
+      checkoutReturnTrackedRef.current = true;
     }
 
     let cancelled = false;
@@ -741,6 +755,15 @@ export default function PricingPage() {
       setBilling(payload.billing ?? null);
 
       if (payload.plan !== 'free') {
+        if (!planUpgradeTrackedRef.current) {
+          trackEvent('plan_upgraded', {
+            ui_lang: uiLang,
+            plan: payload.plan,
+            billing_status: payload.billing?.status || 'unknown',
+          });
+          planUpgradeTrackedRef.current = true;
+        }
+
         setCheckoutNotice(uiLang === 'ar' ? COPY.ar.checkoutSuccessDone : COPY.en.checkoutSuccessDone);
         window.history.replaceState({}, '', '/pricing');
         return;
@@ -767,6 +790,11 @@ export default function PricingPage() {
 
   async function handleOpenBillingPortal() {
     try {
+      trackEvent('billing_portal_open_clicked', {
+        ui_lang: uiLang,
+        current_plan: currentPlan,
+      });
+
       setIsManagingBilling(true);
 
       const response = await fetch('/api/billing/customer-portal', {
@@ -776,6 +804,10 @@ export default function PricingPage() {
       const payload = (await response.json().catch(() => ({}))) as BillingPortalResponse;
 
       if (response.status === 401 && payload.loginRedirect) {
+        trackEvent('billing_portal_login_redirect', {
+          ui_lang: uiLang,
+          current_plan: currentPlan,
+        });
         window.location.assign(payload.loginRedirect);
         return;
       }
@@ -789,8 +821,18 @@ export default function PricingPage() {
         );
       }
 
+      trackEvent('billing_portal_opened', {
+        ui_lang: uiLang,
+        current_plan: currentPlan,
+      });
+
       window.location.assign(payload.url);
     } catch (error) {
+      trackEvent('billing_portal_open_failed', {
+        ui_lang: uiLang,
+        current_plan: currentPlan,
+        error_name: error instanceof Error ? error.name : 'unknown_error',
+      });
       window.alert(
         error instanceof Error
           ? error.message
@@ -804,7 +846,19 @@ export default function PricingPage() {
   }
 
   async function handleSelectPlan(plan: PlanKey) {
-    if (plan === 'team') return;
+    trackEvent('pricing_plan_selected', {
+      ui_lang: uiLang,
+      selected_plan: plan,
+      current_plan: currentPlan,
+    });
+
+    if (plan === 'team') {
+      trackEvent('team_plan_interest_clicked', {
+        ui_lang: uiLang,
+        current_plan: currentPlan,
+      });
+      return;
+    }
 
     if (plan === 'free' && currentPlan !== 'free') {
       await handleOpenBillingPortal();
@@ -812,11 +866,21 @@ export default function PricingPage() {
     }
 
     if (plan === 'free') {
+      trackEvent('free_plan_dashboard_redirect', {
+        ui_lang: uiLang,
+        current_plan: currentPlan,
+      });
       window.location.assign('/dashboard');
       return;
     }
 
     try {
+      trackEvent('checkout_requested', {
+        ui_lang: uiLang,
+        selected_plan: plan,
+        current_plan: currentPlan,
+      });
+
       setIsSubmitting(plan);
 
       const response = await fetch('/api/billing/checkout', {
@@ -832,6 +896,10 @@ export default function PricingPage() {
       const payload = (await response.json().catch(() => ({}))) as CheckoutResponse;
 
       if (response.status === 401 && payload.loginRedirect) {
+        trackEvent('checkout_login_redirect', {
+          ui_lang: uiLang,
+          selected_plan: plan,
+        });
         window.location.assign(payload.loginRedirect);
         return;
       }
@@ -846,11 +914,19 @@ export default function PricingPage() {
       }
 
       if (payload.alreadyActive) {
+        trackEvent('checkout_already_active', {
+          ui_lang: uiLang,
+          selected_plan: plan,
+        });
         window.location.assign('/dashboard');
         return;
       }
 
       if (!payload.checkout) {
+        trackEvent('checkout_not_ready', {
+          ui_lang: uiLang,
+          selected_plan: plan,
+        });
         throw new Error(copy.checkoutNotReady);
       }
 
@@ -862,9 +938,26 @@ export default function PricingPage() {
         tokenPrefix: `${payload.checkout.clientToken.slice(0, 5)}...`,
       });
 
+      trackEvent('checkout_open_started', {
+        ui_lang: uiLang,
+        selected_plan: plan,
+        environment: payload.checkout.environment,
+      });
+
       setCheckoutNotice(null);
       await openMadixoPaddleCheckout(payload.checkout, uiLang);
+
+      trackEvent('checkout_opened', {
+        ui_lang: uiLang,
+        selected_plan: plan,
+        environment: payload.checkout.environment,
+      });
     } catch (error) {
+      trackEvent('checkout_open_failed', {
+        ui_lang: uiLang,
+        selected_plan: plan,
+        error_name: error instanceof Error ? error.name : 'unknown_error',
+      });
       window.alert(
         error instanceof Error
           ? error.message
