@@ -285,12 +285,52 @@ function getBearerToken(request: Request) {
   return match?.[1]?.trim() || null;
 }
 
+async function withAuthTimeout<T>(promise: Promise<T>, timeoutMs: number, timeoutMessage: string): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+
 async function getAuthenticatedUser(accessToken?: string | null) {
   const supabase = await createClient();
+
+  if (accessToken) {
+    try {
+      const {
+        data: { user },
+        error,
+      } = await withAuthTimeout(supabase.auth.getUser(accessToken), 6000, 'AUTH_TOKEN_TIMEOUT');
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (user) {
+        return user;
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'AUTH_TOKEN_TIMEOUT';
+
+      if (message !== 'AUTH_TOKEN_TIMEOUT') {
+        throw new Error(message);
+      }
+    }
+  }
+
   const {
     data: { user },
     error,
-  } = await supabase.auth.getUser(accessToken || undefined);
+  } = await withAuthTimeout(supabase.auth.getUser(), 6000, 'AUTH_COOKIE_TIMEOUT');
 
   if (error) {
     throw new Error(error.message);
