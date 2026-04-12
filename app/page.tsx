@@ -15,6 +15,7 @@ import {
   localizeText,
 } from '@/lib/blog';
 import { type UiLanguage } from '@/lib/ui-language';
+import { trackEvent } from '@/lib/analytics';
 
 const EXAMPLES = {
   en: {
@@ -667,6 +668,14 @@ export default function HomePage() {
     setFieldErrors({});
     setFormError('');
 
+    trackEvent('analysis_started', {
+      source: 'homepage',
+      ui_lang: preferredLanguage,
+      idea_length: query.length,
+      has_market: Boolean(targetMarket),
+      has_customer: Boolean(targetCustomer),
+    });
+
     let hasAuthenticatedUser = sessionState === 'user';
 
     if (!hasAuthenticatedUser) {
@@ -696,9 +705,19 @@ export default function HomePage() {
       loginParams.set('next', nextPath);
       loginParams.set('message', copy.authRequiredToAnalyze);
 
+      trackEvent('analysis_auth_redirect', {
+        source: 'homepage',
+        ui_lang: preferredLanguage,
+      });
+
       router.push(`/login?${loginParams.toString()}`);
       return;
     }
+
+    trackEvent('analysis_results_opened', {
+      source: 'homepage',
+      ui_lang: preferredLanguage,
+    });
 
     router.push(
       buildAnalyzeResultsPath({
