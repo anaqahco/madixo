@@ -26,6 +26,7 @@ import {
 } from '@/lib/madixo-validation';
 import { getClientUiLanguage, setClientUiLanguage } from '@/lib/ui-language';
 import { createClient as createBrowserSupabaseClient } from '@/lib/supabase/client';
+import { trackEvent } from '@/lib/analytics';
 
 type Props = {
   report: SavedMadixoReport;
@@ -885,6 +886,7 @@ export default function ValidationModeClient({
   const synthesisSectionRef = useRef<HTMLDivElement | null>(null);
   const decisionSectionRef = useRef<HTMLDivElement | null>(null);
   const iterationSectionRef = useRef<HTMLDivElement | null>(null);
+  const workspaceReadyTrackedRef = useRef<string | null>(null);
 
   useEffect(() => {
     setUiLang(getClientUiLanguage(initialUiLang));
@@ -898,6 +900,26 @@ export default function ValidationModeClient({
       });
     }
   }, [appliedNotice]);
+
+  useEffect(() => {
+    if (state !== 'ready' || !plan) {
+      return;
+    }
+
+    if (workspaceReadyTrackedRef.current === report.id) {
+      return;
+    }
+
+    trackEvent('validation_workspace_loaded', {
+      ui_lang: uiLang,
+      report_id: report.id,
+      source: planSource || 'generated',
+      evidence_entries: evidenceEntries.length,
+      has_decision_view: Boolean(evidenceSynthesis),
+    });
+
+    workspaceReadyTrackedRef.current = report.id;
+  }, [state, plan, planSource, evidenceEntries.length, evidenceSynthesis, report.id, uiLang]);
 
   useEffect(() => {
     if (state !== 'loading' || plan) {
@@ -993,6 +1015,14 @@ export default function ValidationModeClient({
       lastSavedWorkspaceRef.current = savedSerialized;
       setWorkspace(savedWorkspace);
       setSaveState('saved');
+
+      if (mode === 'manual') {
+        trackEvent('validation_workspace_saved', {
+          ui_lang: uiLang,
+          report_id: report.id,
+          mode,
+        });
+      }
 
       window.setTimeout(() => {
         setSaveState((current) => (current === 'saved' ? 'idle' : current));
@@ -1202,6 +1232,15 @@ export default function ValidationModeClient({
     setUiLang(language);
   };
 
+  const handleRefreshWorkspace = async () => {
+    trackEvent('validation_workspace_refresh_clicked', {
+      ui_lang: uiLang,
+      report_id: report.id,
+    });
+
+    await loadValidationSnapshot(uiLang, { forceRegenerate: true });
+  };
+
   const handleSaveWorkspace = async () => {
     if (autoSaveTimeoutRef.current) {
       window.clearTimeout(autoSaveTimeoutRef.current);
@@ -1235,6 +1274,10 @@ export default function ValidationModeClient({
       }
 
       const blob = await response.blob();
+      trackEvent('validation_pdf_exported', {
+        ui_lang: uiLang,
+        report_id: report.id,
+      });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       const safeName = getSafePdfFileName(report);
@@ -1312,9 +1355,7 @@ export default function ValidationModeClient({
             <div className="grid w-full gap-2 sm:flex sm:w-auto sm:flex-wrap sm:gap-3">
               <button
                 type="button"
-                onClick={() =>
-                  void loadValidationSnapshot(uiLang, { forceRegenerate: true })
-                }
+                onClick={() => void handleRefreshWorkspace()}
                 disabled={state === 'loading'}
                 className="inline-flex w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-semibold text-[#374151] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
               >
