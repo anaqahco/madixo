@@ -30,6 +30,7 @@ export type BlogPost = {
   readingTimeMinutes: number;
   featured: boolean;
   body: BlogBlock[];
+  relatedPosts?: string[];
   relatedUseCases?: string[];
   relatedComparisons?: string[];
 };
