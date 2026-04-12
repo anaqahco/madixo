@@ -9,10 +9,10 @@ import {
   normalizeValidationPlan,
 } from '@/lib/madixo-validation';
 import {
-  getUserValidationPlan,
-  saveUserValidationPlan,
+  getUserValidationPlanForUserId,
+  saveUserValidationPlanForUserId,
 } from '@/lib/madixo-validation-db';
-import { getUserEvidenceEntries } from '@/lib/madixo-evidence-db';
+import { getUserEvidenceEntriesForUserId } from '@/lib/madixo-evidence-db';
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -216,6 +216,22 @@ function validateReport(value: unknown): value is SavedMadixoReport {
   );
 }
 
+const PRIMARY_PLAN_TIMEOUT_MS = 32000;
+const COMPACT_PLAN_TIMEOUT_MS = 22000;
+
+async function requestPlanWithTimeout(
+  report: SavedMadixoReport,
+  uiLang: UiLanguage,
+  compact: boolean,
+  timeoutMs: number
+): Promise<ValidationPlan> {
+  return withAuthTimeout(
+    requestPlan(report, uiLang, compact),
+    timeoutMs,
+    compact ? 'VALIDATION_COMPACT_TIMEOUT' : 'VALIDATION_PRIMARY_TIMEOUT'
+  );
+}
+
 async function requestPlan(
   report: SavedMadixoReport,
   uiLang: UiLanguage,
@@ -228,7 +244,7 @@ async function requestPlan(
         ? 'أنت Madixo، نظام عملي يساعد المؤسس على اختبار أي مشروع بشكل واقعي ومحافظ. أخرج فقط JSON مطابقًا للمخطط. لا تبالغ في اليقين. لا تفترض نوع مشروع معين. لا تفرض 7 أيام أو 7 خطوات. اجعل المخرجات واضحة وبسيطة ومناسبة للمبتدئ والمتقدم. اكتب بالعربية الفصحى البسيطة والمباشرة، وبأسلوب مفهوم لأي متحدث بالعربية في أي بلد عربي. اختر الكلمات الأكثر شيوعًا ووضوحًا، وتجنب الكلمات المحلية أو الغامضة أو المترجمة حرفيًا من الإنجليزية. اجعل الجمل قصيرة وطبيعية، وابتعد عن لغة المستشارين والمصطلحات الثقيلة. لا تخلط العربية والإنجليزية داخل الجمل العادية. إذا ورد اسم منصة أو علامة تجارية معروفة، فاكتبه بصيغته العربية الشائعة داخل الجملة العربية متى كان ذلك طبيعيًا، ولا تستخدم الحروف اللاتينية إلا إذا كان الاسم أو الاختصار لا يُفهم عادة بدونها. إذا أمكن قول الفكرة بكلمتين بسيطتين بدل تعبير تحليلي ثقيل، فاختر الصياغة الأبسط. قبل إخراج الإجابة، راجع النص بصمت وبسّطه لغويًا إذا وجدت كلمة قد لا تكون واضحة لمعظم المستخدمين العرب.'
         : 'You are Madixo, a practical system that helps founders validate any type of project in a realistic, conservative way. Output only JSON matching the schema. Do not overstate certainty. Do not assume a specific project type. Do not force 7 days or 7 steps. Keep the output clear, simple, and commercially grounded.',
     input: buildInput(report, uiLang, compact),
-    max_output_tokens: compact ? 5200 : 4200,
+    max_output_tokens: compact ? 950 : 1500,
     truncation: 'disabled',
     text: {
       format: {
@@ -380,10 +396,18 @@ export async function POST(request: Request) {
 
     if (!forceRegenerate) {
       try {
-        const existing = await getUserValidationPlan(report.id, uiLang, accessToken);
+        const existing = await getUserValidationPlanForUserId({
+          userId: user.id,
+          reportId: report.id,
+          uiLang,
+        });
 
         if (existing) {
-          const evidenceEntries = await getUserEvidenceEntries(report.id, uiLang, accessToken);
+          const evidenceEntries = await getUserEvidenceEntriesForUserId({
+            userId: user.id,
+            reportId: report.id,
+            uiLang,
+          });
 
           return NextResponse.json({
             ok: true,
@@ -409,10 +433,10 @@ export async function POST(request: Request) {
     let plan: ValidationPlan;
 
     try {
-      plan = await requestPlan(report, uiLang, false);
+      plan = await requestPlanWithTimeout(report, uiLang, false, PRIMARY_PLAN_TIMEOUT_MS);
     } catch (firstError) {
       try {
-        plan = await requestPlan(report, uiLang, true);
+        plan = await requestPlanWithTimeout(report, uiLang, true, COMPACT_PLAN_TIMEOUT_MS);
       } catch (secondError) {
         const message =
           secondError instanceof Error
@@ -421,13 +445,20 @@ export async function POST(request: Request) {
               ? firstError.message
               : 'Failed to build validation plan.';
 
+        const friendlyError =
+          message === 'VALIDATION_PRIMARY_TIMEOUT' ||
+          message === 'VALIDATION_COMPACT_TIMEOUT'
+            ? uiLang === 'ar'
+              ? 'استغرق تجهيز مساحة التحقق أكثر من المتوقع. أعد المحاولة وسيحاول Madixo إكمالها بسرعة.'
+              : 'Preparing the validation workspace took longer than expected. Try again and Madixo will retry quickly.'
+            : uiLang === 'ar'
+              ? 'جار تجهيز مساحة التحقق. حاول مرة أخرى بعد لحظات.'
+              : message;
+
         return NextResponse.json(
           {
             ok: false,
-            error:
-              uiLang === 'ar'
-                ? 'جار تجهيز مساحة التحقق. حاول مرة أخرى بعد لحظات.'
-                : message,
+            error: friendlyError,
           },
           { status: 502 }
         );
@@ -435,11 +466,11 @@ export async function POST(request: Request) {
     }
 
     try {
-      const saved = await saveUserValidationPlan({
+      const saved = await saveUserValidationPlanForUserId({
+        userId: user.id,
         reportId: report.id,
         uiLang,
         plan,
-        accessToken,
       });
 
       return NextResponse.json({
@@ -484,7 +515,10 @@ export async function POST(request: Request) {
         error:
           message === 'Auth session missing!'
             ? 'جار تجهيز مساحة التحقق. حاول مرة أخرى بعد لحظات.'
-            : message,
+            : message === 'VALIDATION_PRIMARY_TIMEOUT' ||
+                message === 'VALIDATION_COMPACT_TIMEOUT'
+              ? 'استغرق تجهيز مساحة التحقق أكثر من المتوقع. أعد المحاولة وسيحاول Madixo إكمالها بسرعة.'
+              : message,
       },
       { status: 500 }
     );
