@@ -17,6 +17,11 @@ export default function ComparisonsPageClient({ items }: { items: ComparisonPage
           start: 'ابدأ التحليل',
           pricing: 'شاهد الباقات',
           open: 'افتح المقارنة',
+          blog: 'المقالات',
+          useCases: 'حالات الاستخدام',
+          helperTitle: 'قبل أن تحكم على الأداة، شاهد السياق العملي',
+          helperDescription:
+            'إذا كنت ما زلت في مرحلة الفهم، فالمقالات وحالات الاستخدام تساعدك على رؤية الفرق من زاوية القرار العملي، لا من زاوية المقارنة النظرية فقط.',
         }
       : {
           eyebrow: 'Comparisons',
@@ -26,41 +31,64 @@ export default function ComparisonsPageClient({ items }: { items: ComparisonPage
           start: 'Start analysis',
           pricing: 'See plans',
           open: 'Open comparison',
+          blog: 'Blog',
+          useCases: 'Use cases',
+          helperTitle: 'See the practical context before judging the tool',
+          helperDescription:
+            'If you are still in the understanding stage, the blog and use cases help you see the difference through real decision-making context, not only a theoretical comparison.',
         };
 
   return (
     <>
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-10 pt-10 text-center">
+      <section className="mx-auto max-w-6xl px-4 pb-10 pt-10 text-center sm:px-6">
         <p className="text-sm font-medium text-[#6B7280]">{copy.eyebrow}</p>
-        <h1 className="mt-3 text-3xl font-bold sm:text-4xl tracking-tight text-[#111827] md:text-5xl">
+        <h1 className="mt-3 text-3xl font-bold tracking-tight text-[#111827] sm:text-4xl md:text-5xl">
           {copy.title}
         </h1>
-        <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 sm:text-base sm:leading-8 text-[#475467] md:text-lg">
+        <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-[#475467] sm:text-base sm:leading-8 md:text-lg">
           {copy.description}
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link href="/" className="rounded-full bg-[#111827] px-4 sm:px-6 py-3 text-sm font-semibold text-white hover:opacity-90">
+          <Link href="/" className="rounded-full bg-[#111827] px-4 py-3 text-sm font-semibold text-white hover:opacity-90 sm:px-6">
             {copy.start}
           </Link>
-          <Link href="/pricing" className="rounded-full border border-[#D9E2F0] bg-white px-4 sm:px-6 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]">
+          <Link href="/pricing" className="rounded-full border border-[#D9E2F0] bg-white px-4 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB] sm:px-6">
             {copy.pricing}
           </Link>
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-6 px-4 sm:px-6 pb-24 md:grid-cols-2 xl:grid-cols-2">
+      <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
+        <div className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6">
+          <h2 className="text-xl font-bold tracking-tight text-[#111827] sm:text-2xl">{copy.helperTitle}</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-[#475467] sm:text-base sm:leading-8">
+            {copy.helperDescription}
+          </p>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/blog" className="rounded-full border border-[#D9E2F0] bg-white px-5 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]">
+              {copy.blog}
+            </Link>
+            <Link href="/use-cases" className="rounded-full border border-[#D9E2F0] bg-white px-5 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]">
+              {copy.useCases}
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto grid max-w-6xl gap-6 px-4 pb-24 sm:px-6 md:grid-cols-2 xl:grid-cols-2">
         {items.map((item) => (
           <article key={item.slug} className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6">
             <span className="rounded-full border border-[#D9E2F0] bg-white px-3 py-1 text-xs font-semibold text-[#4B5563]">
               {localizeText(item.compareAgainst, uiLang)}
             </span>
 
-            <h2 className="mt-4 text-xl font-bold sm:text-2xl tracking-tight text-[#111827]">
+            <h2 className="mt-4 text-xl font-bold tracking-tight text-[#111827] sm:text-2xl">
               {localizeText(item.title, uiLang)}
             </h2>
 
-            <p className="mt-4 text-sm leading-7 sm:text-base sm:leading-8 text-[#475467]">
+            <p className="mt-4 text-sm leading-7 text-[#475467] sm:text-base sm:leading-8">
               {localizeText(item.summary, uiLang)}
             </p>
 
