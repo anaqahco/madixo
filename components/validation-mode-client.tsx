@@ -1022,7 +1022,7 @@ export default function ValidationModeClient({
 
     for (let attempt = 1; attempt <= 3; attempt += 1) {
       try {
-        const timeoutMs = attempt === 1 ? 70000 : attempt === 2 ? 40000 : 30000;
+        const timeoutMs = attempt === 1 ? 110000 : attempt === 2 ? 65000 : 45000;
         const { response, payload } = await fetchJsonWithTimeout<{
           ok?: boolean;
           error?: string;
