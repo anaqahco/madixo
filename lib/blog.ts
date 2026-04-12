@@ -1174,6 +1174,249 @@ export const BLOG_POSTS: BlogPost[] = [
     },
   ],
 },
+
+{
+  slug: 'how-to-validate-your-business-idea-step-by-step',
+  category: 'idea-validation',
+  title: {
+    ar: 'كيف تبدأ التحقق من فكرتك خطوة بخطوة',
+    en: 'How to Validate Your Business Idea Step by Step',
+  },
+  excerpt: {
+    ar: 'إذا كانت الفكرة ما زالت واسعة أو ضبابية، فهذه المقالة تعطيك مسارًا عمليًا واضحًا: من تعريف المشكلة إلى أول تجربة صغيرة تكشف القرار.',
+    en: 'If the idea still feels broad or blurry, this article gives you a practical path from defining the problem to running the first small test that reveals the decision.',
+  },
+  seoDescription: {
+    ar: 'تعرف على طريقة عملية للتحقق من فكرة مشروع خطوة بخطوة، من صياغة المشكلة واختيار العميل الأول إلى بناء اختبار صغير وتسجيل الأدلة.',
+    en: 'Learn a practical step-by-step method to validate a business idea, from defining the problem and choosing the first customer to running a small test and documenting evidence.',
+  },
+  coverEyebrow: { ar: 'اختبار الفكرة', en: 'Idea Validation' },
+  keywords: [
+    'خطوات التحقق من الفكرة',
+    'validate business idea step by step',
+    'idea validation process',
+    'how to test a business idea',
+    'business idea validation checklist',
+  ],
+  publishedAt: '2026-04-14T09:00:00.000Z',
+  updatedAt: '2026-04-14T09:00:00.000Z',
+  readingTimeMinutes: 6,
+  featured: false,
+  relatedUseCases: ['madixo-for-first-time-founders', 'madixo-for-service-businesses'],
+  relatedComparisons: ['madixo-vs-asking-chatgpt-only', 'madixo-vs-feasibility-template-spreadsheets'],
+  relatedPosts: ['how-to-validate-a-business-idea-before-building', 'how-to-turn-a-business-idea-into-a-validation-plan'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'كثير من الناس يعرفون أنهم يجب أن "يتحققوا من الفكرة"، لكنهم لا يعرفون من أين يبدأون. النتيجة أن التحقق يتحول إلى كلام عام أو تأجيل طويل. الأفضل أن تنظر إليه كسلسلة خطوات صغيرة، لا كمرحلة غامضة.',
+        en: 'Many people know they should “validate the idea,” but they do not know where to begin. The result is that validation turns into vague conversation or long delays. It is better to treat it as a series of small steps, not as a fuzzy stage.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'المسار العملي المختصر', en: 'A simple practical sequence' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'حدد المشكلة بصياغة واضحة ومحددة بدل وصف عام للفكرة.',
+          en: 'Define the problem clearly instead of describing the idea in broad terms.',
+        },
+        {
+          ar: 'اختر شريحة عميل أولى واضحة يمكن الوصول إليها الآن.',
+          en: 'Choose a clear first customer segment you can reach now.',
+        },
+        {
+          ar: 'اكتب فرضية واحدة: ما الذي تتوقع أن يفعله العميل إذا كان الطلب حقيقيًا؟',
+          en: 'Write one assumption: what do you expect the customer to do if demand is real?',
+        },
+        {
+          ar: 'صمم خطوة اختبار صغيرة: رسالة، عرض أولي، صفحة، أو تجربة حجز.',
+          en: 'Design one small test: a message, first offer, page, or booking experiment.',
+        },
+        {
+          ar: 'سجل ما حدث فعلاً: الأسئلة، الاعتراضات، الإشارات، وقرارك التالي.',
+          en: 'Record what actually happened: questions, objections, signals, and your next decision.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'الهدف من هذه الخطوات ليس إثبات أن الفكرة ممتازة بأي طريقة، بل كشف الصورة بسرعة وبأقل تكلفة ممكنة. إذا ظهرت إشارات جيدة، تكمل. وإذا ظهرت نقاط ضعف مبكرًا، تعدل قبل أن يكبر الالتزام.',
+        en: 'The goal of these steps is not to prove the idea is great by any means necessary. It is to reveal the picture quickly and with the lowest reasonable cost. If good signals appear, you continue. If weak points show up early, you adjust before the commitment grows.',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'في Madixo، هذا المسار أسهل لأنك لا تبدأ من فراغ: تحليل الفرصة، ثم نقطة دخول أوضح، ثم مساحة تحقق وأدلة تدعم القرار بدل أن تضيع بين ملفات وملاحظات متفرقة.',
+        en: 'In Madixo, this sequence becomes easier because you are not starting from zero: opportunity analysis, then a clearer entry point, then a validation workspace and evidence that support the decision instead of scattered notes and disconnected files.',
+      },
+    },
+  ],
+},
+{
+  slug: 'how-to-identify-the-right-first-customer',
+  category: 'positioning',
+  title: {
+    ar: 'كيف تعرف من هو أول عميل يجب أن تستهدفه',
+    en: 'How to Identify the Right First Customer',
+  },
+  excerpt: {
+    ar: 'أول عميل لا يعني أي شخص قد يشتري. هذه المقالة تساعدك على اختيار الشريحة الأولى التي تعطيك أوضح تعلم وأسرع إشارة من السوق.',
+    en: 'The first customer does not mean anyone who might buy. This article helps you choose the first segment that gives you the clearest learning and the fastest market signal.',
+  },
+  seoDescription: {
+    ar: 'تعرف على كيف تحدد أول عميل مناسب لفكرة مشروعك، ولماذا اختيار الشريحة الأولى الصحيحة يجعل التحقق أسرع والرسالة أوضح.',
+    en: 'Learn how to identify the right first customer for your business idea and why the right first segment makes validation faster and messaging clearer.',
+  },
+  coverEyebrow: { ar: 'تموضع المنتج', en: 'Positioning' },
+  keywords: [
+    'أول عميل',
+    'first customer',
+    'target first customer',
+    'customer segment for startup',
+    'best first customer',
+  ],
+  publishedAt: '2026-04-14T09:10:00.000Z',
+  updatedAt: '2026-04-14T09:10:00.000Z',
+  readingTimeMinutes: 5,
+  featured: false,
+  relatedUseCases: ['madixo-for-ecommerce-and-product-ideas', 'madixo-for-agencies-and-consultants'],
+  relatedComparisons: ['madixo-vs-asking-chatgpt-only'],
+  relatedPosts: ['how-to-choose-your-best-first-customer', 'how-to-choose-the-best-market-to-start-with'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'من أكبر أسباب بطء البداية أن الرسالة تُوجَّه إلى جمهور واسع جدًا. عندما تحاول التحدث إلى الجميع، يصبح عرضك أخف وأقل إقناعًا. البداية الأقوى غالبًا تأتي من شريحة أولى أصغر لكنها أوضح.',
+        en: 'One of the biggest reasons early execution moves slowly is that the message is aimed at a market that is far too broad. When you try to speak to everyone, your offer becomes lighter and less convincing. A stronger start often comes from a smaller but clearer first segment.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'ما الذي يميز أول عميل جيد؟', en: 'What makes a strong first customer?' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'يشعر بالمشكلة الآن وليس لاحقًا فقط.',
+          en: 'They feel the problem now, not only someday later.',
+        },
+        {
+          ar: 'يمكن الوصول إليه بدون تعقيد أو دورة بيع طويلة جدًا.',
+          en: 'You can reach them without heavy complexity or an extremely long sales cycle.',
+        },
+        {
+          ar: 'يفهم النتيجة التي تعرضها بسرعة.',
+          en: 'They understand the outcome you offer quickly.',
+        },
+        {
+          ar: 'يمكنه إعطاء إشارة واضحة: اهتمام، تجربة، حجز، أو سؤال جاد.',
+          en: 'They can give a clear signal: interest, trial, booking, or a serious question.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'لا تبحث في البداية عن أكبر شريحة. ابحث عن أوضح شريحة. العميل الأول الجيد ليس فقط من يشتري، بل من يساعدك على فهم أين تنجح الفكرة وأين تحتاج تعديلًا.',
+        en: 'At the start, do not chase the largest segment. Chase the clearest segment. The right first customer is not only the one who may buy, but the one who helps you understand where the idea works and where it needs adjustment.',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'Madixo يفيد هنا لأنه يخرج لك أفضل عميل أول ضمن التحليل نفسه، ثم يربطه بأول عرض مناسب والمخاطر والاعتراضات التي قد تظهر في السوق.',
+        en: 'Madixo helps here because it surfaces the best first customer inside the analysis itself, then connects that segment to a fitting first offer and the risks and objections that may appear in the market.',
+      },
+    },
+  ],
+},
+{
+  slug: 'how-to-know-if-your-idea-is-worth-executing',
+  category: 'feasibility',
+  title: {
+    ar: 'كيف تعرف أن فكرتك تستحق التنفيذ فعلًا',
+    en: 'How to Know If Your Idea Is Actually Worth Executing',
+  },
+  excerpt: {
+    ar: 'ليست كل فكرة جيدة تستحق التنفيذ الآن. هذه المقالة تساعدك على التمييز بين فكرة مثيرة للاهتمام وفكرة تستحق وقتك ومالك وخطوتك التالية.',
+    en: 'Not every good idea deserves execution right now. This article helps you separate an interesting idea from one that truly deserves your time, money, and next move.',
+  },
+  seoDescription: {
+    ar: 'تعرف على العلامات التي تدل على أن فكرة مشروعك تستحق التنفيذ فعلًا، من وضوح المشكلة والطلب الأولي إلى إمكانية الربحية والمخاطر العملية.',
+    en: 'Learn the signals that show a business idea is truly worth executing, from problem clarity and early demand to monetization potential and practical risk.',
+  },
+  coverEyebrow: { ar: 'دراسة الجدوى', en: 'Feasibility' },
+  keywords: [
+    'هل الفكرة تستحق التنفيذ',
+    'is this idea worth executing',
+    'idea feasibility',
+    'should I build this business idea',
+    'early feasibility signals',
+  ],
+  publishedAt: '2026-04-14T09:20:00.000Z',
+  updatedAt: '2026-04-14T09:20:00.000Z',
+  readingTimeMinutes: 6,
+  featured: false,
+  relatedUseCases: ['madixo-for-first-time-founders', 'madixo-for-service-businesses'],
+  relatedComparisons: ['madixo-vs-feasibility-template-spreadsheets', 'madixo-vs-generic-market-research-notes'],
+  relatedPosts: ['difference-between-opportunity-analysis-and-feasibility-study', 'should-you-do-an-early-feasibility-study-before-launch'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'بعض الأفكار تبدو ممتازة في الحديث، لكنها لا تتحول إلى مشروع قوي عند النظر العملي. السبب ليس دائمًا ضعف الفكرة، بل أن شروط التنفيذ نفسها لم تتضح بعد: هل المشكلة واضحة؟ هل يوجد طلب أولي؟ هل الربحية ممكنة؟ وهل المخاطر مقبولة في هذه المرحلة؟',
+        en: 'Some ideas sound excellent in conversation, but they do not become strong businesses when viewed practically. The reason is not always that the idea is weak. Often the execution conditions themselves are still unclear: is the problem clear, is there early demand, is monetization plausible, and are the risks acceptable at this stage?',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'أربع إشارات مهمة', en: 'Four important signals' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'المشكلة متكررة وواضحة عند شريحة محددة.',
+          en: 'The problem is repeated and clear for a specific segment.',
+        },
+        {
+          ar: 'هناك إشارات سلوكية من السوق، لا مجرد مجاملة أو إعجاب عام.',
+          en: 'There are behavioral market signals, not just compliments or general enthusiasm.',
+        },
+        {
+          ar: 'يمكن تصور عرض أول بسيط يختبر القيمة بسرعة.',
+          en: 'You can picture a simple first offer that tests value quickly.',
+        },
+        {
+          ar: 'الأرقام الأولية والمخاطر لا تبدو منفصلة عن الواقع.',
+          en: 'The early numbers and risks do not look detached from reality.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'إذا غابت هذه الإشارات، فهذا لا يعني أن الفكرة ميتة. لكنه يعني غالبًا أن الوقت لم يحن للتنفيذ الكامل بعد، وأنك تحتاج تحليلًا أوضح أو تحققًا إضافيًا قبل التزام أكبر.',
+        en: 'If these signals are missing, it does not necessarily mean the idea is dead. It usually means the time for full execution has not arrived yet, and you need clearer analysis or more validation before a bigger commitment.',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'Madixo يجمع هذه الزوايا في مسار واحد: تحليل الفرصة، قراءة أولية للجدوى، ثم مساحة تحقق وأدلة. وهذا يجعل سؤال "هل تستحق التنفيذ؟" سؤالًا عمليًا يمكن الإجابة عنه، لا مجرد إحساس عام.',
+        en: 'Madixo brings these angles into one path: opportunity analysis, early feasibility, then validation and evidence. That makes the question “is it worth executing?” practical and answerable rather than a vague feeling.',
+      },
+    },
+  ],
+},
+
 ];
 
 export const USE_CASES: UseCasePage[] = [
