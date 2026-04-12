@@ -1022,7 +1022,7 @@ export default function ValidationModeClient({
 
     for (let attempt = 1; attempt <= 3; attempt += 1) {
       try {
-        const timeoutMs = attempt === 1 ? 50000 : 22000;
+        const timeoutMs = attempt === 1 ? 70000 : attempt === 2 ? 40000 : 30000;
         const { response, payload } = await fetchJsonWithTimeout<{
           ok?: boolean;
           error?: string;
@@ -1084,7 +1084,7 @@ export default function ValidationModeClient({
         lastError = error;
 
         if (attempt < 3 && shouldRetryValidationRequest(error)) {
-          await waitForValidationRetry(attempt === 1 ? 1400 : 900);
+          await waitForValidationRetry(attempt === 1 ? 1800 : 1000);
           continue;
         }
       }
