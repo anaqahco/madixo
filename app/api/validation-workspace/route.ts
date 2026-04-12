@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 import {
   normalizeUiLanguage,
   normalizeValidationWorkspaceState,
 } from '@/lib/madixo-validation';
-import { saveUserValidationWorkspace } from '@/lib/madixo-validation-db';
+import { saveUserValidationWorkspaceForUserId } from '@/lib/madixo-validation-db';
 
 function getBearerToken(request: Request) {
   const value = request.headers.get('authorization');
@@ -11,6 +12,69 @@ function getBearerToken(request: Request) {
 
   const match = value.match(/^Bearer\s+(.+)$/i);
   return match?.[1]?.trim() || null;
+}
+
+
+async function withAuthTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  timeoutMessage: string
+): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+
+async function getAuthenticatedUser(accessToken?: string | null) {
+  const supabase = await createClient();
+
+  if (accessToken) {
+    try {
+      const {
+        data: { user },
+        error,
+      } = await withAuthTimeout(
+        supabase.auth.getUser(accessToken),
+        6000,
+        'AUTH_TOKEN_TIMEOUT'
+      );
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (user) {
+        return user;
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'AUTH_TOKEN_TIMEOUT';
+
+      if (message !== 'AUTH_TOKEN_TIMEOUT') {
+        throw new Error(message);
+      }
+    }
+  }
+
+  const {
+    data: { user },
+    error,
+  } = await withAuthTimeout(supabase.auth.getUser(), 6000, 'AUTH_COOKIE_TIMEOUT');
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return user;
 }
 
 export async function POST(request: Request) {
@@ -38,12 +102,27 @@ export async function POST(request: Request) {
         ? normalizeValidationWorkspaceState(body.workspace)
         : normalizeValidationWorkspaceState(undefined);
 
+    const user = await getAuthenticatedUser(accessToken);
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            uiLang === 'ar'
+              ? 'يجب تسجيل الدخول لحفظ مساحة العمل.'
+              : 'You must be logged in to save the workspace.',
+        },
+        { status: 401 }
+      );
+    }
+
     try {
-      const saved = await saveUserValidationWorkspace({
+      const saved = await saveUserValidationWorkspaceForUserId({
+        userId: user.id,
         reportId: body.reportId,
         uiLang,
         workspace,
-        accessToken,
       });
 
       return NextResponse.json({
