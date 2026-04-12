@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import SiteHeader from '@/components/site-header';
 import MixedText from '@/components/mixed-text';
 import PlanUpgradeNotice from '@/components/plan-upgrade-notice';
@@ -19,6 +19,7 @@ import { type AnalysisResult } from '../../lib/madixo-reports';
 import type { InitialFeasibilityStudy } from '@/lib/madixo-feasibility';
 import { saveResultReportAction } from './actions';
 import { normalizePlan } from '@/lib/madixo-plans';
+import { trackEvent } from '@/lib/analytics';
 
 type UiLanguage = 'ar' | 'en';
 type BreakdownKey = keyof AnalysisResult['scoreBreakdown'];
@@ -1419,6 +1420,7 @@ export default function ResultsPage() {
   const [savedReportId, setSavedReportId] = useState<string | null>(null);
   const [upgradePrompt, setUpgradePrompt] = useState<UpgradePrompt | null>(null);
   const [reportLifecycleStatus, setReportLifecycleStatus] = useState<ReportLifecycleStatus>('analysis_only');
+  const analysisCompletedTrackedRef = useRef<string | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [feasibilityLoading, setFeasibilityLoading] = useState(false);
   const [feasibilityError, setFeasibilityError] = useState('');
@@ -1743,6 +1745,16 @@ export default function ResultsPage() {
           result: normalizedResult,
           displayInputs: nextDisplayInputs,
         });
+
+        if (analysisCompletedTrackedRef.current !== cacheKey) {
+          trackEvent('analysis_completed', {
+            ui_lang: uiLang,
+            opportunity_score: normalizedResult.opportunityScore,
+            has_market: nextDisplayInputs.market !== copy.notSpecified,
+            has_customer: nextDisplayInputs.customer !== copy.notSpecified,
+          });
+          analysisCompletedTrackedRef.current = cacheKey;
+        }
 
         setLoadingStageIndex(2);
         setLoadingProgress(100);
@@ -2074,6 +2086,10 @@ ${copy.risks}:
 
     try {
       await navigator.clipboard.writeText(reportText);
+      trackEvent('report_copied', {
+        ui_lang: uiLang,
+        has_feasibility: Boolean(feasibilityStudy),
+      });
       setCopied(true);
 
       window.setTimeout(() => {
@@ -2141,7 +2157,14 @@ ${copy.risks}:
       setSaved(false);
       setUpgradePrompt(null);
 
-      await persistCurrentReport('save');
+      const persistedReportId = await persistCurrentReport('save');
+
+      if (persistedReportId) {
+        trackEvent('report_saved', {
+          ui_lang: uiLang,
+          report_id: persistedReportId,
+        });
+      }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : copy.failedToSaveReport
@@ -2161,6 +2184,11 @@ ${copy.risks}:
     }
 
     try {
+      trackEvent('feasibility_generation_started', {
+        ui_lang: uiLang,
+        current_plan: currentPlan,
+      });
+
       setFeasibilityLoading(true);
       setFeasibilityError('');
       setFeasibilityProgress(7);
@@ -2208,6 +2236,10 @@ ${copy.risks}:
       }
 
       if (response.status === 403 && data.code === 'FEASIBILITY_REQUIRES_PAID_PLAN') {
+        trackEvent('feasibility_upgrade_prompt_shown', {
+          ui_lang: uiLang,
+          current_plan: currentPlan,
+        });
         setUpgradePrompt(getFeasibilityUpgradePrompt(uiLang));
         setFeasibilityError('');
         return;
@@ -2249,10 +2281,20 @@ ${copy.risks}:
         setSavedReportId(data.persistedReportId);
       }
 
+      trackEvent('feasibility_generated', {
+        ui_lang: uiLang,
+        report_id: data.persistedReportId || savedReportId || reportIdParam || 'unsaved',
+        verdict: data.feasibility.verdictLabel,
+      });
+
       if (data.persistenceError) {
         setError(feasibilityCopy.savedWarning);
       }
     } catch (err) {
+      trackEvent('feasibility_generation_failed', {
+        ui_lang: uiLang,
+        error_name: err instanceof Error ? err.name : 'unknown_error',
+      });
       setFeasibilityProgress(0);
       setFeasibilityError(
         err instanceof Error ? err.message : feasibilityCopy.failedToGenerate
@@ -2272,6 +2314,11 @@ ${copy.risks}:
       const reportId = savedReportId || (await persistCurrentReport('validation'));
 
       if (!reportId) return;
+
+      trackEvent('validation_workspace_requested', {
+        ui_lang: uiLang,
+        report_id: reportId,
+      });
 
       router.push(`/validate/${reportId}`);
     } catch (err) {
@@ -2363,6 +2410,10 @@ ${copy.risks}:
       }
 
       const blob = await response.blob();
+      trackEvent('report_pdf_exported', {
+        ui_lang: uiLang,
+        has_feasibility: Boolean(feasibilityStudy),
+      });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
 
