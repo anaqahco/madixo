@@ -22,6 +22,11 @@ export default function ComparisonDetailPageClient({ page, relatedPosts }: Props
           start: 'ابدأ تحليل الفرصة',
           pricing: 'شاهد الباقات',
           related: 'مقالات مرتبطة',
+          continueTitle: 'واصل الاستكشاف',
+          continueDescription:
+            'إذا أردت فهمًا أوسع من هذه المقارنة، انتقل إلى المقالات أو حالات الاستخدام لترى أين يناسب Madixo نوع القرار الذي تعمل عليه.',
+          blog: 'تصفح المقالات',
+          useCases: 'شاهد حالات الاستخدام',
         }
       : {
           back: 'Back to comparisons',
@@ -31,6 +36,11 @@ export default function ComparisonDetailPageClient({ page, relatedPosts }: Props
           start: 'Start opportunity analysis',
           pricing: 'See plans',
           related: 'Related articles',
+          continueTitle: 'Keep exploring',
+          continueDescription:
+            'If you want wider context than this comparison alone, move into the blog or use cases to see where Madixo fits the type of decision you are making.',
+          blog: 'Browse articles',
+          useCases: 'See use cases',
         };
 
   return (
@@ -83,6 +93,21 @@ export default function ComparisonDetailPageClient({ page, relatedPosts }: Props
           </div>
         </section>
       ) : null}
+
+      <section className="mt-14 rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6">
+        <h2 className="text-xl font-bold sm:text-2xl tracking-tight text-[#111827]">{copy.continueTitle}</h2>
+        <p className="mt-3 max-w-3xl text-sm leading-7 sm:text-base sm:leading-8 text-[#475467]">
+          {copy.continueDescription}
+        </p>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <Link href="/blog" className="inline-flex w-full items-center justify-center rounded-full border border-[#D9E2F0] bg-white px-5 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB] sm:w-auto">
+            {copy.blog}
+          </Link>
+          <Link href="/use-cases" className="inline-flex w-full items-center justify-center rounded-full border border-[#D9E2F0] bg-white px-5 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB] sm:w-auto">
+            {copy.useCases}
+          </Link>
+        </div>
+      </section>
     </article>
   );
 }
