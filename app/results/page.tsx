@@ -76,6 +76,16 @@ type CurrentPlanPayload = {
   label?: string;
 };
 
+
+type AnalyzeApiPayload = {
+  ok?: boolean;
+  code?: string;
+  reason?: string;
+  error?: string;
+  result?: AnalysisResult;
+  displayInputs?: Partial<DisplayInputs>;
+};
+
 type UpgradePrompt = {
   title: string;
   description: string;
@@ -156,14 +166,30 @@ async function fetchCurrentPlanClient(): Promise<PlanKey> {
 }
 
 
-async function getBrowserAccessToken(): Promise<string | null> {
+type JsonObject = Record<string, unknown>;
+
+type AuthSessionApiPayload = {
+  ok?: boolean;
+  sessionState?: 'guest' | 'user';
+};
+
+async function getBrowserAccessToken(timeoutMs = 1800): Promise<string | null> {
   try {
     const supabase = createSupabaseClient();
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const sessionResult = (await Promise.race([
+      supabase.auth.getSession(),
+      new Promise<never>((_, reject) => {
+        window.setTimeout(() => reject(new Error('AUTH_SESSION_TIMEOUT')), timeoutMs);
+      }),
+    ])) as {
+      data?: {
+        session?: {
+          access_token?: string | null;
+        } | null;
+      };
+    };
 
-    return session?.access_token || null;
+    return sessionResult?.data?.session?.access_token || null;
   } catch {
     return null;
   }
@@ -197,10 +223,51 @@ async function buildAuthenticatedRequestHeaders(accessTokenOverride?: string | n
   return headers;
 }
 
+function isAuthRequiredPayload(payload: JsonObject | null | undefined) {
+  if (!payload) {
+    return false;
+  }
+
+  const error = typeof payload.error === 'string' ? payload.error : '';
+  const code = typeof payload.code === 'string' ? payload.code : '';
+
+  return error === 'AUTH_REQUIRED' || code === 'AUTH_REQUIRED';
+}
+
+function isAuthRequiredResponse(response: Response, payload: JsonObject | null | undefined) {
+  return response.status === 401 || isAuthRequiredPayload(payload);
+}
+
+async function fetchServerSessionState(
+  accessTokenOverride?: string | null
+): Promise<'guest' | 'user' | 'unknown'> {
+  try {
+    const response = await withTimeout(
+      fetch('/api/auth/session', {
+        cache: 'no-store',
+        headers: await buildAuthenticatedRequestHeaders(accessTokenOverride),
+      }),
+      5000,
+      'AUTH_SERVER_SESSION_TIMEOUT'
+    );
+
+    const payload = (await response.json().catch(() => ({}))) as AuthSessionApiPayload;
+
+    if (response.ok && (payload.sessionState === 'guest' || payload.sessionState === 'user')) {
+      return payload.sessionState;
+    }
+  } catch {
+    // ignore and fall through to unknown
+  }
+
+  return 'unknown';
+}
+
 type ClientAuthBootstrap = {
-  user: any | null;
+  user: unknown | null;
   accessToken: string | null;
-  reason: 'session' | 'user' | 'missing' | 'timeout';
+  hasServerSession: boolean;
+  reason: 'session' | 'user' | 'server' | 'missing' | 'timeout';
 };
 
 function wait(ms: number) {
@@ -225,13 +292,21 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, timeoutMes
 
 async function bootstrapClientAuthOnce(): Promise<ClientAuthBootstrap> {
   const supabase = createSupabaseClient();
+  let hadTimeout = false;
 
   try {
-    const sessionResult: any = await withTimeout(
+    const sessionResult = (await withTimeout(
       supabase.auth.getSession(),
-      10000,
+      2500,
       'AUTH_SESSION_TIMEOUT'
-    );
+    )) as {
+      data?: {
+        session?: {
+          access_token?: string | null;
+          user?: unknown | null;
+        } | null;
+      };
+    };
 
     const session = sessionResult?.data?.session ?? null;
     const accessToken = session?.access_token ?? null;
@@ -241,25 +316,36 @@ async function bootstrapClientAuthOnce(): Promise<ClientAuthBootstrap> {
       return {
         user,
         accessToken,
+        hasServerSession: true,
         reason: 'session',
       };
     }
   } catch (error) {
     if (error instanceof Error && error.message === 'AUTH_SESSION_TIMEOUT') {
-      return {
-        user: null,
-        accessToken: null,
-        reason: 'timeout',
-      };
+      hadTimeout = true;
     }
   }
 
+  const serverSessionState = await fetchServerSessionState();
+  if (serverSessionState === 'user') {
+    return {
+      user: null,
+      accessToken: null,
+      hasServerSession: true,
+      reason: 'server',
+    };
+  }
+
   try {
-    const userResult: any = await withTimeout(
+    const userResult = (await withTimeout(
       supabase.auth.getUser(),
-      10000,
+      2500,
       'AUTH_USER_TIMEOUT'
-    );
+    )) as {
+      data?: {
+        user?: unknown | null;
+      };
+    };
 
     const user = userResult?.data?.user ?? null;
     const accessToken = await getBrowserAccessToken();
@@ -268,35 +354,76 @@ async function bootstrapClientAuthOnce(): Promise<ClientAuthBootstrap> {
       return {
         user,
         accessToken,
+        hasServerSession: true,
         reason: 'user',
       };
     }
   } catch (error) {
     if (error instanceof Error && error.message === 'AUTH_USER_TIMEOUT') {
-      return {
-        user: null,
-        accessToken: null,
-        reason: 'timeout',
-      };
+      hadTimeout = true;
     }
   }
 
   return {
     user: null,
     accessToken: null,
-    reason: 'missing',
+    hasServerSession: false,
+    reason: hadTimeout ? 'timeout' : 'missing',
   };
 }
 
 async function bootstrapClientAuth(): Promise<ClientAuthBootstrap> {
   const firstAttempt = await bootstrapClientAuthOnce();
 
-  if (firstAttempt.user || firstAttempt.accessToken) {
+  if (firstAttempt.user || firstAttempt.accessToken || firstAttempt.hasServerSession) {
     return firstAttempt;
   }
 
   await wait(1200);
   return bootstrapClientAuthOnce();
+}
+
+async function fetchJsonWithAuthRetry<T extends JsonObject>(
+  input: string,
+  init: RequestInit
+): Promise<{ response: Response; payload: T }> {
+  const firstResponse = await fetch(input, init);
+  const firstPayload = (await firstResponse.json().catch(() => ({}))) as T;
+
+  if (!isAuthRequiredResponse(firstResponse, firstPayload)) {
+    return {
+      response: firstResponse,
+      payload: firstPayload,
+    };
+  }
+
+  const authState = await bootstrapClientAuth();
+
+  if (!authState.user && !authState.accessToken && !authState.hasServerSession) {
+    return {
+      response: firstResponse,
+      payload: firstPayload,
+    };
+  }
+
+  const retryHeaders = new Headers(init.headers ?? undefined);
+
+  if (authState.accessToken) {
+    retryHeaders.set('Authorization', `Bearer ${authState.accessToken}`);
+  } else {
+    retryHeaders.delete('Authorization');
+  }
+
+  const retryResponse = await fetch(input, {
+    ...init,
+    headers: retryHeaders,
+  });
+  const retryPayload = (await retryResponse.json().catch(() => ({}))) as T;
+
+  return {
+    response: retryResponse,
+    payload: retryPayload,
+  };
 }
 
 function isBrowser() {
@@ -1466,22 +1593,16 @@ export default function ResultsPage() {
         const authNextPath = `${window.location.pathname}${window.location.search}`;
         const authRedirectUrl = `/login?mode=signup&next=${encodeURIComponent(authNextPath)}&message=${encodeURIComponent(copy.authRequiredToAnalyze)}`;
 
-        const authState = await bootstrapClientAuth();
-
-        if (!authState.user && !authState.accessToken) {
-          router.replace(authRedirectUrl);
-          return;
-        }
-
         if (reportIdParam) {
-          const response = await fetch(`/api/reports?id=${encodeURIComponent(reportIdParam)}`, {
-            cache: 'no-store',
-            headers: await buildAuthenticatedRequestHeaders(authState.accessToken),
-          });
+          const { response, payload } = await fetchJsonWithAuthRetry<SingleReportApiPayload>(
+            `/api/reports?id=${encodeURIComponent(reportIdParam)}`,
+            {
+              cache: 'no-store',
+              headers: await buildAuthenticatedRequestHeaders(),
+            }
+          );
 
-          const payload = (await response.json().catch(() => ({}))) as SingleReportApiPayload;
-
-          if (response.status === 401 || payload.error === 'AUTH_REQUIRED') {
+          if (isAuthRequiredResponse(response, payload)) {
             router.replace(authRedirectUrl);
             return;
           }
@@ -1567,9 +1688,9 @@ export default function ResultsPage() {
           return;
         }
 
-        const response = await fetch('/api/analyze', {
+        const { response, payload: data } = await fetchJsonWithAuthRetry<AnalyzeApiPayload>('/api/analyze', {
           method: 'POST',
-          headers: await buildAuthenticatedJsonHeaders(authState.accessToken),
+          headers: await buildAuthenticatedJsonHeaders(),
           body: JSON.stringify({
             query,
             market,
@@ -1578,9 +1699,7 @@ export default function ResultsPage() {
           }),
         });
 
-        const data = await response.json();
-
-        if (response.status === 401 || data?.error === 'AUTH_REQUIRED' || data?.code === 'AUTH_REQUIRED') {
+        if (isAuthRequiredResponse(response, data)) {
           router.replace(authRedirectUrl);
           return;
         }
@@ -1598,12 +1717,18 @@ export default function ResultsPage() {
           throw new Error(data.error || copy.failedToAnalyzeOpportunity);
         }
 
+        if (!data.result) {
+          throw new Error(data.error || copy.failedToAnalyzeOpportunity);
+        }
+
         if (!isActive) return;
+
+        const normalizedResult = normalizeResultForDisplay(data.result, uiLang);
 
         const nextDisplayInputs = {
           query:
             data.displayInputs?.query?.trim() ||
-            data.result?.query ||
+            normalizedResult.query ||
             query,
           market:
             data.displayInputs?.market?.trim() ||
@@ -1615,7 +1740,7 @@ export default function ResultsPage() {
 
         saveCachedAnalysisEntry({
           key: cacheKey,
-          result: normalizeResultForDisplay(data.result, uiLang),
+          result: normalizedResult,
           displayInputs: nextDisplayInputs,
         });
 
@@ -1624,7 +1749,7 @@ export default function ResultsPage() {
 
         window.setTimeout(() => {
           if (!isActive) return;
-          setResult(normalizeResultForDisplay(data.result, uiLang));
+          setResult(normalizedResult);
           setDisplayInputs(nextDisplayInputs);
           setLoading(false);
         }, 420);
