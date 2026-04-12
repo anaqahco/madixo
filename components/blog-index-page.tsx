@@ -33,89 +33,39 @@ export default function BlogIndexPageClient({
     uiLang === 'ar'
       ? {
           eyebrow: 'مدونة Madixo',
-          title: 'مقالات عملية لاختبار فكرة المشروع وفهم الجدوى والطلب في السوق.',
+          title: 'مقالات وأدلة تبني قرارًا أوضح.',
           description:
-            'تجمع مدونة Madixo مقالات وأدلة عملية حول اختبار فكرة المشروع، فهم الطلب في السوق، دراسة الجدوى الأولية، واتخاذ قرار أوضح قبل البناء أو التوسع.',
+            'مقالات وأدلة تساعدك على فهم الفكرة والسوق والجدوى الأولية واتخاذ قرار أوضح حول خطوتك التالية.',
           featured: 'الأبرز الآن',
           allArticles: 'جميع المقالات',
           readArticle: 'اقرأ المقال',
           openMadixo: 'ابدأ تحليل الفرصة',
           pricing: 'شاهد الباقات',
-          useCases: 'شاهد حالات الاستخدام',
           filters: 'التصنيفات',
           all: 'الكل',
-          guideTitle: 'ابدأ من الأسئلة التي يبحث الناس عنها فعلاً',
-          guideDescription:
-            'إذا كنت تبني مشروعًا جديدًا أو تراجع فرصة قائمة، فهذه الصفحة تساعدك على الانتقال من المقالة إلى التحليل العملي داخل Madixo.',
-          guideCards: [
-            {
-              title: 'اختبار الفكرة قبل البناء',
-              text: 'تعرف على كيف تقيّم المشكلة والعميل وإشارات السوق الأولى قبل صرف الوقت والمال.',
-              href: '/blog/how-to-validate-a-business-idea-before-building',
-              cta: 'ابدأ بهذه المقالة',
-            },
-            {
-              title: 'فهم الفرق بين التحليل والجدوى',
-              text: 'افهم متى تحتاج تحليل فرصة، ومتى تحتاج دراسة جدوى أولية، ولماذا يفيد الجمع بينهما.',
-              href: '/blog/difference-between-opportunity-analysis-and-feasibility-study',
-              cta: 'اقرأ الفرق',
-            },
-            {
-              title: 'الانتقال إلى التطبيق العملي',
-              text: 'بعد القراءة، انتقل إلى حالات الاستخدام أو صفحة الباقات لتعرف أين تبدأ داخل Madixo.',
-              href: '/use-cases',
-              cta: 'افتح حالات الاستخدام',
-            },
-          ],
-          seoBlockTitle: 'ماذا ستجد في مدونة Madixo؟',
-          seoBlockPoints: [
-            'طرق عملية لاختبار فكرة مشروع قبل البناء الكامل.',
-            'مقالات عن دراسة الجدوى الأولية والفرق بينها وبين تحليل الفرصة.',
-            'أدلة عن الطلب في السوق وتوثيق الأدلة والملاحظات.',
-          ],
+          startHere: 'ابدأ بهذه الصفحات إذا كنت جديدًا',
+          startHereDescription:
+            'إذا وصلت إلى المدونة من Google أو من بحث خارجي، فهذه الروابط تنقلك بسرعة من القراءة إلى فهم المنتج أو الباقات أو حالات الاستخدام.',
+          useCases: 'حالات الاستخدام',
+          comparisons: 'المقارنات',
         }
       : {
           eyebrow: 'Madixo Blog',
-          title: 'Practical articles for validating business ideas, feasibility, and market demand.',
+          title: 'Articles and guides that lead to a clearer decision.',
           description:
-            'The Madixo blog brings together practical guides on validating business ideas, understanding market demand, reading early feasibility, and making clearer decisions before building or scaling.',
+            'Articles and guides that help you understand ideas, markets, early feasibility, and the next decision more clearly.',
           featured: 'Featured now',
           allArticles: 'All articles',
           readArticle: 'Read article',
           openMadixo: 'Start opportunity analysis',
           pricing: 'See plans',
-          useCases: 'See use cases',
           filters: 'Categories',
           all: 'All',
-          guideTitle: 'Start with the questions people actually search for',
-          guideDescription:
-            'If you are building a new venture or reviewing an existing opportunity, this page helps you move from reading to practical action inside Madixo.',
-          guideCards: [
-            {
-              title: 'Validate the idea before building',
-              text: 'Learn how to assess the problem, the customer, and the first market signals before spending serious time or money.',
-              href: '/blog/how-to-validate-a-business-idea-before-building',
-              cta: 'Start here',
-            },
-            {
-              title: 'Understand analysis vs feasibility',
-              text: 'See when you need opportunity analysis, when you need early feasibility, and why using both often leads to a better decision.',
-              href: '/blog/difference-between-opportunity-analysis-and-feasibility-study',
-              cta: 'Read the difference',
-            },
-            {
-              title: 'Move into practical application',
-              text: 'After reading, jump into use cases or pricing to understand where to begin inside Madixo.',
-              href: '/use-cases',
-              cta: 'Open use cases',
-            },
-          ],
-          seoBlockTitle: 'What you will find in the Madixo blog',
-          seoBlockPoints: [
-            'Practical ways to validate a business idea before full execution.',
-            'Articles on early feasibility and how it differs from opportunity analysis.',
-            'Guides on market demand, evidence capture, and clearer next-step decisions.',
-          ],
+          startHere: 'Start here if you are new to Madixo',
+          startHereDescription:
+            'If you arrived from Google or an external search, these links help you move quickly from reading into understanding the product, plans, or practical use cases.',
+          useCases: 'Use cases',
+          comparisons: 'Comparisons',
         };
 
   return (
@@ -130,67 +80,49 @@ export default function BlogIndexPageClient({
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/"
-            className="rounded-full bg-[#111827] px-4 py-3 text-sm font-semibold text-white hover:opacity-90 sm:px-6"
-          >
+          <Link href="/" className="rounded-full bg-[#111827] px-4 py-3 text-sm font-semibold text-white hover:opacity-90 sm:px-6">
             {copy.openMadixo}
           </Link>
-          <Link
-            href="/pricing"
-            className="rounded-full border border-[#D9E2F0] bg-white px-4 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB] sm:px-6"
-          >
+          <Link href="/pricing" className="rounded-full border border-[#D9E2F0] bg-white px-4 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB] sm:px-6">
             {copy.pricing}
           </Link>
-          <Link
-            href="/use-cases"
-            className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-3 text-sm font-semibold text-[#374151] hover:bg-[#EEF3F9] sm:px-6"
-          >
-            {copy.useCases}
-          </Link>
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
-        <div className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6 lg:p-8">
-          <h2 className="text-xl font-bold tracking-tight text-[#111827] sm:text-2xl">
-            {copy.seoBlockTitle}
-          </h2>
-          <ul className="mt-4 grid gap-3 text-sm leading-7 text-[#475467] sm:text-base md:grid-cols-3">
-            {copy.seoBlockPoints.map((point) => (
-              <li key={point} className="rounded-2xl border border-[#D9E2F0] bg-white px-4 py-4">
-                {point}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
-        <div className="rounded-[28px] border border-[#D9E2F0] bg-white p-5 shadow-sm sm:p-6 lg:p-8">
-          <h2 className="text-xl font-bold tracking-tight text-[#111827] sm:text-2xl">
-            {copy.guideTitle}
-          </h2>
+        <div className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6">
+          <h2 className="text-xl font-bold tracking-tight text-[#111827] sm:text-2xl">{copy.startHere}</h2>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-[#475467] sm:text-base sm:leading-8">
-            {copy.guideDescription}
+            {copy.startHereDescription}
           </p>
 
-          <div className="mt-6 grid gap-4 lg:grid-cols-3">
-            {copy.guideCards.map((card) => (
-              <div
-                key={card.href}
-                className="rounded-[24px] border border-[#D9E2F0] bg-[#F8FAFD] p-5"
-              >
-                <h3 className="text-lg font-bold text-[#111827]">{card.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-[#475467]">{card.text}</p>
-                <Link
-                  href={card.href}
-                  className="mt-5 inline-flex rounded-full bg-[#111827] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
-                >
-                  {card.cta}
-                </Link>
-              </div>
-            ))}
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            <Link href="/pricing" className="rounded-[24px] border border-[#D9E2F0] bg-white p-5 shadow-sm hover:bg-[#F9FAFB]">
+              <div className="text-sm font-semibold text-[#111827]">{copy.pricing}</div>
+              <p className="mt-2 text-sm leading-7 text-[#475467]">
+                {uiLang === 'ar'
+                  ? 'افهم الفرق بين Free و Pro ومتى تحتاج كل واحدة.'
+                  : 'Understand the difference between Free and Pro and when you need each one.'}
+              </p>
+            </Link>
+
+            <Link href="/use-cases" className="rounded-[24px] border border-[#D9E2F0] bg-white p-5 shadow-sm hover:bg-[#F9FAFB]">
+              <div className="text-sm font-semibold text-[#111827]">{copy.useCases}</div>
+              <p className="mt-2 text-sm leading-7 text-[#475467]">
+                {uiLang === 'ar'
+                  ? 'شاهد أمثلة عملية لكيفية استخدام Madixo بحسب نوع المشروع.'
+                  : 'See practical examples of how Madixo is used across different idea types.'}
+              </p>
+            </Link>
+
+            <Link href="/compare-to" className="rounded-[24px] border border-[#D9E2F0] bg-white p-5 shadow-sm hover:bg-[#F9FAFB]">
+              <div className="text-sm font-semibold text-[#111827]">{copy.comparisons}</div>
+              <p className="mt-2 text-sm leading-7 text-[#475467]">
+                {uiLang === 'ar'
+                  ? 'افهم الفرق بين Madixo وبين الأساليب أو البدائل القريبة.'
+                  : 'Understand how Madixo differs from adjacent tools or approaches.'}
+              </p>
+            </Link>
           </div>
         </div>
       </section>
@@ -231,17 +163,12 @@ export default function BlogIndexPageClient({
       {selectedCategory === 'all' ? (
         <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
           <div className="mb-6 flex items-center justify-between gap-4">
-            <h2 className="text-xl font-bold tracking-tight text-[#111827] sm:text-2xl">
-              {copy.featured}
-            </h2>
+            <h2 className="text-xl font-bold tracking-tight text-[#111827] sm:text-2xl">{copy.featured}</h2>
           </div>
 
           <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
             {featuredPosts.map((post) => (
-              <article
-                key={post.slug}
-                className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6"
-              >
+              <article key={post.slug} className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="rounded-full border border-[#D9E2F0] bg-white px-3 py-1 text-xs font-semibold text-[#4B5563]">
                     {categoryLabel(post.category, uiLang)}
@@ -263,16 +190,10 @@ export default function BlogIndexPageClient({
                 </p>
 
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="inline-flex w-full items-center justify-center rounded-full bg-[#111827] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 sm:w-auto"
-                  >
+                  <Link href={`/blog/${post.slug}`} className="inline-flex w-full items-center justify-center rounded-full bg-[#111827] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 sm:w-auto">
                     {copy.readArticle}
                   </Link>
-                  <Link
-                    href="/pricing"
-                    className="inline-flex w-full items-center justify-center rounded-full border border-[#D9E2F0] bg-white px-5 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB] sm:w-auto"
-                  >
+                  <Link href="/pricing" className="inline-flex w-full items-center justify-center rounded-full border border-[#D9E2F0] bg-white px-5 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB] sm:w-auto">
                     {copy.pricing}
                   </Link>
                 </div>
@@ -284,17 +205,12 @@ export default function BlogIndexPageClient({
 
       <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
         <div className="mb-6 flex items-center justify-between gap-4">
-          <h2 className="text-xl font-bold tracking-tight text-[#111827] sm:text-2xl">
-            {copy.allArticles}
-          </h2>
+          <h2 className="text-xl font-bold tracking-tight text-[#111827] sm:text-2xl">{copy.allArticles}</h2>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {posts.map((post) => (
-            <article
-              key={post.slug}
-              className="rounded-[28px] border border-[#D9E2F0] bg-white p-5 shadow-sm sm:p-6"
-            >
+            <article key={post.slug} className="rounded-[28px] border border-[#D9E2F0] bg-white p-5 shadow-sm sm:p-6">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-3 py-1 text-xs font-semibold text-[#4B5563]">
                   {categoryLabel(post.category, uiLang)}
@@ -317,10 +233,7 @@ export default function BlogIndexPageClient({
                   {formatContentDate(post.publishedAt, uiLang)}
                 </span>
 
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="inline-flex rounded-full bg-[#111827] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
-                >
+                <Link href={`/blog/${post.slug}`} className="inline-flex rounded-full bg-[#111827] px-4 py-2 text-sm font-semibold text-white hover:opacity-90">
                   {copy.readArticle}
                 </Link>
               </div>
