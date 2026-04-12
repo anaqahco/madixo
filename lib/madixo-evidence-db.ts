@@ -30,20 +30,27 @@ type ValidationEvidenceRow = {
 async function getRequiredUser(accessToken?: string | null) {
   const supabase = await createClient();
 
+  if (accessToken) {
+    const {
+      data: tokenUserData,
+      error: tokenUserError,
+    } = await supabase.auth.getUser(accessToken);
+
+    if (!tokenUserError && tokenUserData.user) {
+      return { supabase, user: tokenUserData.user };
+    }
+  }
+
   const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser(accessToken || undefined);
+    data: cookieUserData,
+    error: cookieUserError,
+  } = await supabase.auth.getUser();
 
-  if (error) {
-    throw new Error(error.message);
+  if (!cookieUserError && cookieUserData.user) {
+    return { supabase, user: cookieUserData.user };
   }
 
-  if (!user) {
-    throw new Error('AUTH_REQUIRED');
-  }
-
-  return { supabase, user };
+  throw new Error('AUTH_REQUIRED');
 }
 
 function toSafeText(value: string | null | undefined, fallback = '') {
