@@ -886,6 +886,7 @@ export default function ValidationModeClient({
   const synthesisSectionRef = useRef<HTMLDivElement | null>(null);
   const decisionSectionRef = useRef<HTMLDivElement | null>(null);
   const iterationSectionRef = useRef<HTMLDivElement | null>(null);
+  const loadingSectionRef = useRef<HTMLDivElement | null>(null);
   const workspaceReadyTrackedRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -920,6 +921,19 @@ export default function ValidationModeClient({
 
     workspaceReadyTrackedRef.current = report.id;
   }, [state, plan, planSource, evidenceEntries.length, evidenceSynthesis, report.id, uiLang]);
+
+  useEffect(() => {
+    if (state !== 'loading') return;
+
+    const timer = window.setTimeout(() => {
+      loadingSectionRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, [state]);
 
   useEffect(() => {
     if (state !== 'loading' || plan) {
@@ -1431,7 +1445,10 @@ export default function ValidationModeClient({
         </div>
 
         {state === 'loading' ? (
-          <div className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8">
+          <div
+            ref={loadingSectionRef}
+            className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6 md:p-8 scroll-mt-24"
+          >
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-3xl">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
