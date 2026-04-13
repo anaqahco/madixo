@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import MixedText from '@/components/mixed-text';
 import { nextMoveLabel } from '@/lib/madixo-iteration-engine';
 import type {
@@ -262,6 +262,7 @@ export default function ValidationIterationEngine({
   const [applyState, setApplyState] = useState<ApplyState>('idle');
   const [applyError, setApplyError] = useState('');
   const [loadingSeconds, setLoadingSeconds] = useState(0);
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   const hasNextMove = Boolean(iterationEngine);
 
@@ -270,6 +271,19 @@ export default function ValidationIterationEngine({
       hasNextMove,
     });
   }, [hasNextMove, onIterationStateChange]);
+
+  useEffect(() => {
+    if (state !== 'loading') return;
+
+    const timer = window.setTimeout(() => {
+      sectionRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, [state]);
 
   useEffect(() => {
     if (state !== 'loading') {
@@ -441,7 +455,10 @@ export default function ValidationIterationEngine({
   );
 
   return (
-    <section className="rounded-[32px] border border-[#E5E7EB] bg-white p-8 shadow-sm">
+    <section
+      ref={sectionRef}
+      className="rounded-[32px] border border-[#E5E7EB] bg-white p-8 shadow-sm scroll-mt-24"
+    >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-3">
