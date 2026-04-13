@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import MixedText from '@/components/mixed-text';
 import {
   confidenceLabel,
@@ -257,6 +257,7 @@ export default function ValidationEvidenceSynthesis({
   const [state, setState] = useState<LoadState>(synthesis ? 'ready' : 'idle');
   const [error, setError] = useState('');
   const [progress, setProgress] = useState(0);
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   const hasSummary = Boolean(synthesis);
 
@@ -265,6 +266,19 @@ export default function ValidationEvidenceSynthesis({
     setError('');
     setProgress(0);
   }, [reportId, synthesis, uiLang]);
+
+  useEffect(() => {
+    if (state !== 'loading') return;
+
+    const timer = window.setTimeout(() => {
+      sectionRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, [state]);
 
   useEffect(() => {
     if (state !== 'loading') {
@@ -329,7 +343,10 @@ export default function ValidationEvidenceSynthesis({
   };
 
   return (
-    <section className="rounded-[28px] border border-[#E5E7EB] bg-white p-6 shadow-sm">
+    <section
+      ref={sectionRef}
+      className="rounded-[28px] border border-[#E5E7EB] bg-white p-6 shadow-sm scroll-mt-24"
+    >
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-3">
