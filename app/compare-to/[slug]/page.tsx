@@ -41,25 +41,49 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
   if (!page) return { title: 'Comparison not found' };
 
+  const keywordSeed = page.title.en
+    .split(' ')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
   return {
     title: page.title.en,
     description: page.seoDescription.en,
     alternates: {
       canonical: `/compare-to/${page.slug}`,
     },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
     openGraph: {
       title: page.title.en,
       description: page.seoDescription.en,
       url: buildAbsoluteAppUrl(`/compare-to/${page.slug}`),
       type: 'article',
+      images: [
+        {
+          url: buildAbsoluteAppUrl('/brand/madixo-logo.png'),
+          width: 1200,
+          height: 630,
+          alt: page.title.en,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: page.title.en,
       description: page.seoDescription.en,
+      images: [buildAbsoluteAppUrl('/brand/madixo-logo.png')],
     },
     keywords: [
-      ...page.title.en.split(' '),
+      ...keywordSeed,
       'Madixo comparison',
       'business idea validation',
       'opportunity analysis',
@@ -91,6 +115,10 @@ export default async function ComparisonDetailPage({ params }: { params: Params 
         description: pageDescription,
         url: buildAbsoluteAppUrl(`/compare-to/${page.slug}`),
         about: localizeText(page.compareAgainst, uiLang),
+        primaryImageOfPage: {
+          '@type': 'ImageObject',
+          url: buildAbsoluteAppUrl('/brand/madixo-logo.png'),
+        },
         isPartOf: {
           '@type': 'CollectionPage',
           name: uiLang === 'ar' ? 'مقارنات Madixo' : 'Madixo Comparisons',
