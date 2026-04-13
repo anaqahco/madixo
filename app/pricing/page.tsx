@@ -8,6 +8,13 @@ export const metadata: Metadata = {
   title: 'Pricing | Plans for Business Idea Validation and Feasibility',
   description:
     'Compare Madixo Free and Pro plans for business idea analysis, early feasibility study, validation workflows, saved opportunities, and PDF exports.',
+  keywords: [
+    'Madixo pricing',
+    'business idea validation pricing',
+    'feasibility study tool pricing',
+    'startup validation software pricing',
+    'Madixo free vs pro',
+  ],
   alternates: {
     canonical: '/pricing',
   },
@@ -67,6 +74,7 @@ export default async function PricingPage() {
   const cookieStore = await cookies();
   const uiLang = getServerUiLanguageFromCookie(cookieStore);
   const faqItems = getPricingFaq(uiLang);
+  const planNames = uiLang === 'ar' ? ['المجانية', 'الاحترافية', 'الفِرق'] : ['Free', 'Pro', 'Team'];
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -92,7 +100,10 @@ export default async function PricingPage() {
         '@type': 'Service',
         '@id': buildAbsoluteAppUrl('/pricing#service'),
         name: 'Madixo',
-        serviceType: uiLang === 'ar' ? 'تحليل الفرص واختبار الفكرة ودراسة الجدوى الأولية' : 'Opportunity analysis, idea validation, and early feasibility',
+        serviceType:
+          uiLang === 'ar'
+            ? 'تحليل الفرص واختبار الفكرة ودراسة الجدوى الأولية'
+            : 'Opportunity analysis, idea validation, and early feasibility',
         provider: {
           '@type': 'Organization',
           name: 'Madixo',
@@ -100,6 +111,16 @@ export default async function PricingPage() {
         },
         areaServed: 'Worldwide',
         url: buildAbsoluteAppUrl('/pricing'),
+      },
+      {
+        '@type': 'ItemList',
+        '@id': buildAbsoluteAppUrl('/pricing#plans'),
+        itemListElement: planNames.map((name, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name,
+          url: buildAbsoluteAppUrl('/pricing'),
+        })),
       },
       {
         '@type': 'FAQPage',
