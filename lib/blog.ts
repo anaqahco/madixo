@@ -1417,8 +1417,6 @@ export const BLOG_POSTS: BlogPost[] = [
   ],
 },
 
-];
-
 {
   slug: 'what-to-measure-in-your-first-validation-test',
   category: 'idea-validation',
@@ -1660,6 +1658,8 @@ export const BLOG_POSTS: BlogPost[] = [
     },
   ],
 },
+
+];
 
 export const USE_CASES: UseCasePage[] = [
   {
