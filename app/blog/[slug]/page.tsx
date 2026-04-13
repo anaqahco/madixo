@@ -4,8 +4,8 @@ import type { Metadata } from 'next';
 import {
   getBlogPostBySlug,
   getComparisonsBySlugs,
+  getPostsBySlugs,
   getUseCasesBySlugs,
-  getSmartRelatedPosts,
   localizeText,
 } from '@/lib/blog';
 import { buildAbsoluteAppUrl } from '@/lib/app-url';
@@ -25,19 +25,47 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: post.title.en,
     description: post.seoDescription.en,
+    keywords: post.keywords,
+    authors: [{ name: 'Madixo' }],
+    creator: 'Madixo',
+    publisher: 'Madixo',
+    category: 'business',
     alternates: {
       canonical: `/blog/${post.slug}`,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
     openGraph: {
       title: post.title.en,
       description: post.seoDescription.en,
       url: buildAbsoluteAppUrl(`/blog/${post.slug}`),
       type: 'article',
+      publishedTime: post.publishedAt,
+      modifiedTime: post.updatedAt,
+      section: post.coverEyebrow.en,
+      tags: post.keywords,
+      images: [
+        {
+          url: buildAbsoluteAppUrl('/brand/madixo-logo.png'),
+          width: 1200,
+          height: 630,
+          alt: post.title.en,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title.en,
       description: post.seoDescription.en,
+      images: [buildAbsoluteAppUrl('/brand/madixo-logo.png')],
     },
   };
 }
@@ -51,7 +79,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
   const cookieStore = await cookies();
   const uiLang = getServerUiLanguageFromCookie(cookieStore);
 
-  const relatedPosts = getSmartRelatedPosts(post, 4);
+  const relatedPosts = getPostsBySlugs(post.relatedPosts).filter((item) => item.slug !== post.slug);
   const relatedUseCases = getUseCasesBySlugs(post.relatedUseCases);
   const relatedComparisons = getComparisonsBySlugs(post.relatedComparisons);
 
@@ -70,6 +98,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
         inLanguage: uiLang === 'ar' ? 'ar' : 'en',
         mainEntityOfPage: buildAbsoluteAppUrl(`/blog/${post.slug}`),
         url: buildAbsoluteAppUrl(`/blog/${post.slug}`),
+        image: [buildAbsoluteAppUrl('/brand/madixo-logo.png')],
         author: {
           '@type': 'Organization',
           name: 'Madixo',
