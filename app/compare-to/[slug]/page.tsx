@@ -1,12 +1,39 @@
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getComparisonBySlug, getPostsBySlugs, localizeText } from '@/lib/blog';
+import {
+  getComparisonBySlug,
+  getComparisonsBySlugs,
+  getPostsBySlugs,
+  getUseCasesBySlugs,
+  localizeText,
+} from '@/lib/blog';
 import { buildAbsoluteAppUrl } from '@/lib/app-url';
 import { getServerUiLanguageFromCookie } from '@/lib/ui-language';
 import ComparisonDetailPageClient from '@/components/comparison-detail-page';
 
 type Params = Promise<{ slug: string }>;
+
+const relatedUseCaseMap: Record<string, string[]> = {
+  'madixo-vs-asking-chatgpt-only': [
+    'madixo-for-first-time-founders',
+    'madixo-for-agencies-and-consultants',
+  ],
+  'madixo-vs-feasibility-template-spreadsheets': [
+    'madixo-for-service-businesses',
+    'madixo-for-ecommerce-and-product-ideas',
+  ],
+  'madixo-vs-generic-market-research-notes': [
+    'madixo-for-service-businesses',
+    'madixo-for-first-time-founders',
+  ],
+};
+
+const relatedComparisonMap: Record<string, string[]> = {
+  'madixo-vs-asking-chatgpt-only': ['madixo-vs-feasibility-template-spreadsheets'],
+  'madixo-vs-feasibility-template-spreadsheets': ['madixo-vs-generic-market-research-notes'],
+  'madixo-vs-generic-market-research-notes': ['madixo-vs-asking-chatgpt-only'],
+};
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
@@ -46,6 +73,10 @@ export default async function ComparisonDetailPage({ params }: { params: Params 
   if (!page) notFound();
 
   const relatedPosts = getPostsBySlugs(page.relatedPosts);
+  const relatedUseCases = getUseCasesBySlugs(relatedUseCaseMap[page.slug] ?? []);
+  const relatedComparisons = getComparisonsBySlugs(relatedComparisonMap[page.slug] ?? []).filter(
+    (item) => item.slug !== page.slug,
+  );
   const cookieStore = await cookies();
   const uiLang = getServerUiLanguageFromCookie(cookieStore);
   const pageTitle = localizeText(page.title, uiLang);
@@ -98,7 +129,12 @@ export default async function ComparisonDetailPage({ params }: { params: Params 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ComparisonDetailPageClient page={page} relatedPosts={relatedPosts} />
+      <ComparisonDetailPageClient
+        page={page}
+        relatedPosts={relatedPosts}
+        relatedUseCases={relatedUseCases}
+        relatedComparisons={relatedComparisons}
+      />
     </>
   );
 }
