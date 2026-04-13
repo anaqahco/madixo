@@ -13,6 +13,7 @@ const COPY = {
       'Madixo helps founders move from idea analysis to early feasibility and a clearer next decision inside one focused workspace.',
     product: 'Product',
     company: 'Company',
+    startHere: 'Start here',
     home: 'Home',
     pricing: 'Plans',
     blog: 'Blog',
@@ -23,6 +24,10 @@ const COPY = {
     terms: 'Terms',
     privacy: 'Privacy',
     refund: 'Refunds',
+    firstArticle: 'Read the core articles',
+    firstUseCase: 'See practical use cases',
+    firstComparison: 'Compare Madixo clearly',
+    firstPricing: 'Review the plans',
     emailLabel: 'Email',
     emailValue: 'support@madixo.ai',
     emailHint: 'Support, billing, and product feedback.',
@@ -36,6 +41,7 @@ const COPY = {
       'Madixo يساعد المؤسس على الانتقال من تحليل الفكرة إلى دراسة جدوى أولية ثم قرار أوضح حول الخطوة التالية داخل مساحة عمل واحدة.',
     product: 'المنتج',
     company: 'الشركة',
+    startHere: 'ابدأ من هنا',
     home: 'الرئيسية',
     pricing: 'الباقات',
     blog: 'المدونة',
@@ -46,6 +52,10 @@ const COPY = {
     terms: 'الشروط',
     privacy: 'الخصوصية',
     refund: 'الاسترجاع',
+    firstArticle: 'ابدأ بالمقالات الأساسية',
+    firstUseCase: 'شاهد حالات استخدام عملية',
+    firstComparison: 'قارن Madixo بوضوح',
+    firstPricing: 'راجع الباقات',
     emailLabel: 'البريد الإلكتروني',
     emailValue: 'support@madixo.ai',
     emailHint: 'للدعم، والفوترة، وملاحظات المنتج.',
@@ -84,6 +94,13 @@ export default function SiteFooter({ uiLang }: Props) {
     { href: '/terms', label: copy.terms },
     { href: '/privacy', label: copy.privacy },
     { href: '/refund-policy', label: copy.refund },
+  ];
+
+  const startHereLinks = [
+    { href: '/blog', label: copy.firstArticle },
+    { href: '/use-cases', label: copy.firstUseCase },
+    { href: '/compare-to', label: copy.firstComparison },
+    { href: '/pricing', label: copy.firstPricing },
   ];
 
   return (
@@ -146,47 +163,72 @@ export default function SiteFooter({ uiLang }: Props) {
           </div>
 
           <div className="mt-8 border-t border-[#E5E7EB] pt-6">
-            {isArabic ? (
-              <div className="grid gap-8 text-right sm:ml-auto sm:w-fit sm:grid-cols-[max-content_max-content] sm:gap-x-16 md:gap-x-24">
-                <div>
-                  <h2 className="text-sm font-semibold text-[#111827]">{copy.company}</h2>
-                  <div className="mt-4 flex flex-col gap-3">
-                    {companyLinks.map((item) => (
-                      <FooterLink key={item.href} href={item.href} label={item.label} />
-                    ))}
+            <div
+              className={`grid gap-8 ${
+                isArabic
+                  ? 'text-right lg:grid-cols-[max-content_max-content_max-content]' : 'text-left lg:grid-cols-[max-content_max-content_max-content]'
+              } ${isArabic ? 'lg:justify-end' : 'lg:justify-start'}`}
+            >
+              {isArabic ? (
+                <>
+                  <div>
+                    <h2 className="text-sm font-semibold text-[#111827]">{copy.company}</h2>
+                    <div className="mt-4 flex flex-col gap-3">
+                      {companyLinks.map((item) => (
+                        <FooterLink key={item.href} href={item.href} label={item.label} />
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <h2 className="text-sm font-semibold text-[#111827]">{copy.product}</h2>
-                  <div className="mt-4 flex flex-col gap-3">
-                    {productLinks.map((item) => (
-                      <FooterLink key={item.href} href={item.href} label={item.label} />
-                    ))}
+                  <div>
+                    <h2 className="text-sm font-semibold text-[#111827]">{copy.product}</h2>
+                    <div className="mt-4 flex flex-col gap-3">
+                      {productLinks.map((item) => (
+                        <FooterLink key={item.href} href={item.href} label={item.label} />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </div>
-            ) : (
-              <div className="grid gap-8 text-left sm:mr-auto sm:w-fit sm:grid-cols-[max-content_max-content] sm:gap-x-16 md:gap-x-24">
-                <div>
-                  <h2 className="text-sm font-semibold text-[#111827]">{copy.product}</h2>
-                  <div className="mt-4 flex flex-col gap-3">
-                    {productLinks.map((item) => (
-                      <FooterLink key={item.href} href={item.href} label={item.label} />
-                    ))}
-                  </div>
-                </div>
 
-                <div>
-                  <h2 className="text-sm font-semibold text-[#111827]">{copy.company}</h2>
-                  <div className="mt-4 flex flex-col gap-3">
-                    {companyLinks.map((item) => (
-                      <FooterLink key={item.href} href={item.href} label={item.label} />
-                    ))}
+                  <div>
+                    <h2 className="text-sm font-semibold text-[#111827]">{copy.startHere}</h2>
+                    <div className="mt-4 flex flex-col gap-3">
+                      {startHereLinks.map((item) => (
+                        <FooterLink key={item.href} href={item.href} label={item.label} />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </div>
-            )}
+                </>
+              ) : (
+                <>
+                  <div>
+                    <h2 className="text-sm font-semibold text-[#111827]">{copy.product}</h2>
+                    <div className="mt-4 flex flex-col gap-3">
+                      {productLinks.map((item) => (
+                        <FooterLink key={item.href} href={item.href} label={item.label} />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h2 className="text-sm font-semibold text-[#111827]">{copy.startHere}</h2>
+                    <div className="mt-4 flex flex-col gap-3">
+                      {startHereLinks.map((item) => (
+                        <FooterLink key={item.href} href={item.href} label={item.label} />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h2 className="text-sm font-semibold text-[#111827]">{copy.company}</h2>
+                    <div className="mt-4 flex flex-col gap-3">
+                      {companyLinks.map((item) => (
+                        <FooterLink key={item.href} href={item.href} label={item.label} />
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
 
           <div className={`mt-8 border-t border-[#E5E7EB] pt-5 ${isArabic ? 'text-right' : 'text-left'}`}>
