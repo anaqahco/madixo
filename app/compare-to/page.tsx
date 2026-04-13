@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
-import { getComparisons, localizeText } from '@/lib/blog';
+import { getComparisons, getPostsBySlugs, localizeText } from '@/lib/blog';
 import { buildAbsoluteAppUrl } from '@/lib/app-url';
 import { getServerUiLanguageFromCookie } from '@/lib/ui-language';
 import ComparisonsPageClient from '@/components/comparisons-page';
@@ -33,8 +33,15 @@ export const metadata: Metadata = {
   ],
 };
 
+const featuredPostSlugs = [
+  'when-to-use-madixo-instead-of-asking-chatgpt-only',
+  'difference-between-opportunity-analysis-and-feasibility-study',
+  'how-to-document-market-notes-that-improve-decisions',
+];
+
 export default async function ComparisonsPage() {
   const items = getComparisons();
+  const featuredPosts = getPostsBySlugs(featuredPostSlugs);
   const cookieStore = await cookies();
   const uiLang = getServerUiLanguageFromCookie(cookieStore);
 
@@ -76,6 +83,39 @@ export default async function ComparisonsPage() {
           name: localizeText(item.title, uiLang),
         })),
       },
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name:
+              uiLang === 'ar'
+                ? 'متى أقرأ صفحة مقارنة بدل مقال عادي؟'
+                : 'When should I read a comparison page instead of a normal article?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text:
+                uiLang === 'ar'
+                  ? 'عندما تكون المفاضلة بين Madixo وبين بديل قريب هي السؤال الأساسي لديك، مثل الاكتفاء بسؤال ChatGPT أو استخدام جدول تقليدي أو الاكتفاء بملاحظات سوق عامة.'
+                  : 'Use a comparison page when your main question is choosing between Madixo and an adjacent alternative such as asking ChatGPT only, using a spreadsheet template, or keeping generic market notes.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name:
+              uiLang === 'ar'
+                ? 'هل صفحات المقارنات مناسبة قبل الشراء؟'
+                : 'Are comparison pages useful before buying?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text:
+                uiLang === 'ar'
+                  ? 'نعم، لأنها تختصر لك متى يكون Madixo أقوى، ومتى قد لا يكون الأنسب، ثم تربطك بمقالات وحالات استخدام وباقات قبل اتخاذ قرار الاشتراك.'
+                  : 'Yes. They show when Madixo is stronger, when it may not be the best fit, and then connect you to articles, use cases, and plans before you decide to subscribe.',
+            },
+          },
+        ],
+      },
     ],
   };
 
@@ -85,7 +125,7 @@ export default async function ComparisonsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ComparisonsPageClient items={items} />
+      <ComparisonsPageClient items={items} featuredPosts={featuredPosts} />
     </>
   );
 }
