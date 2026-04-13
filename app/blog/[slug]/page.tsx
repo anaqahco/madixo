@@ -4,8 +4,8 @@ import type { Metadata } from 'next';
 import {
   getBlogPostBySlug,
   getComparisonsBySlugs,
-  getPostsBySlugs,
   getUseCasesBySlugs,
+  getSmartRelatedPosts,
   localizeText,
 } from '@/lib/blog';
 import { buildAbsoluteAppUrl } from '@/lib/app-url';
@@ -51,7 +51,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
   const cookieStore = await cookies();
   const uiLang = getServerUiLanguageFromCookie(cookieStore);
 
-  const relatedPosts = getPostsBySlugs(post.relatedPosts).filter((item) => item.slug !== post.slug);
+  const relatedPosts = getSmartRelatedPosts(post, 4);
   const relatedUseCases = getUseCasesBySlugs(post.relatedUseCases);
   const relatedComparisons = getComparisonsBySlugs(post.relatedComparisons);
 
