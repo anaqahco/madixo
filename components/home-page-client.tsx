@@ -54,6 +54,7 @@ const UI_COPY = {
     quickLinkPricing: 'View pricing',
     quickLinkUseCases: 'Explore use cases',
     quickLinkArticle: 'Read how to validate an idea',
+    quickLinkCompare: 'Explore comparisons',
     radarLabel: 'Start with an idea',
     radarDescription:
       'Describe the opportunity, market, and customer, then let Madixo turn that into structured analysis, early feasibility, testing, evidence, and a clearer working path.',
@@ -157,6 +158,32 @@ const UI_COPY = {
     browseAllUseCases: 'Browse all use cases',
     browseAllComparisons: 'Browse all comparisons',
 
+
+    startPathEyebrow: 'Choose your starting path',
+    startPathTitle: 'Start from the page that matches what you need now.',
+    startPathDescription:
+      'Some visitors need a practical article, some need a use case, and some want to compare Madixo before they commit. These shortcuts make the next step clearer.',
+    startPathArticlesTitle: 'Start with articles',
+    startPathArticlesDescription:
+      'Read practical guidance on validating an idea, testing demand, and understanding feasibility before you commit.',
+    startPathUseCasesTitle: 'Start with use cases',
+    startPathUseCasesDescription:
+      'See how Madixo can be used for service businesses, founders, agencies, and product teams.',
+    startPathComparisonsTitle: 'Start with comparisons',
+    startPathComparisonsDescription:
+      'Compare Madixo with common alternatives like spreadsheets, generic research notes, or asking ChatGPT only.',
+    startPathPricingTitle: 'Start with pricing',
+    startPathPricingDescription:
+      'Understand which workflow depth each plan opens before you choose a subscription.',
+    startPathCta: 'Open path',
+    featuredPathsEyebrow: 'Best starting points',
+    featuredPathsTitle: 'Useful pages to open from the homepage right now.',
+    featuredPathsDescription:
+      'This section surfaces the most useful article, use case, and comparison pages so the homepage sends visitors deeper into the right journey.',
+    featuredArticlesEyebrow: 'Top articles',
+    featuredUseCasesEyebrow: 'Top use cases',
+    featuredComparisonsEyebrow: 'Top comparisons',
+
     howMadixoWorks: 'How Madixo Works',
     howMadixoWorksDescription:
       'Move from a raw idea to a clearer next move through analysis, early feasibility, testing, evidence, and a current direction.',
@@ -192,6 +219,7 @@ const UI_COPY = {
     quickLinkPricing: 'شاهد الباقات',
     quickLinkUseCases: 'استكشف حالات الاستخدام',
     quickLinkArticle: 'اقرأ كيف تختبر الفكرة',
+    quickLinkCompare: 'استكشف المقارنات',
     radarLabel: 'ابدأ من الفكرة',
     radarDescription:
       'صف الفكرة والسوق والعميل، ثم دع Madixo يحول ذلك إلى تحليل منظم ودراسة جدوى أولية وخطة تجربة وملاحظات سوق ومسار عملي أوضح.',
@@ -294,6 +322,32 @@ const UI_COPY = {
     browseAllArticles: 'تصفح كل المقالات',
     browseAllUseCases: 'تصفح كل الحالات',
     browseAllComparisons: 'تصفح كل المقارنات',
+
+
+    startPathEyebrow: 'اختر مسار البداية',
+    startPathTitle: 'ابدأ من الصفحة الأقرب لما تحتاجه الآن.',
+    startPathDescription:
+      'بعض الزوار يحتاجون مقالًا عمليًا، وبعضهم يريد حالة استخدام، وبعضهم يريد مقارنة Madixo بالبدائل قبل اتخاذ القرار. هذه الروابط تختصر عليهم الطريق.',
+    startPathArticlesTitle: 'ابدأ من المقالات',
+    startPathArticlesDescription:
+      'اقرأ شرحًا عمليًا عن اختبار الفكرة والطلب ودراسة الجدوى الأولية قبل أن تلتزم بالتنفيذ.',
+    startPathUseCasesTitle: 'ابدأ من حالات الاستخدام',
+    startPathUseCasesDescription:
+      'شاهد كيف يمكن استخدام Madixo في الشركات الخدمية، ولدى المؤسسين الجدد، والوكالات، والفرق الصغيرة.',
+    startPathComparisonsTitle: 'ابدأ من المقارنات',
+    startPathComparisonsDescription:
+      'قارن Madixo بالبدائل الشائعة مثل الجداول التقليدية، والملاحظات العامة، أو الاكتفاء بسؤال ChatGPT فقط.',
+    startPathPricingTitle: 'ابدأ من الباقات',
+    startPathPricingDescription:
+      'افهم ما الذي يفتحه كل اشتراك وما عمق العمل المناسب لك قبل اختيار الباقة.',
+    startPathCta: 'افتح المسار',
+    featuredPathsEyebrow: 'أفضل نقاط البداية',
+    featuredPathsTitle: 'صفحات مفيدة لتبدأ منها مباشرة من الصفحة الرئيسية.',
+    featuredPathsDescription:
+      'هذا القسم يبرز أفضل مقال، وأفضل حالة استخدام، وأفضل مقارنة حتى تدفع الصفحة الرئيسية الزائر إلى المسار الأنسب بدل التوقف عند التعريف فقط.',
+    featuredArticlesEyebrow: 'مقالات مهمة',
+    featuredUseCasesEyebrow: 'حالات مهمة',
+    featuredComparisonsEyebrow: 'مقارنات مهمة',
 
     howMadixoWorks: 'كيف يعمل Madixo',
     howMadixoWorksDescription:
@@ -704,6 +758,69 @@ export default function HomePageClient() {
     },
   ];
 
+  const startPathCards = [
+    {
+      title: copy.startPathArticlesTitle,
+      description: copy.startPathArticlesDescription,
+      href: '/blog',
+    },
+    {
+      title: copy.startPathUseCasesTitle,
+      description: copy.startPathUseCasesDescription,
+      href: '/use-cases',
+    },
+    {
+      title: copy.startPathComparisonsTitle,
+      description: copy.startPathComparisonsDescription,
+      href: '/compare-to',
+    },
+    {
+      title: copy.startPathPricingTitle,
+      description: copy.startPathPricingDescription,
+      href: '/pricing',
+    },
+  ];
+
+  const homepageFeaturedArticles = BLOG_POSTS.slice(0, 2).map((post) => ({
+    eyebrow: copy.featuredArticlesEyebrow,
+    title: localizeText(post.title, preferredLanguage),
+    description: truncateText(
+      localizeText(post.excerpt, preferredLanguage),
+      preferredLanguage === 'ar' ? 100 : 120
+    ),
+    href: `/blog/${post.slug}`,
+    cta: copy.articlesCta,
+  }));
+
+  const homepageFeaturedUseCases = USE_CASES.slice(0, 2).map((item) => ({
+    eyebrow: copy.featuredUseCasesEyebrow,
+    title: localizeText(item.title, preferredLanguage),
+    description: truncateText(
+      localizeText(item.summary, preferredLanguage),
+      preferredLanguage === 'ar' ? 100 : 120
+    ),
+    href: `/use-cases/${item.slug}`,
+    cta: copy.useCasesCta,
+  }));
+
+  const homepageFeaturedComparisons = COMPARISONS.slice(0, 2).map((item) => ({
+    eyebrow: copy.featuredComparisonsEyebrow,
+    title: localizeText(item.title, preferredLanguage),
+    description: truncateText(
+      localizeText(item.summary, preferredLanguage),
+      preferredLanguage === 'ar' ? 100 : 120
+    ),
+    href: `/compare-to/${item.slug}`,
+    cta: copy.comparisonsCta,
+  }));
+
+  const homepageFeaturedCards = [
+    ...homepageFeaturedArticles,
+    ...homepageFeaturedUseCases,
+    ...homepageFeaturedComparisons,
+  ];
+
+
   const handleAnalyze = async () => {
     const query = idea.trim();
     const targetMarket = market.trim();
@@ -1093,6 +1210,12 @@ export default function HomePageClient() {
               {copy.quickLinkUseCases}
             </Link>
             <Link
+              href="/compare-to"
+              className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-medium text-[#374151] transition hover:bg-[#EEF3F9]"
+            >
+              {copy.quickLinkCompare}
+            </Link>
+            <Link
               href="/blog/how-to-validate-a-business-idea-before-building"
               className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-medium text-[#374151] transition hover:bg-[#EEF3F9]"
             >
@@ -1215,6 +1338,82 @@ export default function HomePageClient() {
           >
             {copy.analyzeOpportunity}
           </button>
+        </div>
+      </section>
+
+
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
+        <div className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6 md:p-8">
+          <div className="text-center">
+            <p className="text-sm font-medium text-[#6B7280]">{copy.startPathEyebrow}</p>
+            <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
+              {copy.startPathTitle}
+            </h2>
+            <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
+              {copy.startPathDescription}
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {startPathCards.map((item) => (
+              <div
+                key={item.href}
+                className="rounded-2xl border border-[#D9E2F0] bg-white p-5 shadow-sm"
+              >
+                <h3 className="text-xl font-semibold tracking-tight text-[#111827]">
+                  {item.title}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-[#4B5563] sm:text-base sm:leading-8">
+                  {item.description}
+                </p>
+                <div className="mt-5">
+                  <Link
+                    href={item.href}
+                    className="inline-flex rounded-full border border-[#111827] bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                  >
+                    {copy.startPathCta}
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
+        <div className="text-center">
+          <p className="text-sm font-medium text-[#6B7280]">{copy.featuredPathsEyebrow}</p>
+          <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
+            {copy.featuredPathsTitle}
+          </h2>
+          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
+            {copy.featuredPathsDescription}
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {homepageFeaturedCards.map((item) => (
+            <div
+              key={`${item.eyebrow}-${item.href}`}
+              className="rounded-2xl border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6"
+            >
+              <p className="text-xs font-semibold text-[#6B7280]">{item.eyebrow}</p>
+              <h3 className="mt-3 text-xl font-semibold tracking-tight text-[#111827] sm:text-2xl">
+                {item.title}
+              </h3>
+              <p className="mt-4 text-sm leading-7 text-[#4B5563] sm:text-base sm:leading-8">
+                {item.description}
+              </p>
+              <div className="mt-5">
+                <Link
+                  href={item.href}
+                  className="inline-flex rounded-full border border-[#111827] bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                >
+                  {item.cta}
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
