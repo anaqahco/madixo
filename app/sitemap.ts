@@ -1,73 +1,87 @@
 import type { MetadataRoute } from 'next';
 import { BLOG_POSTS, USE_CASES, COMPARISONS } from '@/lib/blog';
 
+function normalizeSiteUrl() {
+  return (
+    process.env.APP_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    'https://madixo.ai'
+  ).replace(/\/$/, '');
+}
+
+function getLatestBlogDate() {
+  return BLOG_POSTS.reduce((latest, post) => {
+    const candidate = new Date(post.updatedAt || post.publishedAt);
+    return candidate > latest ? candidate : latest;
+  }, new Date('2026-01-01'));
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl =
-    (process.env.APP_URL ||
-      process.env.NEXT_PUBLIC_APP_URL ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      'https://madixo.ai').replace(/\/$/, '');
+  const siteUrl = normalizeSiteUrl();
+  const latestBlogDate = getLatestBlogDate();
+  const collectionDate = latestBlogDate;
 
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: `${siteUrl}/`,
-      lastModified: new Date(),
+      lastModified: latestBlogDate,
       changeFrequency: 'weekly',
       priority: 1,
     },
     {
       url: `${siteUrl}/pricing`,
-      lastModified: new Date(),
+      lastModified: latestBlogDate,
       changeFrequency: 'weekly',
-      priority: 0.9,
+      priority: 0.95,
     },
     {
       url: `${siteUrl}/blog`,
-      lastModified: new Date(),
+      lastModified: latestBlogDate,
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
+      url: `${siteUrl}/use-cases`,
+      lastModified: collectionDate,
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/use-cases`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.85,
-    },
-    {
       url: `${siteUrl}/compare-to`,
-      lastModified: new Date(),
+      lastModified: collectionDate,
       changeFrequency: 'weekly',
-      priority: 0.85,
+      priority: 0.9,
     },
     {
       url: `${siteUrl}/about`,
-      lastModified: new Date(),
+      lastModified: new Date('2026-03-30'),
       changeFrequency: 'monthly',
-      priority: 0.7,
+      priority: 0.6,
     },
     {
       url: `${siteUrl}/contact`,
-      lastModified: new Date(),
+      lastModified: new Date('2026-03-30'),
       changeFrequency: 'monthly',
-      priority: 0.65,
+      priority: 0.55,
     },
     {
       url: `${siteUrl}/terms`,
-      lastModified: new Date(),
+      lastModified: new Date('2026-03-30'),
       changeFrequency: 'monthly',
-      priority: 0.55,
+      priority: 0.4,
     },
     {
       url: `${siteUrl}/privacy`,
-      lastModified: new Date(),
+      lastModified: new Date('2026-03-30'),
       changeFrequency: 'monthly',
-      priority: 0.55,
+      priority: 0.4,
     },
     {
       url: `${siteUrl}/refund-policy`,
-      lastModified: new Date(),
+      lastModified: new Date('2026-03-30'),
       changeFrequency: 'monthly',
-      priority: 0.5,
+      priority: 0.35,
     },
   ];
 
@@ -75,21 +89,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${siteUrl}/blog/${post.slug}`,
     lastModified: new Date(post.updatedAt || post.publishedAt),
     changeFrequency: 'monthly',
-    priority: post.featured ? 0.85 : 0.8,
+    priority: post.featured ? 0.9 : 0.82,
   }));
 
   const useCasePages: MetadataRoute.Sitemap = USE_CASES.map((item) => ({
     url: `${siteUrl}/use-cases/${item.slug}`,
-    lastModified: new Date(),
+    lastModified: collectionDate,
     changeFrequency: 'monthly',
-    priority: 0.8,
+    priority: 0.84,
   }));
 
   const comparisonPages: MetadataRoute.Sitemap = COMPARISONS.map((item) => ({
     url: `${siteUrl}/compare-to/${item.slug}`,
-    lastModified: new Date(),
+    lastModified: collectionDate,
     changeFrequency: 'monthly',
-    priority: 0.8,
+    priority: 0.84,
   }));
 
   return [...staticPages, ...blogPages, ...useCasePages, ...comparisonPages];
