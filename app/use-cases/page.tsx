@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
-import { getUseCases, localizeText } from '@/lib/blog';
+import { getPostsBySlugs, getUseCases, localizeText } from '@/lib/blog';
 import { buildAbsoluteAppUrl } from '@/lib/app-url';
 import { getServerUiLanguageFromCookie } from '@/lib/ui-language';
 import UseCasesPageClient from '@/components/use-cases-page';
@@ -33,8 +33,15 @@ export const metadata: Metadata = {
   ],
 };
 
+const featuredPostSlugs = [
+  'how-to-choose-your-best-first-customer',
+  'difference-between-opportunity-analysis-and-feasibility-study',
+  'how-to-know-if-market-demand-is-real',
+];
+
 export default async function UseCasesPage() {
   const items = getUseCases();
+  const featuredPosts = getPostsBySlugs(featuredPostSlugs);
   const cookieStore = await cookies();
   const uiLang = getServerUiLanguageFromCookie(cookieStore);
 
@@ -76,6 +83,39 @@ export default async function UseCasesPage() {
           name: localizeText(item.title, uiLang),
         })),
       },
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name:
+              uiLang === 'ar'
+                ? 'متى أفتح صفحة حالة استخدام بدل مقال؟'
+                : 'When should I open a use case page instead of an article?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text:
+                uiLang === 'ar'
+                  ? 'عندما يكون سؤالك ليس ما هي الفكرة فقط، بل كيف يمكن استخدام Madixo مع نوع مشروعك أو مرحلتك الحالية عمليًا.'
+                  : 'Use a use case page when your question is not only what the idea is, but how Madixo fits your project type or current stage in practice.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name:
+              uiLang === 'ar'
+                ? 'هل صفحات حالات الاستخدام مناسبة قبل الاشتراك؟'
+                : 'Are use case pages useful before subscribing?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text:
+                uiLang === 'ar'
+                  ? 'نعم، لأنها تشرح متى يكون Madixo مناسبًا لك، وما المسار المتوقع من التحليل إلى الجدوى الأولية إلى التحقق.'
+                  : 'Yes. They explain when Madixo is a fit for you and what the expected flow looks like from analysis to early feasibility to validation.',
+            },
+          },
+        ],
+      },
     ],
   };
 
@@ -85,7 +125,7 @@ export default async function UseCasesPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <UseCasesPageClient items={items} />
+      <UseCasesPageClient items={items} featuredPosts={featuredPosts} />
     </>
   );
 }
