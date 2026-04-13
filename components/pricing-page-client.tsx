@@ -1274,6 +1274,139 @@ export default function PricingPageClient() {
       </section>
 
 
+
+      <section className="mx-auto mt-5 max-w-7xl rounded-[28px] border border-[#D9E2F0] bg-white p-5 shadow-sm sm:mt-6 sm:p-6 md:rounded-[32px] md:p-8">
+        <h2 className="text-2xl font-bold text-[#111827] md:text-3xl">{uiLang === 'ar' ? 'ابدأ من الصفحة الأقرب لك قبل اختيار الباقة' : 'Start from the closest page before choosing a plan'}</h2>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-[#4B5563] md:text-base">
+          {uiLang === 'ar'
+            ? 'بعض الزوار يصلون إلى الباقات وهم ما زالوا في مرحلة الفهم. هذه الصفحات تساعدك على اختيار المسار الأقرب قبل أن تلتزم بالاشتراك.'
+            : 'Some visitors reach pricing while they are still clarifying the decision. These pages help you choose the closest path before you commit to a plan.'}
+        </p>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {[
+            {
+              title: uiLang === 'ar' ? 'ابدأ من المقالات' : 'Start from articles',
+              description:
+                uiLang === 'ar'
+                  ? 'اقرأ المسار الأساسي لاختبار الفكرة والطلب ودراسة الجدوى الأولية قبل الدفع.'
+                  : 'Read the core path for idea testing, demand checks, and early feasibility before paying.',
+              href: '/blog',
+              cta: uiLang === 'ar' ? 'افتح المسار' : 'Open path',
+            },
+            {
+              title: uiLang === 'ar' ? 'ابدأ من حالات الاستخدام' : 'Start from use cases',
+              description:
+                uiLang === 'ar'
+                  ? 'شاهد كيف يستخدم Madixo في المشاريع الخدمية، والوكالات، والمؤسسين الجدد.'
+                  : 'See how Madixo is used in service businesses, agencies, and early-stage founder workflows.',
+              href: '/use-cases',
+              cta: uiLang === 'ar' ? 'شاهد الحالات' : 'See use cases',
+            },
+            {
+              title: uiLang === 'ar' ? 'ابدأ من المقارنات' : 'Start from comparisons',
+              description:
+                uiLang === 'ar'
+                  ? 'قارن Madixo مع الجداول التقليدية أو سؤال ChatGPT فقط قبل اختيار الباقة.'
+                  : 'Compare Madixo with traditional spreadsheets or asking ChatGPT only before choosing a plan.',
+              href: '/compare-to',
+              cta: uiLang === 'ar' ? 'افتح المقارنات' : 'Open comparisons',
+            },
+            {
+              title: uiLang === 'ar' ? 'ابدأ بتحليل مباشر' : 'Start with a direct analysis',
+              description:
+                uiLang === 'ar'
+                  ? 'إذا كانت فكرتك واضحة بالفعل، ابدأ بتحليل مباشر ثم ارجع للباقات عند الحاجة.'
+                  : 'If your idea is already clear, start with a direct analysis and return to pricing when needed.',
+              href: '/',
+              cta: uiLang === 'ar' ? 'ابدأ التحليل' : 'Start analysis',
+            },
+          ].map((item) => (
+            <article
+              key={item.href}
+              className="rounded-[22px] border border-[#E5E7EB] bg-[#FAFBFD] p-4 shadow-sm"
+            >
+              <h3 className="text-base font-semibold text-[#111827]">{item.title}</h3>
+              <p className="mt-3 text-sm leading-7 text-[#4B5563]">{item.description}</p>
+              <Link
+                href={item.href}
+                className="mt-5 inline-flex rounded-full border border-[#111827] bg-[#111827] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+              >
+                {item.cta}
+              </Link>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto mt-5 max-w-7xl rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:mt-6 sm:p-6 md:rounded-[32px] md:p-8">
+        <h2 className="text-2xl font-bold text-[#111827] md:text-3xl">{uiLang === 'ar' ? 'روابط مفيدة قبل اتخاذ قرار الباقة' : 'Helpful pages before you decide on a plan'}</h2>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-[#4B5563] md:text-base">
+          {uiLang === 'ar'
+            ? 'بدل أن تتوقف عند الأسعار فقط، انتقل إلى صفحة تشرح الفرق أو حالة استخدام أو مقال عملي يكمل قرارك.'
+            : 'Instead of stopping at pricing alone, jump to a page that explains the difference, a practical use case, or an article that completes the decision.'}
+        </p>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {[
+            {
+              eyebrow: uiLang === 'ar' ? 'مقال مرتبط' : 'Related article',
+              title:
+                uiLang === 'ar'
+                  ? 'ما الفرق بين تحليل الفرصة ودراسة الجدوى الأولية'
+                  : 'Opportunity analysis vs early feasibility',
+              description:
+                uiLang === 'ar'
+                  ? 'هذه المقالة مناسبة إذا كنت ما زلت تحدد هل تحتاج فهمًا أوليًا أم عملًا أعمق قبل الاشتراك.'
+                  : 'This article fits when you are still deciding whether you need a first-pass view or deeper work before subscribing.',
+              href: '/blog/feasibility-study-vs-business-plan',
+              cta: uiLang === 'ar' ? 'اقرأ المقال' : 'Read article',
+            },
+            {
+              eyebrow: uiLang === 'ar' ? 'حالة استخدام' : 'Use case',
+              title:
+                uiLang === 'ar'
+                  ? 'Madixo للمشاريع الخدمية'
+                  : 'Madixo for service businesses',
+              description:
+                uiLang === 'ar'
+                  ? 'هذه الصفحة مفيدة إذا كنت تريد رؤية استخدام عملي قريب من تنفيذ حقيقي قبل اختيار الباقة.'
+                  : 'This page is useful if you want to see a practical workflow close to real execution before choosing a plan.',
+              href: '/use-cases/madixo-for-service-businesses',
+              cta: uiLang === 'ar' ? 'شاهد الحالة' : 'See use case',
+            },
+            {
+              eyebrow: uiLang === 'ar' ? 'مقارنة' : 'Comparison',
+              title:
+                uiLang === 'ar'
+                  ? 'Madixo مقابل قوالب الجداول التقليدية للجدوى'
+                  : 'Madixo vs feasibility spreadsheet templates',
+              description:
+                uiLang === 'ar'
+                  ? 'هذه الصفحة مناسبة إذا كنت تقارن بين الاشتراك في أداة وبين الاستمرار على الجداول اليدوية.'
+                  : 'This page fits when you are comparing paying for a focused tool versus staying on manual spreadsheets.',
+              href: '/compare-to/madixo-vs-feasibility-template-spreadsheets',
+              cta: uiLang === 'ar' ? 'افتح المقارنة' : 'Open comparison',
+            },
+          ].map((item) => (
+            <article
+              key={item.href}
+              className="rounded-[22px] border border-[#E5E7EB] bg-white p-4 shadow-sm"
+            >
+              <span className="inline-flex rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-3 py-1 text-xs font-semibold text-[#6B7280]">{item.eyebrow}</span>
+              <h3 className="mt-4 text-base font-semibold text-[#111827]">{item.title}</h3>
+              <p className="mt-3 text-sm leading-7 text-[#4B5563]">{item.description}</p>
+              <Link
+                href={item.href}
+                className="mt-5 inline-flex rounded-full border border-[#111827] bg-[#111827] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+              >
+                {item.cta}
+              </Link>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="mx-auto mt-5 max-w-7xl rounded-[28px] border border-[#D9E2F0] bg-white p-5 shadow-sm sm:mt-6 sm:p-6 md:rounded-[32px] md:p-8">
         <h2 className="text-2xl font-bold text-[#111827] md:text-3xl">{copy.faqTitle}</h2>
         <div className="mt-6 grid gap-4 md:grid-cols-3">
