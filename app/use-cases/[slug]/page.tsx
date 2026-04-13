@@ -49,19 +49,45 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: page.title.en,
     description: page.seoDescription.en,
+    keywords: [
+      page.title.en,
+      page.industry.en,
+      'Madixo use case',
+      'business idea validation',
+      'early feasibility',
+    ],
     alternates: {
       canonical: `/use-cases/${page.slug}`,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
     openGraph: {
       title: page.title.en,
       description: page.seoDescription.en,
       url: buildAbsoluteAppUrl(`/use-cases/${page.slug}`),
       type: 'article',
+      images: [
+        {
+          url: buildAbsoluteAppUrl('/brand/madixo-logo.png'),
+          width: 1200,
+          height: 630,
+          alt: page.title.en,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: page.title.en,
       description: page.seoDescription.en,
+      images: [buildAbsoluteAppUrl('/brand/madixo-logo.png')],
     },
   };
 }
@@ -89,6 +115,10 @@ export default async function UseCaseDetailPage({ params }: { params: Params }) 
         name: pageTitle,
         description: pageDescription,
         url: buildAbsoluteAppUrl(`/use-cases/${page.slug}`),
+        primaryImageOfPage: {
+          '@type': 'ImageObject',
+          url: buildAbsoluteAppUrl('/brand/madixo-logo.png'),
+        },
         isPartOf: {
           '@type': 'CollectionPage',
           name: uiLang === 'ar' ? 'حالات استخدام Madixo' : 'Madixo Use Cases',
