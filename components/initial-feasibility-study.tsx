@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   normalizeFeasibilityStudyDisplay,
   type InitialFeasibilityStudy,
@@ -171,11 +171,25 @@ export default function InitialFeasibilityStudyPanel({
   generatedAt?: string;
 }) {
   const [exportingPdf, setExportingPdf] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const copy = COPY[uiLang];
   const displayStudy = useMemo(
     () => (study ? normalizeFeasibilityStudyDisplay(study, uiLang) : null),
     [study, uiLang]
   );
+
+  useEffect(() => {
+    if (!loading) return;
+
+    const timer = window.setTimeout(() => {
+      sectionRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, [loading]);
 
   const handleExportPdf = async () => {
     if (!study) return;
@@ -224,7 +238,10 @@ export default function InitialFeasibilityStudyPanel({
   };
 
   return (
-    <section className="mt-8 rounded-[28px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:mt-10 sm:p-8 sm:rounded-[32px]">
+    <section
+      ref={sectionRef}
+      className="mt-8 rounded-[28px] border border-[#E5E7EB] bg-white p-5 shadow-sm sm:mt-10 sm:p-8 sm:rounded-[32px] scroll-mt-24"
+    >
       <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
@@ -252,6 +269,7 @@ export default function InitialFeasibilityStudyPanel({
             ) : null}
 
             <button
+              type="button"
               onClick={onGenerate}
               disabled={loading || exportingPdf}
               className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 w-full sm:w-auto"
