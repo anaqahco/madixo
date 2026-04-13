@@ -1421,6 +1421,7 @@ export default function ResultsPage() {
   const [upgradePrompt, setUpgradePrompt] = useState<UpgradePrompt | null>(null);
   const [reportLifecycleStatus, setReportLifecycleStatus] = useState<ReportLifecycleStatus>('analysis_only');
   const analysisCompletedTrackedRef = useRef<string | null>(null);
+  const loadingCardRef = useRef<HTMLDivElement | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [feasibilityLoading, setFeasibilityLoading] = useState(false);
   const [feasibilityError, setFeasibilityError] = useState('');
@@ -1840,6 +1841,19 @@ export default function ResultsPage() {
       setLoadingStageIndex(0);
     }
   }, [loadingProgress]);
+
+  useEffect(() => {
+    if (!loading) return;
+
+    const timer = window.setTimeout(() => {
+      loadingCardRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, [loading]);
 
   useEffect(() => {
     if (!reportIdParam) {
@@ -2451,7 +2465,10 @@ ${copy.risks}:
             </Link>
           </div>
 
-          <div className="rounded-[32px] border border-[#E5E7EB] bg-white px-6 py-8 shadow-sm md:px-10 md:py-12">
+          <div
+            ref={loadingCardRef}
+            className="rounded-[32px] border border-[#E5E7EB] bg-white px-6 py-8 shadow-sm md:px-10 md:py-12 scroll-mt-24"
+          >
             <div className="mx-auto max-w-5xl">
               <div className="text-center">
                 <div className="inline-flex items-center rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6B7280]">
