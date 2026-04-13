@@ -1936,3 +1936,50 @@ export function getComparisonsBySlugs(slugs: string[] = []) {
   const set = new Set(slugs);
   return getComparisons().filter((item) => set.has(item.slug));
 }
+
+
+export function getLatestBlogPosts(limit = 6, excludeSlugs: string[] = []) {
+  const excluded = new Set(excludeSlugs);
+  return getAllBlogPosts().filter((post) => !excluded.has(post.slug)).slice(0, limit);
+}
+
+export function getSmartRelatedPosts(post: BlogPost, limit = 4) {
+  const selected: BlogPost[] = [];
+  const seen = new Set<string>([post.slug]);
+
+  const pushPosts = (items: BlogPost[]) => {
+    for (const item of items) {
+      if (selected.length >= limit) break;
+      if (seen.has(item.slug)) continue;
+      seen.add(item.slug);
+      selected.push(item);
+    }
+  };
+
+  pushPosts(getPostsBySlugs(post.relatedPosts));
+
+  pushPosts(
+    getAllBlogPosts().filter(
+      (item) => item.slug !== post.slug && item.category === post.category
+    )
+  );
+
+  const crossCategoryMap: Partial<Record<ContentCategory, ContentCategory[]>> = {
+    'idea-validation': ['market-research', 'feasibility'],
+    'market-research': ['idea-validation', 'positioning'],
+    feasibility: ['idea-validation', 'positioning'],
+    positioning: ['market-research', 'idea-validation'],
+    'madixo-guides': ['idea-validation', 'feasibility'],
+  };
+
+  const fallbackCategories = crossCategoryMap[post.category] ?? [];
+  for (const category of fallbackCategories) {
+    pushPosts(getAllBlogPosts().filter((item) => item.category === category));
+  }
+
+  if (selected.length < limit) {
+    pushPosts(getLatestBlogPosts(limit, [post.slug]));
+  }
+
+  return selected.slice(0, limit);
+}
