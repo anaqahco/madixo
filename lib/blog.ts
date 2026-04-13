@@ -1419,6 +1419,248 @@ export const BLOG_POSTS: BlogPost[] = [
 
 ];
 
+{
+  slug: 'what-to-measure-in-your-first-validation-test',
+  category: 'idea-validation',
+  title: {
+    ar: 'ما الذي تقيسه في أول تجربة تحقق',
+    en: 'What to Measure in Your First Validation Test',
+  },
+  excerpt: {
+    ar: 'نجاح أول تجربة لا يعني عدد المشاهدات فقط. هذه المقالة تشرح ما الذي يجب أن تقيسه فعلًا حتى تعرف هل الإشارة مشجعة أم مضللة.',
+    en: 'The first validation test is not about views alone. This article explains what you should actually measure to decide whether the signal is useful or misleading.',
+  },
+  seoDescription: {
+    ar: 'تعرف على ما الذي يجب قياسه في أول تجربة تحقق لفكرة مشروعك، من الأسئلة والسلوك إلى الحجز والسعر والاعتراضات المتكررة.',
+    en: 'Learn what to measure in your first validation test, from questions and behavior to bookings, price signals, and repeated objections.',
+  },
+  coverEyebrow: { ar: 'اختبار الفكرة', en: 'Idea Validation' },
+  keywords: [
+    'validation metrics',
+    'first validation test',
+    'what to measure in validation',
+    'ماذا أقيس في التحقق',
+    'اختبار الفكرة',
+  ],
+  publishedAt: '2026-04-15T09:00:00.000Z',
+  updatedAt: '2026-04-15T09:00:00.000Z',
+  readingTimeMinutes: 5,
+  featured: false,
+  relatedUseCases: ['madixo-for-first-time-founders', 'madixo-for-agencies-and-consultants'],
+  relatedComparisons: ['madixo-vs-asking-chatgpt-only'],
+  relatedPosts: ['how-to-turn-a-business-idea-into-a-validation-plan', 'when-to-stop-collecting-opinions-and-start-validating'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'كثير من المؤسسين يخرجون من أول تجربة وهم لا يعرفون هل النتيجة جيدة أم لا. السبب أنهم يقيسون أشياء سهلة لكنها لا تكشف القرار: مشاهدات، إعجابات، أو مجاملات عامة. ما تحتاجه هو قياس الإشارات التي ترتبط بالسلوك الحقيقي.',
+        en: 'Many founders finish their first test without knowing whether the outcome was good or not. The reason is that they measure easy things that do not help the decision: views, likes, or polite feedback. What you need is to measure signals tied to real behavior.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'الإشارات الأهم في أول تجربة', en: 'The most useful signals in a first test' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'هل سأل الناس أسئلة توضح أنهم فهموا المشكلة والعرض؟',
+          en: 'Did people ask questions that show they understood the problem and the offer?',
+        },
+        {
+          ar: 'هل ظهر اهتمام بالسعر أو بطريقة التنفيذ أو وقت البدء؟',
+          en: 'Did they show interest in price, delivery, or timing?',
+        },
+        {
+          ar: 'هل طلب أحد متابعة أو تجربة أو حجزًا مبدئيًا؟',
+          en: 'Did anyone ask for a follow-up, trial, or early booking?',
+        },
+        {
+          ar: 'هل تكرر نفس الاعتراض عند أكثر من شخص؟',
+          en: 'Did the same objection repeat across multiple people?',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'الرقم الصغير الذي يحمل سلوكًا واضحًا أفضل من رقم كبير لا يحمل معنى. ثلاثة أشخاص سألوا عن السعر قد يكونون أقوى من مئة مشاهدة بلا أي تفاعل جاد.',
+        en: 'A small number with clear behavior is better than a large number without meaning. Three people asking about price may be stronger than one hundred views with no serious response.',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'Madixo يفيد هنا لأنه لا يكتفي بتجميع الملاحظات، بل يساعدك على ربط كل إشارة بقرار الجولة التالية: هل تكرر التجربة، تعدل العرض، أو تضيق الشريحة الأولى؟',
+        en: 'Madixo helps here because it does not just collect notes. It helps you connect each signal to the next decision: repeat the test, change the offer, or narrow the first segment.',
+      },
+    },
+  ],
+},
+{
+  slug: 'how-to-handle-market-objections-when-testing-an-idea',
+  category: 'market-research',
+  title: {
+    ar: 'كيف تتعامل مع اعتراضات السوق عند اختبار فكرتك',
+    en: 'How to Handle Market Objections When Testing an Idea',
+  },
+  excerpt: {
+    ar: 'الاعتراض ليس دائمًا علامة رفض. أحيانًا هو أوضح دليل على ما يجب تحسينه. هذه المقالة تشرح كيف تقرأ الاعتراضات بدل أن تخاف منها.',
+    en: 'An objection is not always a rejection. Sometimes it is the clearest clue to what needs improvement. This article shows how to read objections instead of fearing them.',
+  },
+  seoDescription: {
+    ar: 'تعرف على كيف تتعامل مع اعتراضات السوق عند اختبار فكرة مشروعك، وكيف تميز بين اعتراض يكشف ضعفًا حقيقيًا واعتراض ناتج عن سوء عرض أو شريحة غير مناسبة.',
+    en: 'Learn how to handle market objections when testing a business idea and how to distinguish between a real weakness and an objection caused by poor messaging or the wrong segment.',
+  },
+  coverEyebrow: { ar: 'فهم السوق', en: 'Market Research' },
+  keywords: [
+    'market objections',
+    'testing idea objections',
+    'customer objections startup',
+    'اعتراضات السوق',
+    'اختبار الفكرة',
+  ],
+  publishedAt: '2026-04-15T09:10:00.000Z',
+  updatedAt: '2026-04-15T09:10:00.000Z',
+  readingTimeMinutes: 6,
+  featured: false,
+  relatedUseCases: ['madixo-for-agencies-and-consultants', 'madixo-for-service-businesses'],
+  relatedComparisons: ['madixo-vs-generic-market-research-notes'],
+  relatedPosts: ['how-to-test-business-demand-before-launch', 'what-to-measure-in-your-first-validation-test'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'عندما تبدأ في اختبار فكرة جديدة ستسمع اعتراضات. المشكلة ليست في وجودها، بل في التعامل معها كأنها نهاية الفكرة فورًا. الاعتراض الجيد قد يكشف لك أين الخلل: في الشريحة، في الرسالة، في السعر، أو في طريقة العرض نفسها.',
+        en: 'When you start testing a new idea, you will hear objections. The problem is not that they exist, but that people treat them as the end of the idea immediately. A strong objection can reveal where the weakness is: the segment, the message, the price, or the offer itself.',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'اسأل: هذا الاعتراض يدل على ماذا؟', en: 'Ask: what does this objection actually point to?' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'اعتراض على السعر: هل القيمة غير واضحة أم السعر فعلًا مرتفع على هذه الشريحة؟',
+          en: 'Price objection: is the value unclear or is the price genuinely too high for this segment?',
+        },
+        {
+          ar: 'اعتراض على الوقت: هل المشكلة غير عاجلة بما يكفي؟',
+          en: 'Timing objection: is the problem not urgent enough?',
+        },
+        {
+          ar: 'اعتراض على الثقة: هل العرض يحتاج دليلًا أو مثالًا أو تجربة أصغر؟',
+          en: 'Trust objection: does the offer need proof, an example, or a smaller trial?',
+        },
+        {
+          ar: 'اعتراض متكرر من الجميع: هل الشريحة نفسها غير مناسبة كبداية؟',
+          en: 'The same objection from everyone: is the segment itself a poor starting point?',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'لا تحاول الرد على كل اعتراض بطريقة دفاعية. الأفضل أن تسجله، وتلاحظ تكراره، ثم تقرر: هل ستعدل الرسالة، أم تغير الشريحة، أم تعيد صياغة العرض الأول؟',
+        en: 'Do not respond to every objection defensively. It is better to record it, notice how often it repeats, and then decide: will you change the message, the segment, or the first offer itself?',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'في Madixo، الاعتراضات ليست مجرد ملاحظات مبعثرة. تتحول إلى أدلة ضمن مساحة التحقق تساعدك على معرفة ما يجب إصلاحه قبل الجولة التالية.',
+        en: 'In Madixo, objections are not just scattered notes. They become evidence inside the validation workspace and help you see what needs to be fixed before the next round.',
+      },
+    },
+  ],
+},
+{
+  slug: 'how-to-compare-two-business-ideas-before-you-choose',
+  category: 'feasibility',
+  title: {
+    ar: 'كيف تقارن بين فكرتين قبل أن تختار واحدة',
+    en: 'How to Compare Two Business Ideas Before You Choose One',
+  },
+  excerpt: {
+    ar: 'كثير من الناس يعلقون بين فكرتين جيدتين. هذه المقالة تشرح كيف تقارن بينهما عمليًا بدل الاعتماد على الحماس أو الانطباع.',
+    en: 'Many people get stuck between two good ideas. This article explains how to compare them practically instead of relying on excitement or intuition alone.',
+  },
+  seoDescription: {
+    ar: 'تعرف على طريقة عملية للمقارنة بين فكرتين تجاريتين قبل اختيار واحدة، من وضوح المشكلة والطلب الأولي إلى سهولة الدخول والربحية والمخاطر.',
+    en: 'Learn a practical framework for comparing two business ideas before choosing one, from problem clarity and demand to ease of entry, monetization, and risk.',
+  },
+  coverEyebrow: { ar: 'دراسة الجدوى', en: 'Feasibility' },
+  keywords: [
+    'compare business ideas',
+    'choose between two business ideas',
+    'أفضل فكرة مشروع',
+    'مقارنة بين فكرتين',
+    'idea selection',
+  ],
+  publishedAt: '2026-04-15T09:20:00.000Z',
+  updatedAt: '2026-04-15T09:20:00.000Z',
+  readingTimeMinutes: 6,
+  featured: false,
+  relatedUseCases: ['madixo-for-first-time-founders', 'madixo-for-ecommerce-and-product-ideas'],
+  relatedComparisons: ['madixo-vs-asking-chatgpt-only', 'madixo-vs-feasibility-template-spreadsheets'],
+  relatedPosts: ['how-to-know-if-your-idea-is-worth-executing', 'difference-between-opportunity-analysis-and-feasibility-study'],
+  body: [
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'إذا كنت محتارًا بين فكرتين، فالمشكلة ليست دائمًا أن واحدة ممتازة والأخرى ضعيفة. أحيانًا الاثنتان جيدتان، لكن واحدة أوضح كبداية، أقل مخاطرة، أو أسرع في كشف القرار. المقارنة الصحيحة لا تكون فقط: أي فكرة أحب أكثر؟ بل: أي فكرة تعطيني قرارًا أوضح الآن؟',
+        en: 'If you are torn between two ideas, the issue is not always that one is strong and the other is weak. Sometimes both are good, but one is clearer as a starting point, less risky, or faster at revealing the decision. The right comparison is not just “which idea do I like more?” but “which idea gives me a clearer decision now?”',
+      },
+    },
+    {
+      type: 'heading',
+      text: { ar: 'خمسة عناصر تقارن بينها', en: 'Five things to compare' },
+    },
+    {
+      type: 'list',
+      items: [
+        {
+          ar: 'وضوح المشكلة والعميل الأول في كل فكرة.',
+          en: 'Problem clarity and first customer clarity in each idea.',
+        },
+        {
+          ar: 'قوة إشارات الطلب الأولية التي تراها الآن.',
+          en: 'The strength of early demand signals you can already see.',
+        },
+        {
+          ar: 'سهولة الوصول إلى الشريحة الأولى وتجربة العرض.',
+          en: 'Ease of reaching the first segment and testing the offer.',
+        },
+        {
+          ar: 'متطلبات البداية: وقت، مال، وتشغيل.',
+          en: 'Startup requirements: time, money, and operational complexity.',
+        },
+        {
+          ar: 'المخاطر التي قد تمنعك من التقدم بسرعة.',
+          en: 'Risks that may slow you down or block progress.',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'أحيانًا الفكرة التي تبدو أقل لمعانًا تكون أفضل لأنها أسهل في الاختبار وأوضح في السوق. البداية الذكية ليست في اختيار “الأكبر”، بل في اختيار الفكرة التي تكشف حقيقتها بسرعة.',
+        en: 'Sometimes the idea that looks less glamorous is better because it is easier to test and clearer in the market. A smart start is not about choosing the “biggest” idea, but choosing the idea that reveals its truth quickly.',
+      },
+    },
+    {
+      type: 'paragraph',
+      text: {
+        ar: 'Madixo مناسب هنا لأنه لا يكتفي بوصف كل فكرة بشكل مستقل، بل يساعدك على حفظ التقارير والمقارنة بينها حتى ترى أي فرصة تستحق أن تبدأ بها أولًا.',
+        en: 'Madixo is useful here because it does not only describe each idea separately. It also helps you save reports and compare them so you can see which opportunity deserves to be your first move.',
+      },
+    },
+  ],
+},
+
 export const USE_CASES: UseCasePage[] = [
   {
     slug: 'madixo-for-first-time-founders',
