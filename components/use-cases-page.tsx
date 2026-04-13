@@ -1,19 +1,24 @@
 'use client';
 
 import Link from 'next/link';
-import { localizeText, type UseCasePage } from '@/lib/blog';
+import { localizeText, type BlogPost, type UseCasePage } from '@/lib/blog';
 import { useUiLanguageState } from '@/components/ui-language-provider';
 
-export default function UseCasesPageClient({ items }: { items: UseCasePage[] }) {
+type Props = {
+  items: UseCasePage[];
+  featuredPosts: BlogPost[];
+};
+
+export default function UseCasesPageClient({ items, featuredPosts }: Props) {
   const [uiLang] = useUiLanguageState();
 
   const copy =
     uiLang === 'ar'
       ? {
           eyebrow: 'حالات الاستخدام',
-          title: 'كيف يمكن استخدام Madixo في حالات عملية مختلفة؟',
+          title: 'كيف يمكن استخدام Madixo في مواقف عملية؟',
           description:
-            'استكشف حالات استخدام عملية توضّح كيف يساعدك Madixo على تحليل الفرصة، ودراسة الجدوى الأولية، واتخاذ قرار أوضح بحسب نوع المشروع أو الفريق.',
+            'اكتشف حالات استخدام عملية توضّح كيف يساعد Madixo في تحليل الفرصة، والجدوى الأولية، واتخاذ قرار أوضح بحسب نوع المشروع أو الفريق.',
           start: 'ابدأ التحليل',
           pricing: 'شاهد الباقات',
           open: 'افتح الحالة',
@@ -22,6 +27,31 @@ export default function UseCasesPageClient({ items }: { items: UseCasePage[] }) 
           helperTitle: 'هل تريد فهمًا أعمق قبل اختيار الحالة؟',
           helperDescription:
             'يمكنك قراءة المقالات أولًا لفهم الفكرة والطلب والجدوى، أو الانتقال إلى المقارنات إذا كنت تقارن بين Madixo وبدائل أخرى.',
+          chooseTitle: 'اختر الحالة الأقرب لوضعك الحالي',
+          chooseDescription:
+            'هذه الصفحة لا تشرح فقط ما الذي يفعله Madixo، بل متى يكون مناسبًا أكثر حسب نوع المشروع وما تريد الوصول إليه بعد القراءة.',
+          chooseCards: [
+            {
+              title: 'إذا كنت مؤسسًا جديدًا',
+              text: 'ابدأ بالحالة التي تعطيك مسارًا أوضح من فرز الفكرة إلى الجدوى الأولية ثم التحقق العملي.',
+            },
+            {
+              title: 'إذا كان مشروعك خدميًا',
+              text: 'ابدأ بالحالة التي تساعدك على اختبار العرض والسعر والطلب قبل التوسع أو التوظيف.',
+            },
+            {
+              title: 'إذا كنت وكالة أو مستشارًا',
+              text: 'ابدأ بالحالة التي توضّح كيف تستخدم Madixo داخليًا أو مع العميل بدل الاكتفاء بتقرير جامد.',
+            },
+            {
+              title: 'إذا لديك منتج أو متجر',
+              text: 'ابدأ بالحالة التي تركّز على وضوح الرغبة والهامش والبداية المناسبة قبل الالتزام بالمخزون أو التصنيع.',
+            },
+          ],
+          contextTitle: 'مقالات تساعدك على اختيار الحالة الصحيحة',
+          contextDescription:
+            'هذه المقالات تعطيك خلفية عملية قبل أن تفتح حالة الاستخدام أو بعدها حتى تتحول القراءة إلى خطوة أوضح.',
+          readArticle: 'اقرأ المقال',
         }
       : {
           eyebrow: 'Use Cases',
@@ -33,9 +63,34 @@ export default function UseCasesPageClient({ items }: { items: UseCasePage[] }) 
           open: 'Open use case',
           blog: 'Blog',
           comparisons: 'Comparisons',
-          helperTitle: 'Need more context before choosing a use case?',
+          helperTitle: 'Need deeper context before choosing a use case?',
           helperDescription:
-            'You can read the blog first to understand ideas, demand, and feasibility, or jump into comparisons if you are evaluating Madixo against alternatives.',
+            'You can read the blog first to understand ideas, demand, and feasibility, or move into comparisons if you are evaluating Madixo against alternatives.',
+          chooseTitle: 'Choose the use case closest to your current situation',
+          chooseDescription:
+            'This page is not only about what Madixo does. It is about when it fits best depending on your project type and what you want to reach after reading.',
+          chooseCards: [
+            {
+              title: 'If you are a first-time founder',
+              text: 'Start with the path that gives you a clearer route from sorting the idea to early feasibility and practical validation.',
+            },
+            {
+              title: 'If your business is service-based',
+              text: 'Start with the path that helps you test offer, pricing, and demand before scaling or hiring.',
+            },
+            {
+              title: 'If you are an agency or consultant',
+              text: 'Start with the path that shows how Madixo works internally or with clients instead of ending at a static report.',
+            },
+            {
+              title: 'If you have a product or store idea',
+              text: 'Start with the path focused on demand clarity, margin, and a sensible first move before inventory or manufacturing commitments.',
+            },
+          ],
+          contextTitle: 'Articles that help you choose the right use case',
+          contextDescription:
+            'These articles give you practical background before or after opening a use case so the reading turns into a clearer next step.',
+          readArticle: 'Read article',
         };
 
   return (
@@ -77,7 +132,24 @@ export default function UseCasesPageClient({ items }: { items: UseCasePage[] }) 
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-6 px-4 pb-24 sm:px-6 md:grid-cols-2 xl:grid-cols-2">
+      <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
+        <div className="rounded-[28px] border border-[#D9E2F0] bg-white p-5 shadow-sm sm:p-6">
+          <h2 className="text-xl font-bold tracking-tight text-[#111827] sm:text-2xl">{copy.chooseTitle}</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-[#475467] sm:text-base sm:leading-8">
+            {copy.chooseDescription}
+          </p>
+          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {copy.chooseCards.map((card) => (
+              <div key={card.title} className="rounded-[24px] border border-[#D9E2F0] bg-[#F7F9FC] p-5">
+                <h3 className="text-lg font-bold text-[#111827]">{card.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-[#475467]">{card.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto grid max-w-6xl gap-6 px-4 pb-12 sm:px-6 md:grid-cols-2 xl:grid-cols-2">
         {items.map((item) => (
           <article key={item.slug} className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6">
             <span className="rounded-full border border-[#D9E2F0] bg-white px-3 py-1 text-xs font-semibold text-[#4B5563]">
@@ -103,6 +175,30 @@ export default function UseCasesPageClient({ items }: { items: UseCasePage[] }) 
           </article>
         ))}
       </section>
+
+      {featuredPosts.length ? (
+        <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+          <div className="rounded-[28px] border border-[#D9E2F0] bg-white p-5 shadow-sm sm:p-6">
+            <h2 className="text-xl font-bold tracking-tight text-[#111827] sm:text-2xl">{copy.contextTitle}</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-[#475467] sm:text-base sm:leading-8">
+              {copy.contextDescription}
+            </p>
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              {featuredPosts.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="rounded-[24px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm hover:bg-[#F9FAFB]"
+                >
+                  <h3 className="text-lg font-bold leading-tight text-[#111827]">{localizeText(post.title, uiLang)}</h3>
+                  <p className="mt-3 text-sm leading-7 text-[#475467]">{localizeText(post.excerpt, uiLang)}</p>
+                  <div className="mt-4 text-sm font-semibold text-[#111827]">{copy.readArticle}</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
     </>
   );
 }
