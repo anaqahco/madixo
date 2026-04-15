@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import GoogleAuthButton from '@/components/google-auth-button';
 import {
@@ -232,6 +232,7 @@ export default function AuthFormPanel({
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const feedbackRef = useRef<HTMLDivElement | null>(null);
 
   const isSignup = mode === 'signup';
   const isArabic = uiLang === 'ar';
@@ -264,6 +265,26 @@ export default function AuthFormPanel({
     { label: copy.passwordRules[2], passed: passwordChecks.hasNumberOrSymbol },
     { label: copy.passwordRules[3], passed: passwordChecks.passwordsMatch },
   ];
+
+  useEffect(() => {
+    if (!message && !error) return;
+
+    const element = feedbackRef.current;
+    if (!element) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+
+      window.setTimeout(() => {
+        element.focus({ preventScroll: true });
+      }, 260);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [error, message]);
 
   return (
     <section className="rounded-[32px] border border-[#E5E7EB] bg-white p-7 shadow-sm md:p-9">
@@ -394,13 +415,23 @@ export default function AuthFormPanel({
         ) : null}
 
         {error ? (
-          <div className="rounded-[22px] border border-red-200 bg-red-50 px-4 py-3 text-sm leading-7 text-red-700">
+          <div
+            ref={feedbackRef}
+            tabIndex={-1}
+            className="rounded-[22px] border border-red-200 bg-red-50 px-4 py-3 text-sm leading-7 text-red-700 outline-none"
+            aria-live="polite"
+          >
             {error}
           </div>
         ) : null}
 
         {message ? (
-          <div className="rounded-[22px] border border-[#D1FAE5] bg-[#ECFDF3] px-4 py-3 text-sm leading-7 text-[#027A48]">
+          <div
+            ref={feedbackRef}
+            tabIndex={-1}
+            className="rounded-[22px] border border-[#D1FAE5] bg-[#ECFDF3] px-4 py-3 text-sm leading-7 text-[#027A48] outline-none"
+            aria-live="polite"
+          >
             {message}
           </div>
         ) : null}
