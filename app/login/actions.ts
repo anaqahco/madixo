@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { buildAbsoluteAppUrl } from '@/lib/app-url';
+import { isStrongPassword } from '@/lib/password-rules';
 import { createClient } from '@/lib/supabase/server';
 
 type UiLanguage = 'ar' | 'en';
@@ -22,7 +23,7 @@ const COPY = {
     alreadyRegistered:
       'This email is already registered. Log in instead or use another email.',
     weakPassword:
-      'Your password must be at least 8 characters and include at least 1 uppercase letter and 1 symbol.',
+      'Your password must be at least 8 characters and include at least 1 uppercase letter and 1 number or symbol.',
     rateLimit: 'Too many attempts. Please wait a little and try again.',
     signupDisabled: 'Account creation is currently unavailable.',
     missingRecoveryEmail: 'Please enter your email address first.',
@@ -42,7 +43,7 @@ const COPY = {
     alreadyRegistered:
       'هذا البريد الإلكتروني مسجل بالفعل. سجّل الدخول أو استخدم بريدًا آخر.',
     weakPassword:
-      'يجب أن تكون كلمة المرور 8 أحرف على الأقل وتحتوي على حرف كبير واحد ورمز واحد على الأقل.',
+      'يجب أن تكون كلمة المرور 8 أحرف على الأقل وتحتوي على حرف كبير واحد ورقم أو رمز واحد على الأقل.',
     rateLimit: 'هناك عدد كبير من المحاولات. انتظر قليلًا ثم أعد المحاولة.',
     signupDisabled: 'إنشاء الحسابات غير متاح حاليًا.',
     missingRecoveryEmail: 'يرجى إدخال بريدك الإلكتروني أولًا.',
@@ -65,14 +66,6 @@ function getSafeNext(value: FormDataEntryValue | null) {
 
 function getSafeText(value: FormDataEntryValue | null) {
   return typeof value === 'string' ? value.trim() : '';
-}
-
-function isStrongPassword(password: string) {
-  return (
-    password.length >= 8 &&
-    /[A-Z]/.test(password) &&
-    /[^A-Za-z0-9]/.test(password)
-  );
 }
 
 function translateAuthError(
