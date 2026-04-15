@@ -1,9 +1,7 @@
-import Link from 'next/link';
 import { cookies } from 'next/headers';
 import AuthShellHeader from '@/components/auth-shell-header';
-import GoogleAuthButton from '../../components/google-auth-button';
 import { getServerUiLanguageFromCookie } from '@/lib/ui-language';
-import { login, signup } from './actions';
+import AuthFormPanel from './auth-form-panel';
 
 type SearchParams = Promise<{
   next?: string;
@@ -31,19 +29,18 @@ const COPY = {
     forgotPassword: 'نسيت كلمة المرور؟',
     emailPlaceholder: 'you@example.com',
     passwordPlaceholderLogin: 'أدخل كلمة المرور',
-    passwordPlaceholderSignup: '8 أحرف مع حرف كبير ورمز',
+    passwordPlaceholderSignup: '8 أحرف مع حرف كبير ورقم أو رمز',
     confirmPasswordPlaceholder: 'أعد كتابة كلمة المرور',
     passwordRulesTitle: 'متطلبات كلمة المرور',
     passwordRules: [
       '8 أحرف على الأقل',
       'حرف كبير واحد على الأقل',
-      'رمز واحد على الأقل مثل ! أو @ أو #',
+      'رقم واحد أو رمز واحد على الأقل',
       'يجب أن تتطابق كلمة المرور مع التأكيد',
     ],
-    passwordRuleShort:
-      'يجب أن تكون كلمة المرور 8 أحرف على الأقل وتحتوي على حرف كبير ورمز واحد على الأقل.',
     submitLogin: 'تسجيل الدخول',
     submitSignup: 'إنشاء حساب',
+    submitSignupDisabled: 'أكمل الشروط أولًا',
     backHome: 'العودة للرئيسية',
     divider: 'أو',
     sideEyebrow: 'مساحة واحدة واضحة',
@@ -59,6 +56,9 @@ const COPY = {
     authHintSignup: 'لديك حساب بالفعل؟',
     authHintActionLogin: 'أنشئ حسابًا',
     authHintActionSignup: 'سجّل الدخول',
+    showPassword: 'إظهار',
+    hidePassword: 'إخفاء',
+    passwordRuleHint: 'يتفعّل الزر بعد اكتمال الشروط كلها',
   },
   en: {
     dir: 'ltr',
@@ -78,19 +78,18 @@ const COPY = {
     forgotPassword: 'Forgot your password?',
     emailPlaceholder: 'you@example.com',
     passwordPlaceholderLogin: 'Enter your password',
-    passwordPlaceholderSignup: '8 characters with 1 uppercase and 1 symbol',
+    passwordPlaceholderSignup: '8 characters with 1 uppercase and 1 number or symbol',
     confirmPasswordPlaceholder: 'Re-enter your password',
     passwordRulesTitle: 'Password rules',
     passwordRules: [
       'At least 8 characters',
       'At least 1 uppercase letter',
-      'At least 1 symbol like ! or @ or #',
+      'At least 1 number or symbol',
       'Your password and confirmation must match',
     ],
-    passwordRuleShort:
-      'Your password must be at least 8 characters and include at least 1 uppercase letter and 1 symbol.',
     submitLogin: 'Log In',
     submitSignup: 'Create Account',
+    submitSignupDisabled: 'Complete the requirements first',
     backHome: 'Return Home',
     divider: 'or',
     sideEyebrow: 'One clear workspace',
@@ -106,6 +105,9 @@ const COPY = {
     authHintSignup: 'Already have an account?',
     authHintActionLogin: 'Create one',
     authHintActionSignup: 'Log in',
+    showPassword: 'Show',
+    hidePassword: 'Hide',
+    passwordRuleHint: 'The button unlocks when every rule is complete',
   },
 } as const;
 
@@ -127,8 +129,6 @@ export default async function LoginPage({
   const mode = params.mode === 'signup' ? 'signup' : 'login';
   const error = typeof params.error === 'string' ? params.error : '';
   const message = typeof params.message === 'string' ? params.message : '';
-
-  const passwordPattern = '(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}';
 
   return (
     <main
@@ -170,197 +170,19 @@ export default async function LoginPage({
                 {copy.brand}
               </p>
               <p className="mt-3 text-sm leading-7 text-[#4B5563]">
-                {mode === 'login'
-                  ? copy.loginDescription
-                  : copy.signupDescription}
+                {mode === 'login' ? copy.loginDescription : copy.signupDescription}
               </p>
             </div>
           </section>
 
-          <section className="rounded-[32px] border border-[#E5E7EB] bg-white p-7 shadow-sm md:p-9">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#667085]">
-                {copy.eyebrow}
-              </p>
-
-              <h2 className="mt-4 text-4xl font-bold tracking-tight text-[#111827] md:text-5xl">
-                {mode === 'login' ? copy.loginTitle : copy.signupTitle}
-              </h2>
-
-              <p className="mt-4 text-base leading-8 text-[#4B5563]">
-                {mode === 'login'
-                  ? copy.loginDescription
-                  : copy.signupDescription}
-              </p>
-            </div>
-
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link
-                href={`/login?mode=login&next=${encodeURIComponent(nextPath)}`}
-                className={`rounded-full px-5 py-2.5 text-sm font-semibold transition ${
-                  mode === 'login'
-                    ? 'bg-[#111827] text-white'
-                    : 'border border-[#E5E7EB] bg-white text-[#374151] hover:bg-[#F9FAFB]'
-                }`}
-              >
-                {copy.loginTab}
-              </Link>
-
-              <Link
-                href={`/login?mode=signup&next=${encodeURIComponent(nextPath)}`}
-                className={`rounded-full px-5 py-2.5 text-sm font-semibold transition ${
-                  mode === 'signup'
-                    ? 'bg-[#111827] text-white'
-                    : 'border border-[#E5E7EB] bg-white text-[#374151] hover:bg-[#F9FAFB]'
-                }`}
-              >
-                {copy.signupTab}
-              </Link>
-            </div>
-
-            <div className="mt-7">
-              <GoogleAuthButton
-                uiLang={uiLang}
-                mode={mode}
-                nextPath={nextPath}
-              />
-            </div>
-
-            <div className="my-6 flex items-center gap-3">
-              <div className="h-px flex-1 bg-[#E5E7EB]" />
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#98A2B3]">
-                {copy.divider}
-              </span>
-              <div className="h-px flex-1 bg-[#E5E7EB]" />
-            </div>
-
-            <form action={mode === 'login' ? login : signup} className="space-y-5">
-              <input type="hidden" name="next" value={nextPath} />
-
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#374151]">
-                  {copy.email}
-                </label>
-                <input
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  placeholder={copy.emailPlaceholder}
-                  className="w-full rounded-[22px] border border-[#E5E7EB] bg-[#FCFCFD] px-4 py-3.5 text-sm text-[#111827] outline-none transition focus:border-[#111827] focus:bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#374151]">
-                  {copy.password}
-                </label>
-                <input
-                  name="password"
-                  type="password"
-                  required
-                  autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-                  minLength={mode === 'signup' ? 8 : undefined}
-                  pattern={mode === 'signup' ? passwordPattern : undefined}
-                  title={mode === 'signup' ? copy.passwordRuleShort : undefined}
-                  placeholder={
-                    mode === 'login'
-                      ? copy.passwordPlaceholderLogin
-                      : copy.passwordPlaceholderSignup
-                  }
-                  className="w-full rounded-[22px] border border-[#E5E7EB] bg-[#FCFCFD] px-4 py-3.5 text-sm text-[#111827] outline-none transition focus:border-[#111827] focus:bg-white"
-                />
-              </div>
-
-              {mode === 'login' ? (
-                <div className="mt-[-6px] text-sm">
-                  <Link
-                    href={`/forgot-password?next=${encodeURIComponent(nextPath)}`}
-                    className="font-semibold text-[#374151] transition hover:text-black"
-                  >
-                    {copy.forgotPassword}
-                  </Link>
-                </div>
-              ) : null}
-
-              {mode === 'signup' ? (
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-[#374151]">
-                    {copy.confirmPassword}
-                  </label>
-                  <input
-                    name="confirmPassword"
-                    type="password"
-                    required
-                    autoComplete="new-password"
-                    minLength={8}
-                    placeholder={copy.confirmPasswordPlaceholder}
-                    className="w-full rounded-[22px] border border-[#E5E7EB] bg-[#FCFCFD] px-4 py-3.5 text-sm text-[#111827] outline-none transition focus:border-[#111827] focus:bg-white"
-                  />
-                </div>
-              ) : null}
-
-              {mode === 'signup' ? (
-                <div className="rounded-[22px] border border-[#E5E7EB] bg-[#F9FAFB] p-4">
-                  <p className="text-sm font-semibold text-[#111827]">
-                    {copy.passwordRulesTitle}
-                  </p>
-                  <ul className="mt-3 space-y-2">
-                    {copy.passwordRules.map((rule) => (
-                      <li
-                        key={rule}
-                        className="rounded-2xl bg-white px-4 py-3 text-sm leading-7 text-[#374151]"
-                      >
-                        {rule}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-
-              {error ? (
-                <div className="rounded-[22px] border border-red-200 bg-red-50 px-4 py-3 text-sm leading-7 text-red-700">
-                  {error}
-                </div>
-              ) : null}
-
-              {message ? (
-                <div className="rounded-[22px] border border-[#D1FAE5] bg-[#ECFDF3] px-4 py-3 text-sm leading-7 text-[#027A48]">
-                  {message}
-                </div>
-              ) : null}
-
-              <button
-                type="submit"
-                className="w-full rounded-full bg-[#111827] px-5 py-3.5 text-sm font-semibold text-white transition hover:opacity-90"
-              >
-                {mode === 'login' ? copy.submitLogin : copy.submitSignup}
-              </button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm leading-7 text-[#667085]">
-                {mode === 'login' ? copy.authHintLogin : copy.authHintSignup}{' '}
-                <Link
-                  href={`/login?mode=${mode === 'login' ? 'signup' : 'login'}&next=${encodeURIComponent(nextPath)}`}
-                  className="font-semibold text-[#111827] hover:opacity-80"
-                >
-                  {mode === 'login'
-                    ? copy.authHintActionLogin
-                    : copy.authHintActionSignup}
-                </Link>
-              </p>
-
-              <div className="mt-4">
-                <Link
-                  href="/"
-                  className="text-sm font-semibold text-[#374151] transition hover:text-black"
-                >
-                  {copy.backHome}
-                </Link>
-              </div>
-            </div>
-          </section>
+          <AuthFormPanel
+            uiLang={uiLang}
+            copy={copy}
+            mode={mode}
+            nextPath={nextPath}
+            error={error}
+            message={message}
+          />
         </div>
       </div>
     </main>
