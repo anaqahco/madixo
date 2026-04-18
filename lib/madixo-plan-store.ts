@@ -7,6 +7,7 @@ import {
   normalizeMadixoBillingStatus,
   type MadixoBillingInfo,
 } from '@/lib/madixo-billing';
+import { getMadixoComplimentaryAccess } from '@/lib/madixo-comp-access';
 import {
   getPlanLabel,
   getPlanLimits,
@@ -85,6 +86,11 @@ export async function getCurrentMadixoPlan(): Promise<MadixoPlan> {
       return cookiePlan;
     }
 
+    const complimentaryAccess = getMadixoComplimentaryAccess(user);
+    if (complimentaryAccess) {
+      return complimentaryAccess.plan;
+    }
+
     const metadataPlan = readPlanFromUserMetadata(user);
     return metadataPlan ?? cookiePlan;
   } catch {
@@ -104,7 +110,17 @@ export async function getCurrentMadixoBilling(): Promise<MadixoBillingInfo> {
       return readBillingFromMetadata({});
     }
 
-    return readBillingFromMetadata(toMetadataRecord(user.user_metadata));
+    const billing = readBillingFromMetadata(toMetadataRecord(user.user_metadata));
+    const complimentaryAccess = getMadixoComplimentaryAccess(user);
+
+    if (!complimentaryAccess) {
+      return billing;
+    }
+
+    return {
+      ...billing,
+      status: billing.customerId ? billing.status : 'active',
+    };
   } catch {
     return readBillingFromMetadata({});
   }
@@ -122,7 +138,8 @@ export async function syncPlanCookieFromUser() {
       return null;
     }
 
-    return readPlanFromUserMetadata(user);
+    const complimentaryAccess = getMadixoComplimentaryAccess(user);
+    return complimentaryAccess?.plan ?? readPlanFromUserMetadata(user);
   } catch {
     return null;
   }
