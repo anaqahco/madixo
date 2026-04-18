@@ -19,6 +19,7 @@ import {
   type MadixoPlanUsage,
 } from '@/lib/madixo-plan-usage';
 import { createClient } from '@/lib/supabase/server';
+import { getMadixoComplimentaryAccess } from '@/lib/madixo-comp-access';
 
 type SafeMetadata = Record<string, unknown>;
 
@@ -97,16 +98,20 @@ function buildPayloadFromMetadata(
   metadata: SafeMetadata,
   language: 'ar' | 'en'
 ): CurrentPlanPayloadShape {
-  const plan = parsePlan(
+  const complimentaryAccess = getMadixoComplimentaryAccess({ user_metadata: metadata });
+  const plan = complimentaryAccess?.plan ?? parsePlan(
     typeof metadata.madixo_plan === 'string' ? metadata.madixo_plan : null
   );
   const normalizedPlan = plan || 'free';
+  const billing = buildBillingFromMetadata(metadata);
 
   return {
     plan: normalizedPlan,
     label: getPlanLabel(normalizedPlan, language),
     limits: getPlanLimits(normalizedPlan),
-    billing: buildBillingFromMetadata(metadata),
+    billing: complimentaryAccess && !billing.customerId
+      ? { ...billing, status: 'active' }
+      : billing,
   };
 }
 
@@ -137,7 +142,14 @@ async function getPayloadForRequest(
       } = await withAuthTimeout(supabase.auth.getUser(accessToken), 6000, 'AUTH_TOKEN_TIMEOUT');
 
       if (!error && user) {
-        return buildPayloadFromMetadata(toMetadataRecord(user.user_metadata), language);
+        return buildPayloadFromMetadata(
+          {
+            ...toMetadataRecord(user.user_metadata),
+            madixo_user_email_for_comp: user.email ?? null,
+            madixo_user_id_for_comp: user.id ?? null,
+          },
+          language
+        );
       }
     } catch {
       // Fall back to cookie-based plan below.
