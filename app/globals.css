@@ -3,6 +3,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --surface: #ffffff;
+  --surface-muted: #f8f8f7;
+  --border: #e5e5e4;
+  --border-strong: #d4d4d3;
+  --text-muted: #6b7280;
 }
 
 @theme inline {
@@ -16,15 +21,13 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --surface: #111111;
+    --surface-muted: #181817;
+    --border: #262625;
+    --border-strong: #333332;
+    --text-muted: #9ca3af;
   }
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 
 html {
   -webkit-text-size-adjust: 100%;
@@ -32,7 +35,18 @@ html {
 }
 
 body {
+  background: var(--background);
+  color: var(--foreground);
+  /* Use the loaded Geist/Cairo fonts instead of Arial fallback */
+  font-family: var(--font-geist-sans), 'Cairo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Arabic pages should render with Cairo as the primary font */
+html[dir="rtl"] body {
+  font-family: 'Cairo', var(--font-geist-sans), 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 img,
@@ -48,4 +62,25 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+/* Improved focus ring for accessibility */
+:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
