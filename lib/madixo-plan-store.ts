@@ -28,16 +28,39 @@ function toMetadataRecord(value: unknown): SafeMetadata {
   return value as SafeMetadata;
 }
 
+/**
+ * SECURITY: Reads the user's plan with the following priority:
+ *   1. app_metadata (server-side only, cannot be modified from the client)
+ *   2. user_metadata (legacy, kept for backward compatibility)
+ *
+ * For any new user, webhooks should write to BOTH so we migrate cleanly.
+ * The eventual goal is to drop user_metadata fallback entirely.
+ */
 function readPlanFromUserMetadata(user: unknown): MadixoPlan | null {
   if (!user || typeof user !== 'object') {
     return null;
   }
 
-  const metadata = toMetadataRecord(
+  const appMetadata = toMetadataRecord(
+    (user as { app_metadata?: Record<string, unknown> | null }).app_metadata
+  );
+  const appPlan = parsePlan(
+    typeof appMetadata.madixo_plan === 'string' ? appMetadata.madixo_plan : null
+  );
+
+  if (appPlan) {
+    return appPlan;
+  }
+
+  // Fallback: older users still have their plan in user_metadata.
+  // This path will be removed once all users are migrated.
+  const userMetadata = toMetadataRecord(
     (user as { user_metadata?: Record<string, unknown> | null }).user_metadata
   );
 
-  return parsePlan(typeof metadata.madixo_plan === 'string' ? metadata.madixo_plan : null);
+  return parsePlan(
+    typeof userMetadata.madixo_plan === 'string' ? userMetadata.madixo_plan : null
+  );
 }
 
 function getString(value: unknown) {
@@ -145,6 +168,13 @@ export async function syncPlanCookieFromUser() {
   }
 }
 
+/**
+ * Persists the plan to user_metadata. This is retained for the manual
+ * "select plan" flow where there is no Paddle subscription yet.
+ *
+ * For production subscriptions, writes should happen via the Paddle webhook
+ * which uses the Admin API to write to app_metadata (server-only, tamper-proof).
+ */
 export async function persistCurrentUserPlan(plan: MadixoPlan) {
   const supabase = await createClient();
   const {
