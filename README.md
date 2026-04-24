@@ -1,106 +1,100 @@
-import type { MadixoPlan } from '@/lib/madixo-plans';
-import { parsePlan } from '@/lib/madixo-plans';
-type SafeMetadata = Record<string, unknown>;
-type UserLike = {
-id?: string | null;
-email?: string | null;
-user_metadata?: Record<string, unknown> | null;
-};
-export type MadixoComplimentaryAccess = {
-plan: Exclude<MadixoPlan, 'free'>;
-source: 'metadata' | 'env_email' | 'env_user_id';
-expiresAt: string | null;
-};
-function toMetadataRecord(value: unknown): SafeMetadata {
-if (!value || typeof value !== 'object' || Array.isArray(value)) {
-return {};
-}
-return value as SafeMetadata;
-}
-function getString(value: unknown) {
-return typeof value === 'string' && value.trim().length > 0 ? value.trim() : null;
-}
-function normalizeIdentity(value: string | null | undefined) {
-return typeof value === 'string' ? value.trim().toLowerCase() : '';
-}
-function parseCsvList(value: string | undefined) {
-return new Set(
-(value ?? '')
-.split(',')
-.map((item) => normalizeIdentity(item))
-.filter(Boolean)
-);
-}
-function isFutureIsoDate(value: string | null) {
-if (!value) return true;
-const timestamp = Date.parse(value);
-if (!Number.isFinite(timestamp)) {
-return false;
-}
-return timestamp > Date.now();
-}
-function readComplimentaryPlanFromMetadata(
-metadata: SafeMetadata
-): MadixoComplimentaryAccess | null {
-const plan = parsePlan(getString(metadata.madixo_comp_plan));
-if (plan !== 'pro' && plan !== 'team') {
-return null;
-}
-const expiresAt = getString(metadata.madixo_comp_expires_at);
-if (!isFutureIsoDate(expiresAt)) {
-return null;
-}
-return {
-plan,
-source: 'metadata',
-expiresAt,
-};
-}
-function readComplimentaryPlanFromEnv(user: UserLike): MadixoComplimentaryAccess | null {
-const metadata = toMetadataRecord(user.user_metadata);
-const email = normalizeIdentity(user.email ?? getString(metadata.madixo_user_email_for_comp));
-const userId = normalizeIdentity(user.id ?? getString(metadata.madixo_user_id_for_comp));
-const teamEmails = parseCsvList(process.env.MADIXO_COMP_TEAM_EMAILS);
-const teamUserIds = parseCsvList(process.env.MADIXO_COMP_TEAM_USER_IDS);
-const proEmails = parseCsvList(process.env.MADIXO_COMP_PRO_EMAILS);
-const proUserIds = parseCsvList(process.env.MADIXO_COMP_PRO_USER_IDS);
-if (email && teamEmails.has(email)) {
-return { plan: 'team', source: 'env_email', expiresAt: null };
-}
-if (userId && teamUserIds.has(userId)) {
-return { plan: 'team', source: 'env_user_id', expiresAt: null };
-}
-if (email && proEmails.has(email)) {
-return { plan: 'pro', source: 'env_email', expiresAt: null };
-}
-if (userId && proUserIds.has(userId)) {
-return { plan: 'pro', source: 'env_user_id', expiresAt: null };
-}
-return null;
-}
-export function getMadixoComplimentaryAccess(user: unknown): MadixoComplimentaryAccess | null {
-if (!user || typeof user !== 'object') {
-return null;
-}
-const typedUser = user as UserLike;
-const metadata = toMetadataRecord(typedUser.user_metadata);
-return readComplimentaryPlanFromMetadata(metadata) ?? readComplimentaryPlanFromEnv(typedUser);
-}
-
-Complimentary paid access (manual Pro / Team access)
-This project now supports giving specific accounts paid access without charging them.
-Use one of these environment variables:
-```bash
-MADIXO_COMP_PRO_EMAILS=person1@example.com,person2@example.com
-MADIXO_COMP_PRO_USER_IDS=
-MADIXO_COMP_TEAM_EMAILS=
-MADIXO_COMP_TEAM_USER_IDS=
+تحديثات Madixo — دليل التطبيق
+اسم كل ملف هنا = المسار في مشروعك، مع استبدال `/` بـ `__`.
+اللصق بسيط: حوّل `__` إلى `/` في الاسم، وهذا هو مكانه في المشروع.
+---
+خريطة الملفات
+اسم الملف هنا	المسار في مشروعك
+`app__api__analyze__route.ts`	`app/api/analyze/route.ts`
+`app__api__billing__webhook__route.ts`	`app/api/billing/webhook/route.ts`
+`app__results__page.tsx`	`app/results/page.tsx`
+`app__globals.css`	`app/globals.css`
+`lib__madixo-plan-store.ts`	`lib/madixo-plan-store.ts`
+---
+ماذا يعمل كل ملف
+`app/api/analyze/route.ts`
+قراءة آمنة للخطة — يقرأ من `app_metadata` أولاً (لا يمكن تعديله من client)، ثم يرجع لـ `user_metadata` كـ fallback
+Rate limiting — حد 5 طلبات في الدقيقة لكل مستخدم (in-memory). يرجع `429` مع `Retry-After` header
+TTL على الـ cache — التقارير المحفوظة لا تُعاد استخدامها بعد 30 يوم (الأسواق تتغير)
+AbortController + timeout — يلغي استدعاء OpenAI بعد 45 ثانية ويرجع `504` برسالة واضحة
+متغيرات بيئة جديدة (اختيارية):
+```env
+OPENAI_TIMEOUT_MS=45000
 ```
-How it works:
-if a logged-in user's email or Supabase user id matches one of the lists above, Madixo treats that account as `pro` or `team`
-the account keeps paid feature access without going through checkout
-real Paddle billing data is not faked
-Optional metadata method:
-`madixo_comp_plan=pro` or `team`
-`madixo_comp_expires_at=2026-12-31T23:59:59.000Z`
-The complimentary access overrides the normal saved plan while it is active.
+`app/api/billing/webhook/route.ts`
+عند استقبال webhook من Paddle، يكتب الخطة في كلا `app_metadata` (آمن) و `user_metadata` (للتوافق مع الكود القديم)
+بعد ترحيل كامل المستخدمين، يمكن إزالة الكتابة لـ `user_metadata`
+`lib/madixo-plan-store.ts`
+`readPlanFromUserMetadata` الآن يقرأ من `app_metadata` أولاً
+هذا يطبق التحسين الأمني على كل الملفات التي تستخدم `getCurrentMadixoPlan()` — أي تلقائياً يحمي كل الـ APIs الأخرى
+`app/results/page.tsx`
+معالجة خاصة لخطأ `RATE_LIMITED` — رسالة واضحة مع عدد الثواني للانتظار
+معالجة خاصة لخطأ `TIMEOUT` / `504` — رسالة بأن التحليل تأخر
+إضافة `retryAfter` لنوع `AnalyzeApiPayload`
+`app/globals.css`
+إزالة `font-family: Arial` الذي كان يتعارض مع Geist المحمّل
+استخدام `Cairo` تلقائياً عند `dir="rtl"`
+متغيرات CSS إضافية للأسطح والحدود (dark mode تلقائي)
+`:focus-visible` واضح للـ accessibility
+احترام `prefers-reduced-motion`
+---
+ما الذي لم يُعدَّل (مقصود)
+تحسينات تركت للمرحلة القادمة لأنها تحتاج تغييرات أكبر:
+نقل `usage tracking` من cookie إلى Supabase — يحتاج جدول جديد + migration
+Streaming AI responses — يحتاج تغيير كامل في الـ client (SSE)
+تقسيم `home-page-client.tsx` (1668 سطر) — refactoring كبير
+Dark mode كامل في كل components — 42 مكان في home-page-client وحده
+---
+خطوات التطبيق
+1. احفظ نسخة احتياطية
+```bash
+cd your-madixo-project
+cp app/api/analyze/route.ts app/api/analyze/route.ts.backup
+cp app/api/billing/webhook/route.ts app/api/billing/webhook/route.ts.backup
+cp lib/madixo-plan-store.ts lib/madixo-plan-store.ts.backup
+cp app/results/page.tsx app/results/page.tsx.backup
+cp app/globals.css app/globals.css.backup
+```
+2. استبدل الملفات
+افتح `app__api__analyze__route.ts` → الصق محتواه في `app/api/analyze/route.ts`
+افتح `app__api__billing__webhook__route.ts` → الصق في `app/api/billing/webhook/route.ts`
+افتح `app__results__page.tsx` → الصق في `app/results/page.tsx`
+افتح `app__globals.css` → الصق في `app/globals.css`
+افتح `lib__madixo-plan-store.ts` → الصق في `lib/madixo-plan-store.ts`
+3. تحقق من البناء
+```bash
+npm run lint
+npm run build
+```
+4. اختبر محلياً
+```bash
+npm run dev
+```
+اختبر:
+أرسل 6 طلبات تحليل متتالية — يجب أن تظهر رسالة rate limit
+افتح تقرير قديم (>30 يوم) — يجب أن يُعاد توليده
+سجل الدخول بحساب Pro — يجب أن تعمل الخطة كالسابق
+في `dir="rtl"` — يجب أن يظهر خط Cairo
+---
+تحذير مهم قبل النشر
+المستخدمون الحاليون عندهم `madixo_plan` في `user_metadata` — الـ fallback يحميهم، لن يتأثروا.
+المستخدمون الجدد أو المجددون بعد النشر، الخطة ستُكتب في `app_metadata` — أكثر أماناً.
+لترحيل المستخدمين الحاليين (اختياري)، نفذ في Supabase SQL Editor بعد اختباره على حساب واحد:
+```sql
+-- اختبر أولاً على حساب واحد:
+UPDATE auth.users
+SET raw_app_meta_data = jsonb_set(
+  COALESCE(raw_app_meta_data, '{}'::jsonb),
+  '{madixo_plan}',
+  raw_user_meta_data->'madixo_plan'
+)
+WHERE raw_user_meta_data ? 'madixo_plan'
+  AND NOT (raw_app_meta_data ? 'madixo_plan')
+  AND email = 'your-test@email.com';  -- احذف هذا السطر بعد التحقق
+
+-- بعد التأكد، نفذه بدون الـ email filter لترحيل الجميع
+```
+---
+الخطوة التالية
+بعد تطبيق هذه الدفعة، أفضل تحسين تالي هو نقل usage tracking إلى جدول Supabase.
+هذا يسد الثغرة الأكبر في نموذج الربح (حالياً أي شخص يقدر يتجاوز الـ 5 تحليلات بحذف cookies).
+قل لي لو تبغى أجهز هذا.
