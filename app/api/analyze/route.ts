@@ -32,6 +32,48 @@ function getMaxOutputTokens() {
 
 const MAX_OUTPUT_TOKENS = getMaxOutputTokens();
 
+// Timeout for OpenAI calls (45 seconds). Prevents hanging serverless functions.
+const OPENAI_TIMEOUT_MS = Number(process.env.OPENAI_TIMEOUT_MS || '45000');
+
+// Cache TTL: reuse identical analyses only within 30 days.
+// After that, market conditions likely changed and we should regenerate.
+const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+// Simple in-memory rate limiter (per user, per minute).
+// For production at scale, replace with Upstash Redis or Vercel KV.
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 5;
+const rateLimitStore = new Map<string, number[]>();
+
+function checkRateLimit(userId: string): { allowed: boolean; retryAfter: number } {
+  const now = Date.now();
+  const timestamps = rateLimitStore.get(userId) || [];
+  const recent = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+
+  if (recent.length >= RATE_LIMIT_MAX_REQUESTS) {
+    const oldest = recent[0];
+    const retryAfter = Math.ceil((RATE_LIMIT_WINDOW_MS - (now - oldest)) / 1000);
+    return { allowed: false, retryAfter };
+  }
+
+  recent.push(now);
+  rateLimitStore.set(userId, recent);
+
+  // Periodic cleanup: keep map from growing unbounded
+  if (rateLimitStore.size > 5000) {
+    for (const [key, stamps] of rateLimitStore.entries()) {
+      const stillRecent = stamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+      if (stillRecent.length === 0) {
+        rateLimitStore.delete(key);
+      } else {
+        rateLimitStore.set(key, stillRecent);
+      }
+    }
+  }
+
+  return { allowed: true, retryAfter: 0 };
+}
+
 const ANALYSIS_USAGE_COOKIE = 'madixo_analysis_usage_v1';
 
 type AnalysisUsageStore = {
@@ -724,13 +766,32 @@ async function resolveAuthenticatedUser(request: Request) {
   };
 }
 
-function readPlanFromUserMetadata(user: { user_metadata?: Record<string, unknown> | null } | null) {
-  if (!user || !user.user_metadata) {
+function readPlanFromUserMetadata(
+  user: {
+    user_metadata?: Record<string, unknown> | null;
+    app_metadata?: Record<string, unknown> | null;
+  } | null
+) {
+  if (!user) {
     return null;
   }
 
-  const value = user.user_metadata.madixo_plan;
-  return parsePlan(typeof value === 'string' ? value : null);
+  // SECURITY: Prefer app_metadata (server-side only, cannot be modified by client).
+  // Fall back to user_metadata only for backward compatibility with existing users.
+  if (user.app_metadata && typeof user.app_metadata === 'object') {
+    const appValue = (user.app_metadata as Record<string, unknown>).madixo_plan;
+    const appPlan = parsePlan(typeof appValue === 'string' ? appValue : null);
+    if (appPlan) {
+      return appPlan;
+    }
+  }
+
+  if (user.user_metadata && typeof user.user_metadata === 'object') {
+    const userValue = (user.user_metadata as Record<string, unknown>).madixo_plan;
+    return parsePlan(typeof userValue === 'string' ? userValue : null);
+  }
+
+  return null;
 }
 
 function detectOutputLanguage(params: {
@@ -1260,6 +1321,25 @@ export async function POST(request: Request) {
       );
     }
 
+    // Rate limiting: prevent abuse of the expensive AI endpoint
+    const rateLimit = checkRateLimit(user.id);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: 'RATE_LIMITED',
+          error: outputLanguage === 'ar'
+            ? `عدد محاولاتك كبير. حاول مرة أخرى بعد ${rateLimit.retryAfter} ثانية.`
+            : `Too many requests. Please try again in ${rateLimit.retryAfter} seconds.`,
+          retryAfter: rateLimit.retryAfter,
+        },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(rateLimit.retryAfter) },
+        }
+      );
+    }
+
     const currentPlan = readPlanFromUserMetadata(user) ?? (await getCurrentMadixoPlan());
     const currentPlanLimits = PLAN_LIMITS[currentPlan];
     const currentUsage = readAnalysisUsageFromRequest(request);
@@ -1277,14 +1357,25 @@ export async function POST(request: Request) {
       customer,
     });
 
-    if (matchedReport && areSameInputs(
-      { query, market, customer },
-      {
-        query: matchedReport.query,
-        market: matchedReport.market,
-        customer: matchedReport.customer,
-      }
-    )) {
+    // Only serve cached report if it's still fresh (within 30 days).
+    // Market conditions change — stale analyses do more harm than good.
+    const isCacheFresh =
+      matchedReport &&
+      matchedReport.createdAt &&
+      Date.now() - new Date(matchedReport.createdAt).getTime() < CACHE_TTL_MS;
+
+    if (
+      matchedReport &&
+      isCacheFresh &&
+      areSameInputs(
+        { query, market, customer },
+        {
+          query: matchedReport.query,
+          market: matchedReport.market,
+          customer: matchedReport.customer,
+        }
+      )
+    ) {
       const repairedCachedResult = validateAndRepairResult(
         matchedReport.result,
         matchedReport.query,
@@ -1330,27 +1421,64 @@ export async function POST(request: Request) {
       );
     }
 
-    const response = await client.responses.create({
-      model: MODEL,
-      instructions:
-        outputLanguage === 'ar'
-          ? `أنت Madixo، محلل فرص تجارية للمؤسسين والشركات الصغيرة. أخرج فقط التقرير المنظم المطلوب. كن موجزًا، عمليًا، واقعيًا، ومحددًا. اجعل جميع الأقسام سهلة القراءة، قصيرة، ومتماسكة. ${ARABIC_WRITING_RULES} اكتب بالعربية فقط إلا إذا كان اسم منصة أو اختصارًا لا يُفهم عادة بدون لغته الأصلية.`
-          : 'You are Madixo, an AI opportunity analyst for founders and small businesses. Output only the structured report requested. Be concise, commercially useful, specific, compact, and realistic. Keep all sections tight and readable. Avoid speculative numbers unless clearly justified. Write in English only unless a platform or acronym must remain unchanged.',
-      input: buildAnalysisInput({
-        query,
-        market,
-        customer,
-        outputLanguage,
-      }),
-      max_output_tokens: MAX_OUTPUT_TOKENS,
-      truncation: 'auto',
-      text: {
-        format: {
-          type: 'json_schema',
-          ...reportSchema,
+    // Apply timeout to prevent serverless function hangs.
+    // If OpenAI takes longer than OPENAI_TIMEOUT_MS, abort and return a clear error.
+    const abortController = new AbortController();
+    const timeoutId = setTimeout(() => abortController.abort(), OPENAI_TIMEOUT_MS);
+
+    let response;
+    try {
+      response = await client.responses.create(
+        {
+          model: MODEL,
+          instructions:
+            outputLanguage === 'ar'
+              ? `أنت Madixo، محلل فرص تجارية للمؤسسين والشركات الصغيرة. أخرج فقط التقرير المنظم المطلوب. كن موجزًا، عمليًا، واقعيًا، ومحددًا. اجعل جميع الأقسام سهلة القراءة، قصيرة، ومتماسكة. ${ARABIC_WRITING_RULES} اكتب بالعربية فقط إلا إذا كان اسم منصة أو اختصارًا لا يُفهم عادة بدون لغته الأصلية.`
+              : 'You are Madixo, an AI opportunity analyst for founders and small businesses. Output only the structured report requested. Be concise, commercially useful, specific, compact, and realistic. Keep all sections tight and readable. Avoid speculative numbers unless clearly justified. Write in English only unless a platform or acronym must remain unchanged.',
+          input: buildAnalysisInput({
+            query,
+            market,
+            customer,
+            outputLanguage,
+          }),
+          max_output_tokens: MAX_OUTPUT_TOKENS,
+          truncation: 'auto',
+          text: {
+            format: {
+              type: 'json_schema',
+              ...reportSchema,
+            },
+          },
         },
-      },
-    });
+        { signal: abortController.signal }
+      );
+    } catch (openAiError) {
+      clearTimeout(timeoutId);
+
+      const wasAborted =
+        (openAiError instanceof Error &&
+          (openAiError.name === 'AbortError' ||
+            openAiError.message.toLowerCase().includes('abort'))) ||
+        abortController.signal.aborted;
+
+      if (wasAborted) {
+        return NextResponse.json(
+          {
+            ok: false,
+            code: 'TIMEOUT',
+            error:
+              outputLanguage === 'ar'
+                ? 'تأخرت عملية التحليل أكثر من المتوقع. فضلاً أعد المحاولة.'
+                : 'The analysis took longer than expected. Please try again.',
+          },
+          { status: 504 }
+        );
+      }
+
+      throw openAiError;
+    }
+
+    clearTimeout(timeoutId);
 
     if (response.status === 'failed') {
       return NextResponse.json(
