@@ -208,13 +208,23 @@ export async function POST(request: Request) {
     }
 
     const existingMetadata = toMetadataRecord(userData.user.user_metadata);
+    const existingAppMetadata = toMetadataRecord(userData.user.app_metadata);
     const nextPlan = resolveAppPlanForStatus(subscription);
     const priceId = getString(subscription.items?.[0]?.price?.id);
     const productId = getString(subscription.items?.[0]?.price?.product_id);
     const billingStatus = normalizeMadixoBillingStatus(subscription.status);
     const cancelAtPeriodEnd = subscription.scheduled_change?.action === 'cancel';
 
+    // SECURITY: Write plan to app_metadata (server-side only, client cannot tamper).
+    // We still write to user_metadata to keep the current reading paths working
+    // while the codebase migrates to app_metadata as the source of truth.
     const { error: updateError } = await admin.auth.admin.updateUserById(userId, {
+      app_metadata: {
+        ...existingAppMetadata,
+        madixo_plan: nextPlan,
+        madixo_plan_source: 'paddle',
+        madixo_plan_updated_at: new Date().toISOString(),
+      },
       user_metadata: {
         ...existingMetadata,
         madixo_plan: nextPlan,
