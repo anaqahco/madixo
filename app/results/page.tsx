@@ -85,6 +85,7 @@ type AnalyzeApiPayload = {
   error?: string;
   result?: AnalysisResult;
   displayInputs?: Partial<DisplayInputs>;
+  retryAfter?: number;
 };
 
 type UpgradePrompt = {
@@ -1715,6 +1716,25 @@ export default function ResultsPage() {
           if (data?.reason === 'analysis_limit' || data?.code === 'ANALYSIS_LIMIT') {
             router.replace(`/upgrade?reason=analysis_limit&from=${encodeURIComponent(window.location.pathname + window.location.search)}`);
             return;
+          }
+
+          // Rate limit hit — show a clear message with retry hint
+          if (data?.code === 'RATE_LIMITED') {
+            const retryAfter = typeof data.retryAfter === 'number' ? data.retryAfter : 30;
+            const rateLimitMessage =
+              uiLang === 'ar'
+                ? `عدد محاولاتك كبير. حاول مرة أخرى بعد ${retryAfter} ثانية.`
+                : `Too many requests. Please try again in ${retryAfter} seconds.`;
+            throw new Error(data.error || rateLimitMessage);
+          }
+
+          // Server-side timeout — distinct from a generic failure
+          if (data?.code === 'TIMEOUT' || response.status === 504) {
+            const timeoutMessage =
+              uiLang === 'ar'
+                ? 'تأخرت عملية التحليل. فضلاً أعد المحاولة.'
+                : 'The analysis took too long. Please try again.';
+            throw new Error(data.error || timeoutMessage);
           }
 
           throw new Error(data.error || copy.failedToAnalyzeOpportunity);
