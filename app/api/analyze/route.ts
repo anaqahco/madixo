@@ -2,8 +2,12 @@ import OpenAI from 'openai';
 import { NextResponse } from 'next/server';
 import { findLatestMatchingUserReport } from '@/lib/madixo-db';
 import { createClient } from '@/lib/supabase/server';
-import { PLAN_LIMITS, parsePlan } from '@/lib/madixo-plans';
+import { parsePlan } from '@/lib/madixo-plans';
 import { getCurrentMadixoPlan } from '@/lib/madixo-plan-store';
+import {
+  readUserUsage,
+  incrementUserUsage,
+} from '@/lib/madixo-usage';
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -32,8 +36,16 @@ function getMaxOutputTokens() {
 
 const MAX_OUTPUT_TOKENS = getMaxOutputTokens();
 
-// Timeout for OpenAI calls (45 seconds). Prevents hanging serverless functions.
-const OPENAI_TIMEOUT_MS = Number(process.env.OPENAI_TIMEOUT_MS || '45000');
+// Vercel Pro plan allows up to 300s serverless duration.
+// We set 180s to leave buffer for request/response handling.
+// If you're on Hobby plan, change to 60 and reduce OPENAI_TIMEOUT_MS to 50000.
+export const maxDuration = 180;
+
+// Timeout for OpenAI calls. Default raised to 3 minutes because:
+// - gpt-5 with reasoning can take 60-120s on complex inputs
+// - Arabic outputs use roughly 2x more tokens than English
+// Override via env if your model is faster.
+const OPENAI_TIMEOUT_MS = Number(process.env.OPENAI_TIMEOUT_MS || '170000');
 
 // Cache TTL: reuse identical analyses only within 30 days.
 // After that, market conditions likely changed and we should regenerate.
@@ -141,6 +153,24 @@ function buildAnalysisUsageKey(params: {
     c: normalizeComparableText(params.customer),
     l: params.language,
   });
+}
+
+/**
+ * Shapes the usage info into a small payload safe to send to the client.
+ * The client uses this to display "X analyses left this month".
+ */
+function buildUsagePayload(usage: {
+  used: number;
+  limit: number | null;
+  remaining: number;
+  period: string;
+}) {
+  return {
+    used: usage.used,
+    limit: usage.limit,
+    remaining: usage.remaining === Infinity ? null : usage.remaining,
+    period: usage.period,
+  };
 }
 
 
@@ -1341,7 +1371,9 @@ export async function POST(request: Request) {
     }
 
     const currentPlan = readPlanFromUserMetadata(user) ?? (await getCurrentMadixoPlan());
-    const currentPlanLimits = PLAN_LIMITS[currentPlan];
+
+    // Cookie usage tracking (legacy) — kept only for in-session deduplication.
+    // The real source of truth for the monthly limit is Supabase (see below).
     const currentUsage = readAnalysisUsageFromRequest(request);
     const usageKey = buildAnalysisUsageKey({
       query,
@@ -1350,6 +1382,11 @@ export async function POST(request: Request) {
       language: outputLanguage,
     });
     const alreadyCounted = currentUsage.items.includes(usageKey);
+
+    // Supabase-backed monthly usage check (tamper-proof).
+    // Cookies can be cleared / spoofed; the database row is keyed by user.id
+    // and writable only by the service role.
+    const supabaseUsage = await readUserUsage(user.id, currentPlan);
 
     const matchedReport = await findLatestMatchingUserReport({
       query,
@@ -1399,14 +1436,18 @@ export async function POST(request: Request) {
           outputLanguage,
           cached: true,
         },
+        usage: buildUsagePayload(supabaseUsage),
       });
     }
 
+    // Supabase is the source of truth for the monthly limit.
+    // alreadyCounted (from cookie) lets us skip the 403 for users who
+    // are re-running the SAME idea within the same browser session — but
+    // this only matters when the cache miss path is taken, which is rare.
     if (
       currentPlan === 'free' &&
       !alreadyCounted &&
-      typeof currentPlanLimits.analysisRuns === 'number' &&
-      currentUsage.items.length >= currentPlanLimits.analysisRuns
+      supabaseUsage.hasReachedLimit
     ) {
       return NextResponse.json(
         {
@@ -1414,8 +1455,9 @@ export async function POST(request: Request) {
           code: 'ANALYSIS_LIMIT',
           reason: 'analysis_limit',
           error: outputLanguage === 'ar'
-            ? 'استهلكت 5 تحليلات مجانية. تحتاج إلى الترقية للمتابعة.'
-            : 'You used the 5 free analyses. Upgrade to continue.',
+            ? `استهلكت ${supabaseUsage.limit} تحليلات هذا الشهر. يتجدد العداد في بداية الشهر القادم، أو رقّ خطتك للوصول الفوري.`
+            : `You used your ${supabaseUsage.limit} monthly analyses. Your quota resets at the start of next month, or upgrade for instant access.`,
+          usage: buildUsagePayload(supabaseUsage),
         },
         { status: 403 }
       );
@@ -1552,6 +1594,23 @@ export async function POST(request: Request) {
 
     const result = validateAndRepairResult(parsed, query, outputLanguage);
 
+    // Increment the user's monthly usage counter in Supabase.
+    // We do this AFTER a successful analysis (not before) so failed
+    // OpenAI calls don't consume the user's quota.
+    // For free users only — paid plans have unlimited analyses.
+    let updatedUsage = supabaseUsage;
+    if (currentPlan === 'free' && !alreadyCounted) {
+      const newCount = await incrementUserUsage(user.id);
+      if (typeof newCount === 'number') {
+        updatedUsage = {
+          ...supabaseUsage,
+          used: newCount,
+          remaining: Math.max(0, (supabaseUsage.limit ?? 0) - newCount),
+          hasReachedLimit: newCount >= (supabaseUsage.limit ?? 0),
+        };
+      }
+    }
+
     const successResponse = NextResponse.json({
       ok: true,
       result: {
@@ -1565,8 +1624,11 @@ export async function POST(request: Request) {
         outputLanguage,
         cached: false,
       },
+      usage: buildUsagePayload(updatedUsage),
     });
 
+    // Keep the cookie in sync so we can do session-level deduplication.
+    // The cookie is no longer authoritative — Supabase is.
     if (currentPlan === 'free' && !alreadyCounted) {
       writeAnalysisUsageCookie(successResponse, {
         items: [...currentUsage.items, usageKey],
