@@ -5,33 +5,35 @@ import { buildAbsoluteAppUrl } from '@/lib/app-url';
 import { getServerUiLanguageFromCookie } from '@/lib/ui-language';
 
 export const metadata: Metadata = {
-  title: 'AI Business Idea Validation & Feasibility Workspace',
+  title: 'Madixo — Stop Guessing. Start Validating Your Business Idea.',
   description:
-    'Analyze business ideas, generate an early feasibility view, build a validation plan, capture market evidence, and decide your next move with Madixo.',
+    'Madixo is an AI workspace that validates business ideas with structured analysis, early feasibility studies, and evidence-based decision making. Arabic and English.',
   keywords: [
     'business idea validation',
     'feasibility study software',
     'startup idea analysis',
     'validation plan tool',
     'AI business analysis',
+    'idea testing',
     'تحليل فكرة مشروع',
     'دراسة جدوى أولية',
+    'اختبار فكرة مشروع',
     'خطة تحقق',
   ],
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Madixo | AI Business Idea Validation & Feasibility Workspace',
+    title: 'Madixo — Stop Guessing. Start Validating Your Business Idea.',
     description:
-      'Analyze business ideas, generate an early feasibility view, build a validation plan, capture market evidence, and decide your next move with Madixo.',
+      'AI workspace for business idea validation. Structured analysis, feasibility studies, and evidence-based decisions. Arabic and English.',
     url: buildAbsoluteAppUrl('/'),
     type: 'website',
   },
   twitter: {
-    title: 'Madixo | AI Business Idea Validation & Feasibility Workspace',
+    title: 'Madixo — Stop Guessing. Start Validating Your Business Idea.',
     description:
-      'Analyze business ideas, generate an early feasibility view, build a validation plan, capture market evidence, and decide your next move with Madixo.',
+      'AI workspace for business idea validation. Structured analysis, feasibility studies, and evidence-based decisions. Arabic and English.',
   },
 };
 
@@ -39,36 +41,36 @@ function getHomeFaq(language: 'ar' | 'en') {
   return language === 'ar'
     ? [
         {
-          question: 'ما هو Madixo بالضبط؟',
+          question: 'وش هو Madixo بالضبط؟',
           answer:
-            'Madixo هو مساحة عمل لتحليل الفرص واختبار أفكار المشاريع. يساعدك على فهم الفكرة، توليد قراءة جدوى أولية، بناء خطة تحقق، وتوثيق الأدلة قبل اتخاذ قرار التنفيذ.',
+            'Madixo مساحة عمل تاخذ فكرة مشروعك من مفهوم خام إلى قرار مبني على أدلة. يجمع بين تحليل الفرصة ودراسة الجدوى الأولية ومساحة التحقق والاختبار والخطوة التالية — كلها في مكان واحد.',
         },
         {
-          question: 'هل Madixo مجرد أداة لتوليد الأفكار؟',
+          question: 'هل Madixo مجرد مولد أفكار؟',
           answer:
-            'Madixo ليس مجرد مولد أفكار، بل مساحة عمل لتحليل الفرص، ودراسة الجدوى الأولية، ومساحة التحقق، وجمع الأدلة، وتحديد الخطوة التالية.',
+            'لا. Madixo ما يولّد أفكار. يختبر الأفكار اللي عندك عبر تحليل منظم وتقييم جدوى وجمع أدلة ومتابعة القرار.',
         },
         {
-          question: 'ماذا يحدث بعد تحليل الفرصة؟',
+          question: 'وش الفرق بينه وبين سؤال ChatGPT؟',
           answer:
-            'بعد تقرير التحليل يمكنك الانتقال إلى دراسة الجدوى الأولية، ثم مساحة التحقق، ثم توثيق الأدلة والمقابلات والاعتراضات، ثم تحديث الاتجاه الحالي والخطوة التالية.',
+            'ChatGPT يعطيك إجابة وحدة وتضيع. Madixo يحفظ تحليلك ويتتبع أدلتك مع الوقت ويبني دراسات جدوى ويساعدك تقرر هل تكمل أو تعدّل أو توقف — داخل مساحة عمل دائمة.',
         },
       ]
     : [
         {
           question: 'What exactly is Madixo?',
           answer:
-            'Madixo is a workspace for opportunity analysis and business idea validation. It helps you understand an idea, generate an early feasibility view, build a validation plan, and capture evidence before you commit.',
+            'Madixo is a workspace that takes your business idea from raw concept to validated decision. It combines opportunity analysis, early feasibility, a validation workspace for testing, and evidence-based next moves — all in one place.',
         },
         {
           question: 'Is Madixo just an idea generator?',
           answer:
-            'Madixo is not just an idea generator. It is built for opportunity analysis, early feasibility, validation workflow, evidence capture, and choosing the next practical move.',
+            'No. Madixo does not generate ideas. It validates the ideas you already have through structured analysis, feasibility assessment, evidence capture, and decision tracking.',
         },
         {
-          question: 'What happens after the opportunity analysis?',
+          question: 'How is this different from asking ChatGPT?',
           answer:
-            'After the report, you can move into early feasibility, then into the validation workspace, then log interviews, objections, and signals, and finally update the current direction and next move.',
+            'ChatGPT gives you a one-time answer that disappears. Madixo saves your analysis, tracks your evidence over time, generates feasibility studies, and helps you decide whether to continue, pivot, or stop — inside a persistent workspace.',
         },
       ];
 }
