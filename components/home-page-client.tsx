@@ -784,7 +784,7 @@ export default function HomePageClient() {
     },
   ];
 
-  const steps = [
+  const handleAnalyze = async () => {
     const query = idea.trim();
     const targetMarket = market.trim();
     const targetCustomer = customer.trim();
