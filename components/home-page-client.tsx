@@ -1145,7 +1145,6 @@ export default function HomePageClient() {
             {copy.secondaryCta}
           </a>
         </div>
-      </section>
 
         <div
           ref={formSectionRef}
