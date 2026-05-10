@@ -314,9 +314,9 @@ async function openMadixoPaddleCheckout(
 const COPY = {
   ar: {
     eyebrow: 'الباقات',
-    title: 'اختر باقة Madixo المناسبة لاختبار الفكرة ودراسة الجدوى الأولية.',
+    title: 'اختر الباقة المناسبة لعمق الاختبار اللي تحتاجه.',
     description:
-      'قارن بين باقات Madixo حسب عمق العمل الذي تحتاجه: من تحليل أولي للفرصة إلى التحقق المستمر، ودراسة جدوى أولية، وجمع الأدلة لاتخاذ القرار.',
+      'ابدأ مجانًا وجرب المسار كامل. لما تحتاج دراسات جدوى وتحقق أعمق وحفظ فرص أكثر، ارتقِ للاحترافية.',
     draftHint:
       'هذه الصفحة أصبحت مهيأة للدفع الحقيقي عبر Paddle. عند اختيار الاحترافية سيتم فتح Checkout آمن فوق الصفحة الحالية، وتحديث الباقة يتم تلقائيًا عبر webhook بعد نجاح الدفع.',
     currentPlan: 'باقتك الحالية',
@@ -333,9 +333,9 @@ const COPY = {
     compareTitle: 'ملخص سريع للفروق بين الباقات',
     compareDescription:
       'هذه الأرقام تعكس الحدود الحالية داخل النسخة الموجودة الآن، وليست وعودًا تسويقية عامة فقط.',
-    seoIntroTitle: 'على ماذا بُنيت هذه الباقات',
+    seoIntroTitle: 'على ماذا بُنيت الأسعار',
     seoIntroDescription:
-      'تسعير Madixo مبني على عمق العمل الذي تريد الوصول إليه: من تحليل أولي للفرصة إلى دراسة جدوى أولية، ومساحة تحقق، وجمع الأدلة، ثم تحديد الخطوة العملية التالية.',
+      'تسعير Madixo مبني على عمق الاختبار: من فرز أولي للفكرة إلى دراسة جدوى ومسار تحقق وجمع أدلة والخطوة التالية.',
     faqTitle: 'الأسئلة الشائعة عن الباقات',
     faqItems: [
       {
@@ -484,9 +484,9 @@ const COPY = {
   },
   en: {
     eyebrow: 'Plans',
-    title: 'Choose the right plan for idea validation and feasibility work.',
+    title: 'Choose the right plan for the depth of validation you need.',
     description:
-      'Start on Free to try Madixo clearly, then move to Pro when you begin saving more opportunities and using validation workflows regularly.',
+      'Start on Free to test the full workflow. Move to Pro when you need feasibility studies, deeper validation, and more saved opportunities.',
     draftHint:
       'This page is now prepared for real billing with Paddle. When you choose Pro, a secure checkout opens on top of this page and your plan is updated automatically by webhook after payment succeeds.',
     currentPlan: 'Current plan',
@@ -503,9 +503,9 @@ const COPY = {
     compareTitle: 'Quick summary of plan differences',
     compareDescription:
       'These numbers reflect the current limits in this version of the product, not just generic marketing promises.',
-    seoIntroTitle: 'What this pricing is built around',
+    seoIntroTitle: 'What the pricing is built around',
     seoIntroDescription:
-      'Madixo pricing is built around how deeply you want to evaluate an opportunity: from a first opportunity scan to early feasibility, validation workflow, evidence capture, and the next practical move.',
+      'Madixo pricing reflects how deeply you want to validate: from a first opportunity scan to feasibility studies, evidence capture, and a clear next move.',
     faqTitle: 'Pricing FAQ',
     faqItems: [
       {
