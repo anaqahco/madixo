@@ -44,20 +44,20 @@ const INPUT_PLACEHOLDERS = {
 const UI_COPY = {
   en: {
     dir: 'ltr',
-    heroEyebrow: 'AI Opportunity Analysis Workspace',
-    heroTitle: 'Validate a business idea with clearer analysis, feasibility, and next steps.',
+    heroEyebrow: 'AI-Powered Idea Validation',
+    heroTitle: 'Stop guessing if your idea will work. Start knowing.',
     heroDescription:
-      'Madixo is an AI workspace for business idea validation. Analyze startup ideas, generate an early feasibility view, build a practical validation plan, capture market evidence, and decide the next move with more confidence.',
-    primaryCta: 'Start Opportunity Analysis',
+      'Most ideas die not because they are bad — but because no one tested them. Madixo gives you structured analysis, early feasibility, and a clear validation path so you move forward with evidence, not assumptions.',
+    primaryCta: 'Test Your Idea Now',
     secondaryCta: 'See How It Works',
-    quickLinksLabel: 'Explore faster',
-    quickLinkPricing: 'View pricing',
-    quickLinkUseCases: 'Explore use cases',
-    quickLinkArticle: 'Read how to validate an idea',
-    quickLinkCompare: 'Explore comparisons',
-    radarLabel: 'Start with an idea',
+    quickLinksLabel: 'Quick links',
+    quickLinkPricing: 'Plans & pricing',
+    quickLinkUseCases: 'Use cases',
+    quickLinkArticle: 'How to validate an idea',
+    quickLinkCompare: 'Compare alternatives',
+    radarLabel: 'Describe your idea',
     radarDescription:
-      'Describe the opportunity, market, and customer, then let Madixo turn that into structured analysis, early feasibility, testing, evidence, and a clearer working path.',
+      'Enter your idea, target market, and customer. Madixo will analyze it, assess feasibility, build a testing plan, and show you the clearest next move.',
     businessIdea: 'Business Idea',
     targetMarket: 'Target Market',
     targetCustomer: 'Target Customer',
@@ -69,27 +69,27 @@ const UI_COPY = {
     summary4: 'Decide',
 
     trustEyebrow: 'Why Madixo',
-    trustTitle: 'Built for founders who need more than a one-time report.',
+    trustTitle: 'Because a good idea deserves more than a gut feeling.',
     trustDescription:
-      'Madixo is designed to help you move from analysis to execution instead of getting stuck with a static output.',
-    trustCard1Title: 'From report to feasibility and testing',
+      'Most founders skip validation and go straight to building. Madixo makes sure you do not skip the most important step.',
+    trustCard1Title: 'From idea to feasibility in minutes',
     trustCard1Description:
-      'Generate a structured opportunity report, then move into an early feasibility view and a practical validation plan without switching tools.',
-    trustCard2Title: 'From evidence to decision',
+      'Get a structured opportunity report, then generate an early feasibility view — startup costs, revenue scenarios, break-even direction — without switching tools.',
+    trustCard2Title: 'From assumptions to evidence',
     trustCard2Description:
-      'Capture objections, interviews, and market signals, then use them to understand whether to continue, pivot, or stop.',
-    trustCard3Title: 'From decision to next move',
+      'Log interviews, objections, and market signals. Build a real case for your idea instead of relying on what you think the market wants.',
+    trustCard3Title: 'From analysis paralysis to a clear next move',
     trustCard3Description:
-      'Get a clearer next move with suggested changes, a tighter test, an updated offer, and a sharper outreach message.',
-    builtForTitle: 'Best fit for',
-    builtFor1: 'Founders validating new startup ideas',
-    builtFor2: 'Operators testing a product before scaling',
+      'Know exactly what to change, what to test next, and when to pivot or stop — based on what you actually learned.',
+    builtForTitle: 'Built for',
+    builtFor1: 'First-time founders validating an idea',
+    builtFor2: 'Operators testing before scaling',
     builtFor3: 'Teams that want evidence before commitment',
 
     pricingEyebrow: 'Plans',
-    pricingTitle: 'Package the product around workflow depth.',
+    pricingTitle: 'Simple plans. Pay for the depth you need.',
     pricingDescription:
-      'Madixo can be positioned in tiers based on how deep the user wants to go: from opportunity analysis only, to early feasibility, testing, evidence, and the best next move.',
+      'Start free to test the workflow. Upgrade when you need feasibility studies, deeper validation, and unlimited analysis.',
     plan1Name: 'Opportunity Scan',
     plan1Tag: 'Light entry',
     plan1Description:
@@ -117,32 +117,45 @@ const UI_COPY = {
     mostRecommended: 'Most recommended',
 
     valueEyebrow: 'What you get',
-    valueTitle: 'A working evidence flow, not just a single answer.',
+    valueTitle: 'A complete validation workflow, not just a report.',
     valueDescription:
-      'Each opportunity in Madixo can move through analysis, early feasibility, testing, evidence capture, current direction, and the best next move inside one workspace.',
+      'Each idea in Madixo moves through analysis, feasibility, testing, evidence capture, and a clear decision — all inside one workspace.',
     value1Title: 'Structured opportunity report',
     value1Description:
-      'Evaluate demand, competition, monetization, risks, and first-customer direction in one report.',
+      'Demand, competition, monetization, risks, and your best first-customer direction — in one clear report.',
     value2Title: 'Early feasibility study',
     value2Description:
-      'Get an early financial view before deeper execution: startup range, monthly costs, revenue scenarios, and a rough break-even direction.',
-    value3Title: 'Validation workspace and evidence',
+      'Startup costs, monthly expenses, revenue scenarios, and a break-even estimate — before you spend a dollar.',
+    value3Title: 'Validation workspace',
     value3Description:
-      'Turn the report into a practical testing plan, log interviews, objections, and market signals, then keep your decision state visible in one workspace.',
+      'Turn the report into a testing plan. Log interviews, objections, and market signals. Extract insights from real evidence.',
     value4Title: 'Next move engine',
     value4Description:
-      'Translate what you learned into the next practical move: what to change, what to test, what to offer, and what to measure.',
+      'What to change, what to test next, what offer to make, and what to measure — based on what the market actually told you.',
 
-    signalsEyebrow: 'Trust signals',
+    signalsEyebrow: 'Built for real work',
     signalsTitle: 'Designed for a real workflow.',
     signalsDescription:
-      'Madixo is built around practical operating signals that make the product more useful in real decision-making.',
-    signal1: 'Arabic and English experience',
-    signal2: 'Saved reports, feasibility studies, and validation plans',
-    signal3: 'Evidence logging and evidence summary',
-    signal4: 'Evidence, decision view, and next move',
+      'Madixo is not a toy. It is built around the signals that matter when you are making real business decisions.',
+    signal1: 'Full Arabic and English experience',
+    signal2: 'Saved reports and feasibility studies',
+    signal3: 'Evidence logging and synthesis',
+    signal4: 'Decision view and next move engine',
     signal5: 'Shareable PDF exports',
-    signal6: 'Single workspace from idea to next step',
+    signal6: 'One workspace from idea to decision',
+
+    chatgptEyebrow: 'The honest question',
+    chatgptTitle: 'Why not just ask ChatGPT?',
+    chatgptDescription: 'It is a fair question. Here is the honest answer.',
+    chatgptCard1Title: 'ChatGPT gives you an answer. Madixo gives you a workflow.',
+    chatgptCard1Description:
+      'A single AI response cannot replace structured analysis, feasibility testing, evidence logging, and decision tracking inside one workspace.',
+    chatgptCard2Title: 'ChatGPT forgets. Madixo remembers.',
+    chatgptCard2Description:
+      'Every interview, objection, and market signal you capture stays connected to your idea — building a case over time, not vanishing after a chat.',
+    chatgptCard3Title: 'ChatGPT agrees with you. Madixo challenges you.',
+    chatgptCard3Description:
+      'The validation workspace pushes you to test assumptions and face evidence, not just confirm what you already believe.',
 
     contentEyebrow: 'Explore content',
     contentTitle: 'Explore the knowledge hub without leaving the main path.',
@@ -184,45 +197,45 @@ const UI_COPY = {
     featuredUseCasesEyebrow: 'Top use cases',
     featuredComparisonsEyebrow: 'Top comparisons',
 
-    howMadixoWorks: 'How Madixo Works',
+    howMadixoWorks: 'How It Works',
     howMadixoWorksDescription:
-      'Move from a raw idea to a clearer next move through analysis, early feasibility, testing, evidence, and a current direction.',
-    step1Title: 'Describe the idea and market',
+      'Four steps. From raw idea to a decision you can defend.',
+    step1Title: 'Describe your idea',
     step1Description:
-      'Enter the opportunity you want to explore, then define the market and target customer so Madixo starts with clear context.',
-    step2Title: 'Get the report and early feasibility view',
+      'Enter the opportunity, target market, and customer. Madixo starts with your context, not a generic template.',
+    step2Title: 'Get your report and feasibility',
     step2Description:
-      'Madixo evaluates demand, competition, monetization, and risk, then gives you a structured opportunity report. On the paid path, you can also generate an early feasibility view before deeper execution.',
+      'Madixo analyzes demand, competition, monetization, and risk. Then it generates a structured report and an early feasibility view.',
     step3Title: 'Test and capture evidence',
     step3Description:
-      'Turn the report into a practical testing plan, then log interviews, objections, and market signals in one working space.',
-    step4Title: 'Decide the next move',
+      'Turn the report into a practical testing plan. Log interviews, objections, and real market signals in one workspace.',
+    step4Title: 'Decide your next move',
     step4Description:
-      'Generate the decision view, understand the current direction, and get the next practical move: what to change, what to test, and what to measure.',
+      'See the full picture: what the evidence says, what to change, what to test next, and whether to continue, pivot, or stop.',
 
-    closingTitle: 'Ready to explore your next opportunity?',
+    closingTitle: 'Your idea deserves a real answer.',
     closingDescription:
-      'Start with analysis, then add early feasibility, testing, evidence, and a clearer next move with Madixo.',
+      'Stop wondering. Start validating. Enter your idea and get your first analysis in minutes.',
     signedOutNotice: 'You have been signed out successfully.',
     authRequiredToAnalyze:
       'Create your account or log in first to start the opportunity analysis.',
   },
   ar: {
     dir: 'rtl',
-    heroEyebrow: 'مساحة عمل لتحليل الفرص وتحديد الخطوة التالية',
-    heroTitle: 'اختبر فكرة مشروعك بتحليل أوضح ودراسة جدوى أولية وخطوات عملية تالية.',
+    heroEyebrow: 'اختبار الأفكار بالذكاء الاصطناعي',
+    heroTitle: 'توقف عن التخمين. اعرف إذا فكرتك تستاهل قبل ما تصرف ريال.',
     heroDescription:
-      'Madixo مساحة عمل بالذكاء الاصطناعي لاختبار فكرة المشروع. يساعدك على تحليل الفكرة، وبناء دراسة جدوى أولية، وتحويلها إلى خطة تحقق عملية، وجمع ملاحظات السوق، ثم تحديد الخطوة التالية بثقة أكبر.',
-    primaryCta: 'ابدأ تحليل الفرصة',
-    secondaryCta: 'استكشف كيف يعمل',
-    quickLinksLabel: 'ابدأ من المسار المناسب',
-    quickLinkPricing: 'شاهد الباقات',
-    quickLinkUseCases: 'استكشف حالات الاستخدام',
-    quickLinkArticle: 'اقرأ كيف تختبر الفكرة',
-    quickLinkCompare: 'استكشف المقارنات',
-    radarLabel: 'ابدأ من الفكرة',
+      'أغلب الأفكار ما تموت لأنها سيئة — تموت لأن أحد ما اختبرها. Madixo يعطيك تحليل منظم، ودراسة جدوى أولية، ومسار تحقق واضح عشان تتحرك بناءً على أدلة، مش افتراضات.',
+    primaryCta: 'اختبر فكرتك الآن',
+    secondaryCta: 'شاهد كيف يعمل',
+    quickLinksLabel: 'روابط سريعة',
+    quickLinkPricing: 'الباقات والأسعار',
+    quickLinkUseCases: 'حالات الاستخدام',
+    quickLinkArticle: 'كيف تختبر فكرتك',
+    quickLinkCompare: 'قارن البدائل',
+    radarLabel: 'صف فكرتك',
     radarDescription:
-      'صف الفكرة والسوق والعميل، ثم دع Madixo يحول ذلك إلى تحليل منظم ودراسة جدوى أولية وخطة تجربة وملاحظات سوق ومسار عملي أوضح.',
+      'أدخل فكرتك والسوق المستهدف والعميل. Madixo يحللها ويقيّم الجدوى ويبني خطة اختبار ويوريك أوضح خطوة تالية.',
     businessIdea: 'الفكرة التجارية',
     targetMarket: 'السوق المستهدف',
     targetCustomer: 'العميل المستهدف',
@@ -234,27 +247,27 @@ const UI_COPY = {
     summary4: 'قرّر',
 
     trustEyebrow: 'لماذا Madixo',
-    trustTitle: 'مبني للمؤسس الذي يحتاج أكثر من تقرير واحد.',
+    trustTitle: 'لأن الفكرة الجيدة تستاهل أكثر من مجرد إحساس.',
     trustDescription:
-      'صُمم Madixo ليساعدك على الانتقال من التحليل إلى التنفيذ، بدل التوقف عند مخرجات ثابتة لا تتحرك بعدها.',
-    trustCard1Title: 'من التقرير إلى الجدوى الأولية وخطة التجربة',
+      'أغلب المؤسسين يتجاوزون مرحلة الاختبار ويروحون مباشرة للبناء. Madixo يتأكد إنك ما تتجاوز أهم خطوة.',
+    trustCard1Title: 'من الفكرة إلى الجدوى في دقائق',
     trustCard1Description:
-      'أنشئ تقرير فرصة منظمًا، ثم انتقل إلى دراسة جدوى أولية وخطة تجربة عملية داخل المسار نفسه دون التنقل بين أدوات متعددة.',
-    trustCard2Title: 'من نتائج التجربة إلى القرار',
+      'احصل على تقرير فرصة منظم ثم ادرس الجدوى الأولية — تكاليف البداية، سيناريوهات الإيراد، اتجاه نقطة التعادل — بدون ما تتنقل بين أدوات.',
+    trustCard2Title: 'من الافتراضات إلى الأدلة',
     trustCard2Description:
-      'سجل الاعتراضات والمقابلات وملاحظات السوق، ثم استخدمها لتعرف هل الأنسب هو الاستمرار أو التعديل أو التوقف.',
-    trustCard3Title: 'من الاتجاه الحالي إلى الخطوة التالية',
+      'سجل المقابلات والاعتراضات وإشارات السوق. ابنِ قضية حقيقية لفكرتك بدل ما تعتمد على اللي تتوقعه.',
+    trustCard3Title: 'من شلل التحليل إلى خطوة واضحة',
     trustCard3Description:
-      'احصل على التعديل التنفيذي التالي بشكل أوضح: ما الذي يتغير، ما الاختبار التالي، وما العرض والرسالة الأنسب الآن.',
-    builtForTitle: 'الأنسب لـ',
-    builtFor1: 'المؤسسين الذين يختبرون أفكارًا جديدة',
-    builtFor2: 'المشغلين الذين يريدون اختبار المنتج قبل التوسع',
-    builtFor3: 'من يريد اتجاهًا مبنيًا على ما تعلّمه من السوق لا على الانطباع',
+      'اعرف بالضبط وش تغيّر، وش تختبر، ومتى تعدّل أو توقف — بناءً على اللي تعلمته فعلاً.',
+    builtForTitle: 'مبني لـ',
+    builtFor1: 'المؤسسين الجدد اللي يختبرون فكرتهم',
+    builtFor2: 'المشغلين اللي يبون يختبرون قبل التوسع',
+    builtFor3: 'الفرق اللي تبي أدلة قبل الالتزام',
 
     pricingEyebrow: 'الباقات',
-    pricingTitle: 'قسّم المنتج حسب عمق العمل، لا حسب عدد الأزرار فقط.',
+    pricingTitle: 'باقات بسيطة. ادفع حسب العمق اللي تحتاجه.',
     pricingDescription:
-      'يمكن تموضع Madixo كباقات متدرجة بحسب عمق الاستخدام: من تحليل الفرصة فقط، إلى دراسة الجدوى الأولية، ثم مسار التحقق وملاحظات السوق والخطوة التالية.',
+      'ابدأ مجانًا وجرب المسار. ارتقِ لما تحتاج دراسات جدوى وتحقق أعمق وتحليلات بدون حدود.',
     plan1Name: 'تحليل الفرصة',
     plan1Tag: 'دخول خفيف',
     plan1Description:
@@ -282,32 +295,45 @@ const UI_COPY = {
     mostRecommended: 'الأكثر توصية',
 
     valueEyebrow: 'ماذا تحصل عليه',
-    valueTitle: 'مسار عمل متجدد، وليس إجابة واحدة فقط.',
+    valueTitle: 'مسار تحقق كامل، مش مجرد تقرير.',
     valueDescription:
-      'كل فرصة في Madixo يمكن أن تمر عبر التحليل، ودراسة الجدوى الأولية، وخطة التحقق، وتسجيل ملاحظات السوق، ورؤية القرار، ثم أفضل خطوة الآن داخل مساحة عمل واحدة.',
+      'كل فكرة في Madixo تمر بالتحليل والجدوى والاختبار وجمع الأدلة والقرار — كلها في مساحة عمل واحدة.',
     value1Title: 'تقرير فرصة منظم',
     value1Description:
-      'قيّم الطلب والمنافسة والربحية والمخاطر واتجاه أفضل عميل أول داخل تقرير واحد واضح.',
+      'الطلب والمنافسة والربحية والمخاطر وأفضل عميل أول — في تقرير واحد واضح.',
     value2Title: 'دراسة جدوى أولية',
     value2Description:
-      'خذ نظرة مالية أولية قبل التنفيذ الأعمق: تكاليف البداية، والتكاليف الشهرية، وسيناريوهات الإيراد، واتجاه أولي لنقطة التعادل.',
-    value3Title: 'مساحة عمل للتجربة ونتائجها',
+      'تكاليف البداية والمصاريف الشهرية وسيناريوهات الإيراد ونقطة التعادل — قبل ما تصرف ريال.',
+    value3Title: 'مساحة عمل للتحقق',
     value3Description:
-      'حوّل التقرير إلى خطة تجربة، وسجل المقابلات والاعتراضات وملاحظات السوق، ثم استخرج خلاصة ما تعلمته من السوق.',
+      'حوّل التقرير لخطة اختبار. سجل المقابلات والاعتراضات وإشارات السوق. واستخرج خلاصات من أدلة حقيقية.',
     value4Title: 'محرك الخطوة التالية',
     value4Description:
-      'حوّل ما تعلمته من التجربة إلى خطوة عملية تالية: ما الذي يتغير، ما التجربة التالية، ما العرض الأنسب، وما الذي يجب قياسه.',
+      'وش تغيّر، وش تختبر، وش العرض الأنسب، وش تقيس — بناءً على اللي قاله السوق فعلاً.',
 
-    signalsEyebrow: 'إشارات الثقة',
+    signalsEyebrow: 'مبني للعمل الحقيقي',
     signalsTitle: 'مصمم لسير عمل حقيقي.',
     signalsDescription:
-      'تم بناء Madixo حول عناصر تشغيل عملية تجعل المنتج أكثر فائدة في اتخاذ القرار الحقيقي.',
-    signal1: 'تجربة عربية وإنجليزية',
-    signal2: 'حفظ التقارير ودراسات الجدوى وخطط التجربة',
-    signal3: 'تسجيل نتائج التجربة وخلاصة ما تعلمناه',
-    signal4: 'ملاحظات السوق ورؤية القرار وأفضل خطوة الآن',
+      'Madixo مش لعبة. مبني حول الإشارات اللي تهم لما تاخذ قرارات مشروع حقيقية.',
+    signal1: 'تجربة عربية وإنجليزية كاملة',
+    signal2: 'حفظ التقارير ودراسات الجدوى',
+    signal3: 'تسجيل الأدلة وتلخيصها',
+    signal4: 'رؤية القرار ومحرك الخطوة التالية',
     signal5: 'تصدير PDF قابل للمشاركة',
-    signal6: 'مساحة عمل واحدة من الفكرة إلى الخطوة التالية',
+    signal6: 'مساحة عمل واحدة من الفكرة للقرار',
+
+    chatgptEyebrow: 'السؤال الصريح',
+    chatgptTitle: 'ليش ما أسأل ChatGPT وخلاص؟',
+    chatgptDescription: 'سؤال عادل. وهذي الإجابة الصريحة.',
+    chatgptCard1Title: 'ChatGPT يعطيك إجابة. Madixo يعطيك مسار عمل.',
+    chatgptCard1Description:
+      'رد واحد من الذكاء الاصطناعي ما يقدر يحل محل تحليل منظم ودراسة جدوى وتوثيق أدلة ومتابعة القرار داخل مساحة عمل واحدة.',
+    chatgptCard2Title: 'ChatGPT ينسى. Madixo يتذكر.',
+    chatgptCard2Description:
+      'كل مقابلة واعتراض وإشارة من السوق تسجلها تبقى مرتبطة بفكرتك — تبني قضية مع الوقت بدل ما تضيع بعد محادثة.',
+    chatgptCard3Title: 'ChatGPT يوافقك. Madixo يتحداك.',
+    chatgptCard3Description:
+      'مساحة التحقق تدفعك تختبر افتراضاتك وتواجه الأدلة، مش تأكد اللي تبي تسمعه.',
 
     contentEyebrow: 'مركز المحتوى',
     contentTitle: 'اكتشف المحتوى بدون أن يزاحم هدف الصفحة الرئيسي.',
@@ -349,25 +375,25 @@ const UI_COPY = {
     featuredUseCasesEyebrow: 'حالات مهمة',
     featuredComparisonsEyebrow: 'مقارنات مهمة',
 
-    howMadixoWorks: 'كيف يعمل Madixo',
+    howMadixoWorks: 'كيف يعمل',
     howMadixoWorksDescription:
-      'حوّل فكرتك من تصور أولي إلى قرار أوضح، عبر التحليل، ودراسة الجدوى الأولية، والتجربة، ونتائجها، والخطوة التالية.',
-    step1Title: 'صف الفكرة والسوق',
+      'أربع خطوات. من فكرة خام إلى قرار تقدر تدافع عنه.',
+    step1Title: 'صف فكرتك',
     step1Description:
-      'أدخل الفكرة التي تريد تجربتها، وحدد السوق والعميل المستهدف حتى يبدأ Madixo من سياق واضح.',
-    step2Title: 'احصل على التقرير ودراسة الجدوى الأولية',
+      'أدخل الفكرة والسوق والعميل المستهدف. Madixo يبدأ من سياقك، مش من قالب جاهز.',
+    step2Title: 'احصل على التقرير والجدوى',
     step2Description:
-      'يحلل Madixo الطلب والمنافسة والربحية والمخاطر، ثم يبني لك تقرير فرصة منظمًا. وفي المسار المدفوع يمكنك أيضًا إنشاء دراسة جدوى أولية قبل الدخول في التنفيذ الأعمق.',
-    step3Title: 'جرّب الفكرة واجمع نتائج التجربة',
+      'Madixo يحلل الطلب والمنافسة والربحية والمخاطر، ثم يبني لك تقرير منظم ودراسة جدوى أولية.',
+    step3Title: 'جرّب واجمع الأدلة',
     step3Description:
-      'حوّل التقرير إلى خطة اختبار عملية، وسجل المقابلات والاعتراضات وإشارات السوق داخل مساحة عمل واحدة.',
-    step4Title: 'قرر الخطوة التالية',
+      'حوّل التقرير لخطة اختبار عملية. سجل المقابلات والاعتراضات وإشارات السوق في مكان واحد.',
+    step4Title: 'قرر خطوتك التالية',
     step4Description:
-      'استخرج خلاصة ما تعلمناه، افهم اتجاه القرار، ثم احصل على التعديل التنفيذي التالي: ماذا تغيّر، ماذا تجرّب، وما الذي تقيسه.',
+      'شف الصورة الكاملة: وش تقول الأدلة، وش تغيّر، وش تختبر، وهل تكمل أو تعدّل أو توقف.',
 
-    closingTitle: 'هل أنت جاهز لاكتشاف فرصتك القادمة؟',
+    closingTitle: 'فكرتك تستاهل إجابة حقيقية.',
     closingDescription:
-      'ابدأ بتحليل الفكرة، ثم أضف دراسة جدوى أولية وتجربة ونتائج وقرار أوضح مع Madixo.',
+      'توقف عن التخمين. ابدأ التحقق. أدخل فكرتك واحصل على أول تحليل في دقائق.',
     signedOutNotice: 'تم تسجيل الخروج بنجاح.',
     authRequiredToAnalyze:
       'أنشئ حسابك أو سجّل الدخول أولًا لبدء تحليل الفرصة.',
@@ -404,19 +430,19 @@ const HOME_FAQ_COPY = {
       'هذه الأسئلة السريعة تساعد الزائر على فهم ما يفعله Madixo، ومتى يكون مناسبًا، وما الذي يحدث بعد تحليل الفرصة.',
     items: [
       {
-        question: 'ما هو Madixo بالضبط؟',
+        question: 'وش هو Madixo بالضبط؟',
         answer:
-          'Madixo هو مساحة عمل لتحليل الفرص واختبار أفكار المشاريع. يساعدك على فهم الفكرة، توليد قراءة جدوى أولية، بناء خطة تحقق، وتوثيق الأدلة قبل اتخاذ قرار التنفيذ.',
+          'Madixo مساحة عمل تاخذ فكرة مشروعك من مفهوم خام إلى قرار مبني على أدلة. يجمع بين تحليل الفرصة ودراسة الجدوى الأولية ومساحة التحقق والاختبار والخطوة التالية — كلها في مكان واحد.',
       },
       {
-        question: 'هل Madixo مجرد أداة لتوليد الأفكار؟',
+        question: 'هل Madixo مجرد مولد أفكار؟',
         answer:
-          'لا. Madixo ليس مجرد مولد أفكار. هو منتج مخصص لتحليل الفرص، ودراسة الجدوى الأولية، ومساحة التحقق، وجمع الأدلة، وتحديد الخطوة العملية التالية.',
+          'لا. Madixo ما يولّد أفكار. يختبر الأفكار اللي عندك عبر تحليل منظم وتقييم جدوى وجمع أدلة ومتابعة القرار.',
       },
       {
-        question: 'ماذا يحدث بعد تحليل الفرصة؟',
+        question: 'وش الفرق بينه وبين سؤال ChatGPT؟',
         answer:
-          'بعد تقرير التحليل يمكنك الانتقال إلى دراسة الجدوى الأولية، ثم مساحة التحقق، ثم توثيق الأدلة والمقابلات والاعتراضات، ثم تحديث الاتجاه الحالي والخطوة التالية.',
+          'ChatGPT يعطيك إجابة وحدة وتضيع. Madixo يحفظ تحليلك ويتتبع أدلتك مع الوقت ويبني دراسات جدوى ويساعدك تقرر هل تكمل أو تعدّل أو توقف — داخل مساحة عمل دائمة.',
       },
     ],
   },
@@ -429,17 +455,17 @@ const HOME_FAQ_COPY = {
       {
         question: 'What exactly is Madixo?',
         answer:
-          'Madixo is a workspace for opportunity analysis and business idea validation. It helps you understand an idea, generate an early feasibility view, build a validation plan, and capture evidence before you commit.',
+          'Madixo is a workspace that takes your business idea from raw concept to validated decision. It combines opportunity analysis, early feasibility, a validation workspace for testing, and evidence-based next moves — all in one place.',
       },
       {
         question: 'Is Madixo just an idea generator?',
         answer:
-          'No. Madixo is not just an idea generator. It is built for opportunity analysis, early feasibility, validation workflow, evidence capture, and choosing the next practical move.',
+          'No. Madixo does not generate ideas. It validates the ideas you already have through structured analysis, feasibility assessment, evidence capture, and decision tracking.',
       },
       {
-        question: 'What happens after the opportunity analysis?',
+        question: 'How is this different from asking ChatGPT?',
         answer:
-          'After the report, you can move into early feasibility, then into the validation workspace, then log interviews, objections, and signals, and finally update the current direction and next move.',
+          'ChatGPT gives you a one-time answer that disappears. Madixo saves your analysis, tracks your evidence over time, generates feasibility studies, and helps you decide whether to continue, pivot, or stop — inside a persistent workspace.',
       },
     ],
   },
@@ -758,70 +784,7 @@ export default function HomePageClient() {
     },
   ];
 
-  const startPathCards = [
-    {
-      title: copy.startPathArticlesTitle,
-      description: copy.startPathArticlesDescription,
-      href: '/blog',
-    },
-    {
-      title: copy.startPathUseCasesTitle,
-      description: copy.startPathUseCasesDescription,
-      href: '/use-cases',
-    },
-    {
-      title: copy.startPathComparisonsTitle,
-      description: copy.startPathComparisonsDescription,
-      href: '/compare-to',
-    },
-    {
-      title: copy.startPathPricingTitle,
-      description: copy.startPathPricingDescription,
-      href: '/pricing',
-    },
-  ];
-
-  const homepageFeaturedArticles = BLOG_POSTS.slice(0, 2).map((post) => ({
-    eyebrow: copy.featuredArticlesEyebrow,
-    title: localizeText(post.title, preferredLanguage),
-    description: truncateText(
-      localizeText(post.excerpt, preferredLanguage),
-      preferredLanguage === 'ar' ? 100 : 120
-    ),
-    href: `/blog/${post.slug}`,
-    cta: copy.articlesCta,
-  }));
-
-  const homepageFeaturedUseCases = USE_CASES.slice(0, 2).map((item) => ({
-    eyebrow: copy.featuredUseCasesEyebrow,
-    title: localizeText(item.title, preferredLanguage),
-    description: truncateText(
-      localizeText(item.summary, preferredLanguage),
-      preferredLanguage === 'ar' ? 100 : 120
-    ),
-    href: `/use-cases/${item.slug}`,
-    cta: copy.useCasesCta,
-  }));
-
-  const homepageFeaturedComparisons = COMPARISONS.slice(0, 2).map((item) => ({
-    eyebrow: copy.featuredComparisonsEyebrow,
-    title: localizeText(item.title, preferredLanguage),
-    description: truncateText(
-      localizeText(item.summary, preferredLanguage),
-      preferredLanguage === 'ar' ? 100 : 120
-    ),
-    href: `/compare-to/${item.slug}`,
-    cta: copy.comparisonsCta,
-  }));
-
-  const homepageFeaturedCards = [
-    ...homepageFeaturedArticles,
-    ...homepageFeaturedUseCases,
-    ...homepageFeaturedComparisons,
-  ];
-
-
-  const handleAnalyze = async () => {
+  const steps = [
     const query = idea.trim();
     const targetMarket = market.trim();
     const targetCustomer = customer.trim();
@@ -1073,15 +1036,6 @@ export default function HomePageClient() {
     return () => window.clearTimeout(timeout);
   }, [flashNotice]);
 
-  const signalItems = [
-    copy.signal1,
-    copy.signal2,
-    copy.signal3,
-    copy.signal4,
-    copy.signal5,
-    copy.signal6,
-  ];
-
   const pricingPlans = [
     {
       name: copy.plan1Name,
@@ -1120,8 +1074,6 @@ export default function HomePageClient() {
       highlighted: false,
     },
   ];
-
-  const summaryItems = [copy.summary1, copy.summary2, copy.summary3, copy.summary4];
 
   return (
     <main dir={copy.dir} className="min-h-screen bg-[#FAFAFB] text-[#111827]">
@@ -1193,47 +1145,7 @@ export default function HomePageClient() {
             {copy.secondaryCta}
           </a>
         </div>
-
-        <div className="mt-6 flex flex-col items-center gap-3">
-          <p className="text-sm font-medium text-[#6B7280]">{copy.quickLinksLabel}</p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Link
-              href="/pricing"
-              className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-medium text-[#374151] transition hover:bg-[#EEF3F9]"
-            >
-              {copy.quickLinkPricing}
-            </Link>
-            <Link
-              href="/use-cases"
-              className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-medium text-[#374151] transition hover:bg-[#EEF3F9]"
-            >
-              {copy.quickLinkUseCases}
-            </Link>
-            <Link
-              href="/compare-to"
-              className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-medium text-[#374151] transition hover:bg-[#EEF3F9]"
-            >
-              {copy.quickLinkCompare}
-            </Link>
-            <Link
-              href="/blog/how-to-validate-a-business-idea-before-building"
-              className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-medium text-[#374151] transition hover:bg-[#EEF3F9]"
-            >
-              {copy.quickLinkArticle}
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          {summaryItems.map((item) => (
-            <span
-              key={item}
-              className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-medium text-[#374151]"
-            >
-              {item}
-            </span>
-          ))}
-        </div>
+      </section>
 
         <div
           ref={formSectionRef}
@@ -1342,76 +1254,30 @@ export default function HomePageClient() {
       </section>
 
 
-      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
-        <div className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6 md:p-8">
-          <div className="text-center">
-            <p className="text-sm font-medium text-[#6B7280]">{copy.startPathEyebrow}</p>
-            <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
-              {copy.startPathTitle}
-            </h2>
-            <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
-              {copy.startPathDescription}
-            </p>
-          </div>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {startPathCards.map((item) => (
-              <div
-                key={item.href}
-                className="rounded-2xl border border-[#D9E2F0] bg-white p-5 shadow-sm"
-              >
-                <h3 className="text-xl font-semibold tracking-tight text-[#111827]">
-                  {item.title}
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-[#4B5563] sm:text-base sm:leading-8">
-                  {item.description}
-                </p>
-                <div className="mt-5">
-                  <Link
-                    href={item.href}
-                    className="inline-flex rounded-full border border-[#111827] bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
-                  >
-                    {copy.startPathCta}
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
+      <section id={sectionId} className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
         <div className="text-center">
-          <p className="text-sm font-medium text-[#6B7280]">{copy.featuredPathsEyebrow}</p>
+          <p className="text-sm font-medium text-[#6B7280]">{copy.howMadixoWorks}</p>
           <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
-            {copy.featuredPathsTitle}
+            {copy.howMadixoWorks}
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
-            {copy.featuredPathsDescription}
+            {copy.howMadixoWorksDescription}
           </p>
         </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {homepageFeaturedCards.map((item) => (
+        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {steps.map((step) => (
             <div
-              key={`${item.eyebrow}-${item.href}`}
+              key={step.number}
               className="rounded-2xl border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6"
             >
-              <p className="text-xs font-semibold text-[#6B7280]">{item.eyebrow}</p>
-              <h3 className="mt-3 text-xl font-semibold tracking-tight text-[#111827] sm:text-2xl">
-                {item.title}
-              </h3>
-              <p className="mt-4 text-sm leading-7 text-[#4B5563] sm:text-base sm:leading-8">
-                {item.description}
-              </p>
-              <div className="mt-5">
-                <Link
-                  href={item.href}
-                  className="inline-flex rounded-full border border-[#111827] bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
-                >
-                  {item.cta}
-                </Link>
+              <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#EEF3F9] text-lg font-semibold text-[#111827]">
+                {step.number}
               </div>
+              <h3 className="text-2xl font-semibold">{step.title}</h3>
+              <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
+                {step.description}
+              </p>
             </div>
           ))}
         </div>
@@ -1454,6 +1320,40 @@ export default function HomePageClient() {
               >
                 {item}
               </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
+        <div className="rounded-[28px] border border-[#111827] bg-[#111827] p-5 shadow-sm sm:p-6 md:p-8">
+          <div className="text-center">
+            <p className="text-sm font-medium text-white/60">{copy.chatgptEyebrow}</p>
+            <h2 className="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
+              {copy.chatgptTitle}
+            </h2>
+            <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-white/70 md:text-lg md:leading-8">
+              {copy.chatgptDescription}
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-6 lg:grid-cols-3">
+            {[
+              { title: copy.chatgptCard1Title, description: copy.chatgptCard1Description },
+              { title: copy.chatgptCard2Title, description: copy.chatgptCard2Description },
+              { title: copy.chatgptCard3Title, description: copy.chatgptCard3Description },
+            ].map((card) => (
+              <div
+                key={card.title}
+                className="rounded-2xl border border-white/15 bg-white/10 p-5 sm:p-6"
+              >
+                <h3 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
+                  {card.title}
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-white/75 sm:text-base sm:leading-8">
+                  {card.description}
+                </p>
+              </div>
             ))}
           </div>
         </div>
@@ -1509,60 +1409,6 @@ export default function HomePageClient() {
               </h3>
               <p className="mt-4 text-base leading-8 text-[#4B5563]">
                 {card.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
-        <div className="rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6 md:p-8">
-          <div className="text-center">
-            <p className="text-sm font-medium text-[#6B7280]">{copy.signalsEyebrow}</p>
-            <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
-              {copy.signalsTitle}
-            </h2>
-            <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
-              {copy.signalsDescription}
-            </p>
-          </div>
-
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            {signalItems.map((item) => (
-              <span
-                key={item}
-                className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-medium text-[#374151]"
-              >
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id={sectionId} className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
-        <div className="text-center">
-          <p className="text-sm font-medium text-[#6B7280]">{copy.howMadixoWorks}</p>
-          <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
-            {copy.howMadixoWorks}
-          </h2>
-          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#4B5563] md:text-lg md:leading-8">
-            {copy.howMadixoWorksDescription}
-          </p>
-        </div>
-
-        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {steps.map((step) => (
-            <div
-              key={step.number}
-              className="rounded-2xl border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6"
-            >
-              <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#EEF3F9] text-lg font-semibold text-[#111827]">
-                {step.number}
-              </div>
-              <h3 className="text-2xl font-semibold">{step.title}</h3>
-              <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
-                {step.description}
               </p>
             </div>
           ))}
