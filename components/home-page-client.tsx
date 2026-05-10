@@ -45,11 +45,11 @@ const UI_COPY = {
   en: {
     dir: 'ltr',
     heroEyebrow: 'The Idea Lab',
-    heroTitle: 'Put your idea under the microscope before you bet everything on it.',
+    heroTitle: 'Don’t ask AI to encourage your idea. Test it before you build.',
     heroDescription:
-      'Most ideas die not because they are bad — but because no one ran the tests. Madixo is your idea lab: structured analysis, feasibility diagnostics, evidence collection, and a clear verdict on what to do next.',
-    primaryCta: 'Run Your First Test',
-    secondaryCta: 'See How The Lab Works',
+      'Madixo helps founders challenge assumptions, analyze opportunities, collect market evidence, and make clearer go/no-go decisions before spending time or money on development.',
+    primaryCta: 'Test Your Idea',
+    secondaryCta: 'See How Madixo Works',
     quickLinksLabel: 'Quick links',
     quickLinkPricing: 'Plans & pricing',
     quickLinkUseCases: 'Use cases',
@@ -223,11 +223,11 @@ const UI_COPY = {
   ar: {
     dir: 'rtl',
     heroEyebrow: 'مختبر الأفكار',
-    heroTitle: 'حط فكرتك تحت المجهر قبل ما تراهن عليها بكل شيء.',
+    heroTitle: 'لا تطلب من الذكاء الاصطناعي أن يجامل فكرتك. اختبرها قبل أن تبنيها.',
     heroDescription:
-      'أغلب الأفكار ما تموت لأنها سيئة — تموت لأن أحد ما فحصها. Madixo مختبرك: تحليل منظم، فحص جدوى، جمع أدلة، وحكم واضح على الخطوة التالية.',
-    primaryCta: 'شغّل أول فحص',
-    secondaryCta: 'شاهد كيف يعمل المختبر',
+      'Madixo يساعدك على تحدي افتراضات فكرتك، تحليل الفرصة، جمع أدلة من السوق، واتخاذ قرار أوضح: تكمل، تغيّر، أو تتوقف قبل أن تصرف وقتك ومالك على البناء.',
+    primaryCta: 'اختبر فكرتك الآن',
+    secondaryCta: 'شاهد كيف يعمل Madixo',
     quickLinksLabel: 'روابط سريعة',
     quickLinkPricing: 'الباقات والأسعار',
     quickLinkUseCases: 'حالات الاستخدام',
