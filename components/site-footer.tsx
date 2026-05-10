@@ -10,7 +10,7 @@ const COPY = {
   en: {
     dir: 'ltr',
     description:
-      'Madixo helps founders move from idea analysis to early feasibility and a clearer next decision inside one focused workspace.',
+      'Put your idea under the microscope. Madixo is the lab that validates business ideas with structured diagnostics, feasibility scans, and evidence-based verdicts.',
     product: 'Product',
     company: 'Company',
     startHere: 'Start here',
@@ -31,14 +31,14 @@ const COPY = {
     emailLabel: 'Email',
     emailValue: 'support@madixo.ai',
     emailHint: 'Support, billing, and product feedback.',
-    cta: 'Start Opportunity Analysis',
+    cta: 'Run Your First Test',
     secondary: 'See Plans',
     copyright: 'All rights reserved.',
   },
   ar: {
     dir: 'rtl',
     description:
-      'Madixo يساعد المؤسس على الانتقال من تحليل الفكرة إلى دراسة جدوى أولية ثم قرار أوضح حول الخطوة التالية داخل مساحة عمل واحدة.',
+      'حط فكرتك تحت المجهر. Madixo المختبر اللي يفحص أفكار المشاريع بتشخيص منظم وفحص جدوى وأحكام مبنية على أدلة.',
     product: 'المنتج',
     company: 'الشركة',
     startHere: 'ابدأ من هنا',
@@ -59,7 +59,7 @@ const COPY = {
     emailLabel: 'البريد الإلكتروني',
     emailValue: 'support@madixo.ai',
     emailHint: 'للدعم، والفوترة، وملاحظات المنتج.',
-    cta: 'ابدأ تحليل الفرصة',
+    cta: 'شغّل أول فحص',
     secondary: 'شاهد الباقات',
     copyright: 'جميع الحقوق محفوظة.',
   },
