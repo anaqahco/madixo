@@ -16,9 +16,9 @@ export default function UseCasesPageClient({ items, featuredPosts }: Props) {
     uiLang === 'ar'
       ? {
           eyebrow: 'حالات الاستخدام',
-          title: 'كيف يمكن استخدام Madixo في مواقف عملية؟',
+          title: 'شف كيف مؤسسين مثلك يستخدمون Madixo.',
           description:
-            'اكتشف حالات استخدام عملية توضّح كيف يساعد Madixo في تحليل الفرصة، والجدوى الأولية، واتخاذ قرار أوضح بحسب نوع المشروع أو الفريق.',
+            'سيناريوهات حقيقية توضح كيف Madixo يساعد أنواع مختلفة من المشاريع — من المؤسسين الجدد للشركات الخدمية وفرق المنتجات.',
           start: 'ابدأ التحليل',
           pricing: 'شاهد الباقات',
           open: 'افتح الحالة',
@@ -55,9 +55,9 @@ export default function UseCasesPageClient({ items, featuredPosts }: Props) {
         }
       : {
           eyebrow: 'Use Cases',
-          title: 'How can Madixo be used in practical situations?',
+          title: 'See how founders like you use Madixo.',
           description:
-            'Explore practical use cases that show how Madixo can help with opportunity analysis, early feasibility, and clearer decisions depending on the business or team.',
+            'Real scenarios showing how Madixo helps different business types — from first-time founders to service businesses and product teams.',
           start: 'Start analysis',
           pricing: 'See plans',
           open: 'Open use case',
