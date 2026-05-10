@@ -16,9 +16,9 @@ export default function ComparisonsPageClient({ items, featuredPosts }: Props) {
     uiLang === 'ar'
       ? {
           eyebrow: 'المقارنات',
-          title: 'كيف يختلف Madixo عن البدائل الشائعة؟',
+          title: 'Madixo مقابل البدائل اللي تستخدمها الآن.',
           description:
-            'هذه المقارنات تساعدك على فهم الفرق بين Madixo وبين الأساليب أو الأدوات القريبة، حتى تعرف متى يكون هو الخيار الأنسب لفهم الفكرة واتخاذ القرار.',
+            'شف بالضبط وين Madixo يضيف قيمة مقارنة بـ ChatGPT والجداول والملاحظات العامة — عشان تقرر هل يستاهل التغيير.',
           start: 'ابدأ التحليل',
           pricing: 'شاهد الباقات',
           open: 'افتح المقارنة',
@@ -51,9 +51,9 @@ export default function ComparisonsPageClient({ items, featuredPosts }: Props) {
         }
       : {
           eyebrow: 'Comparisons',
-          title: 'How is Madixo different from common alternatives?',
+          title: 'Madixo vs. the alternatives you are already using.',
           description:
-            'These comparisons help you understand the difference between Madixo and adjacent tools or approaches so you can see when it is the better fit for idea evaluation and decision-making.',
+            'See exactly where Madixo adds value compared to ChatGPT, spreadsheets, and generic research notes — so you can decide if it is worth switching.',
           start: 'Start analysis',
           pricing: 'See plans',
           open: 'Open comparison',
