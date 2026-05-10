@@ -5,9 +5,9 @@ import { buildAbsoluteAppUrl } from '@/lib/app-url';
 import { getServerUiLanguageFromCookie } from '@/lib/ui-language';
 
 export const metadata: Metadata = {
-  title: 'Madixo — Stop Guessing. Start Validating Your Business Idea.',
+  title: 'Madixo — The Idea Lab | Put Your Idea Under The Microscope',
   description:
-    'Madixo is an AI workspace that validates business ideas with structured analysis, early feasibility studies, and evidence-based decision making. Arabic and English.',
+    'Madixo is the AI-powered lab that validates business ideas with structured diagnostics, feasibility scans, and evidence-based verdicts. Arabic and English.',
   keywords: [
     'business idea validation',
     'feasibility study software',
@@ -24,16 +24,16 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'Madixo — Stop Guessing. Start Validating Your Business Idea.',
+    title: 'Madixo — The Idea Lab | Put Your Idea Under The Microscope',
     description:
-      'AI workspace for business idea validation. Structured analysis, feasibility studies, and evidence-based decisions. Arabic and English.',
+      'AI-powered lab for business idea validation. Structured diagnostics, feasibility scans, and evidence-based verdicts. Arabic and English.',
     url: buildAbsoluteAppUrl('/'),
     type: 'website',
   },
   twitter: {
-    title: 'Madixo — Stop Guessing. Start Validating Your Business Idea.',
+    title: 'Madixo — The Idea Lab | Put Your Idea Under The Microscope',
     description:
-      'AI workspace for business idea validation. Structured analysis, feasibility studies, and evidence-based decisions. Arabic and English.',
+      'AI-powered lab for business idea validation. Structured diagnostics, feasibility scans, and evidence-based verdicts. Arabic and English.',
   },
 };
 
