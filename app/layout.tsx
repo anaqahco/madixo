@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: '%s | Madixo',
   },
   description:
-    'Madixo is an AI opportunity analysis workspace for evaluating business ideas, generating early feasibility views, validating market demand, and identifying the clearest next move.',
+    'Stop guessing if your idea will work. Madixo validates business ideas with AI-powered analysis, early feasibility studies, and evidence-based decision making.',
   applicationName: 'Madixo',
   keywords: [
     'Madixo',
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     siteName: 'Madixo',
     title: 'Madixo',
     description:
-      'Analyze opportunities, generate early feasibility views, validate ideas, and move toward a clearer next move.',
+      'Stop guessing. Validate business ideas with AI-powered analysis, feasibility studies, and evidence-based decisions.',
     images: [
       {
         url: '/brand/madixo-logo.png',
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Madixo',
     description:
-      'Analyze opportunities, generate early feasibility views, validate ideas, and move toward a clearer next move.',
+      'Stop guessing. Validate business ideas with AI-powered analysis, feasibility studies, and evidence-based decisions.',
     images: ['/brand/madixo-logo.png'],
   },
   robots: {
