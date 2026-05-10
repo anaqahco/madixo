@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: '%s | Madixo',
   },
   description:
-    'Stop guessing if your idea will work. Madixo validates business ideas with AI-powered analysis, early feasibility studies, and evidence-based decision making.',
+    'Put your idea under the microscope. Madixo is the AI-powered lab that validates business ideas with structured diagnostics, feasibility scans, and evidence-based decisions.',
   applicationName: 'Madixo',
   keywords: [
     'Madixo',
@@ -48,9 +48,9 @@ export const metadata: Metadata = {
     type: 'website',
     url: siteUrl,
     siteName: 'Madixo',
-    title: 'Madixo',
+    title: 'Madixo — The Idea Lab',
     description:
-      'Stop guessing. Validate business ideas with AI-powered analysis, feasibility studies, and evidence-based decisions.',
+      'Put your idea under the microscope. AI-powered diagnostics, feasibility scans, and evidence-based verdicts.',
     images: [
       {
         url: '/brand/madixo-logo.png',
@@ -62,9 +62,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Madixo',
+    title: 'Madixo — The Idea Lab',
     description:
-      'Stop guessing. Validate business ideas with AI-powered analysis, feasibility studies, and evidence-based decisions.',
+      'Put your idea under the microscope. AI-powered diagnostics, feasibility scans, and evidence-based verdicts.',
     images: ['/brand/madixo-logo.png'],
   },
   robots: {
