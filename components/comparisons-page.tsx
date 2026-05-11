@@ -97,7 +97,7 @@ export default function ComparisonsPageClient({ items, featuredPosts }: Props) {
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link href="/" className="rounded-full bg-[#111827] px-4 py-3 text-sm font-semibold text-white hover:opacity-90 sm:px-6">
+          <Link href="/" className="rounded-full bg-[#0F766E] px-4 py-3 text-sm font-semibold text-white hover:bg-[#0D9488] sm:px-6">
             {copy.start}
           </Link>
           <Link href="/pricing" className="rounded-full border border-[#D9E2F0] bg-white px-4 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB] sm:px-6">
