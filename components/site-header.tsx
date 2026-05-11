@@ -96,15 +96,16 @@ export default function SiteHeader({
   ];
 
   return (
-    <div className={`mx-auto w-full ${maxWidthClass} ${className}`} ref={menuRef}>
+    <div className={`mx-auto w-full overflow-hidden ${maxWidthClass} ${className}`} ref={menuRef}>
       <div className="rounded-[20px] border border-[#E5E7EB] bg-white/95 shadow-[0_8px_30px_rgba(17,24,39,0.04)] backdrop-blur supports-[backdrop-filter]:bg-white/85 sm:rounded-[24px] md:rounded-[28px]">
 
         {/* Top bar */}
         <div
           dir={isArabic ? 'rtl' : 'ltr'}
-          className="flex min-h-[56px] items-center gap-3 px-3 py-2.5 sm:min-h-[60px] sm:gap-4 sm:px-5 sm:py-3 md:px-7 md:py-4"
+          className="flex min-h-[52px] items-center gap-2 px-3 py-2 sm:min-h-[60px] sm:gap-4 sm:px-5 sm:py-3 md:px-7 md:py-4"
         >
-          <div className="shrink-0">{logo}</div>
+          {/* Logo — force smaller on mobile via child img override */}
+          <div className="min-w-0 shrink [&_img]:!w-[120px] sm:[&_img]:!w-[170px] md:[&_img]:!w-[220px]">{logo}</div>
 
           {showPrimaryLinks ? (
             <nav className="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex">
@@ -127,24 +128,24 @@ export default function SiteHeader({
             <div className="flex-1" />
           )}
 
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <LanguageSwitcher
               value={uiLang}
               onChange={onLanguageChange}
               className="shrink-0"
             />
-            {/* Hamburger — mobile only */}
+            {/* Hamburger — mobile/tablet only */}
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] text-[#374151] transition hover:bg-[#F3F4F6] lg:hidden"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] text-[#374151] transition hover:bg-[#F3F4F6] sm:h-9 sm:w-9 lg:hidden"
               aria-label={navCopy.menu}
               aria-expanded={menuOpen}
             >
               {menuOpen ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="20" y2="17" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="20" y2="17" /></svg>
               )}
             </button>
           </div>
