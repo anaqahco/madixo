@@ -130,7 +130,7 @@ export default function SiteFooter({ uiLang }: Props) {
               >
                 <Link
                   href="/"
-                  className="inline-flex w-full justify-center rounded-full border border-[#111827] bg-[#111827] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto"
+                  className="inline-flex w-full justify-center rounded-full border border-[#0F766E] bg-[#0F766E] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0D9488] sm:w-auto"
                 >
                   {copy.cta}
                 </Link>
