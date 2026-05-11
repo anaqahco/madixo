@@ -1030,7 +1030,7 @@ export default function PricingPageClient() {
                 className={[
                   'rounded-[24px] border p-4 shadow-sm transition sm:rounded-[28px] sm:p-5',
                   plan.highlighted
-                    ? 'border-[#111827] bg-[#0F172A] text-white'
+                    ? 'border-[#0F766E] bg-gradient-to-br from-[#0F766E] to-[#064E3B] text-white'
                     : 'border-[#E5E7EB] bg-white text-[#111827]',
                 ].join(' ')}
               >
@@ -1187,8 +1187,8 @@ export default function PricingPageClient() {
                       className={[
                         'inline-flex w-full justify-center rounded-full px-5 py-3 text-sm font-semibold transition sm:w-auto',
                         plan.highlighted
-                          ? 'border border-[#111827] bg-white text-[#111827] hover:opacity-90'
-                          : 'border border-[#111827] bg-[#111827] text-white hover:opacity-90',
+                          ? 'border border-[#0F766E] bg-white text-[#0F766E] hover:opacity-90'
+                          : 'border border-[#0F766E] bg-[#0F766E] text-white hover:opacity-90',
                       ].join(' ')}
                     >
                       {primaryLabel}
