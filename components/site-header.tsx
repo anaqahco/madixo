@@ -99,6 +99,7 @@ export default function SiteHeader({
     <div className={`mx-auto w-full ${maxWidthClass} ${className}`} ref={menuRef}>
       <div className="rounded-[20px] border border-[#E5E7EB] bg-white/95 shadow-[0_8px_30px_rgba(17,24,39,0.04)] backdrop-blur supports-[backdrop-filter]:bg-white/85 sm:rounded-[24px] md:rounded-[28px]">
 
+        {/* Top bar */}
         <div
           dir={isArabic ? 'rtl' : 'ltr'}
           className="flex min-h-[56px] items-center gap-3 px-3 py-2.5 sm:min-h-[60px] sm:gap-4 sm:px-5 sm:py-3 md:px-7 md:py-4"
@@ -132,10 +133,11 @@ export default function SiteHeader({
               onChange={onLanguageChange}
               className="shrink-0"
             />
+            {/* Hamburger — mobile only */}
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] text-[#374151] transition hover:bg-[#F3F4F6]"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] text-[#374151] transition hover:bg-[#F3F4F6] lg:hidden"
               aria-label={navCopy.menu}
               aria-expanded={menuOpen}
             >
@@ -148,14 +150,23 @@ export default function SiteHeader({
           </div>
         </div>
 
+        {/* Desktop: Auth always visible */}
+        <div
+          dir={isArabic ? 'rtl' : 'ltr'}
+          className="hidden border-t border-[#EEF2F7] px-3 pb-3 pt-3 sm:px-5 md:px-7 lg:block"
+        >
+          <AuthActions uiLang={uiLang} />
+        </div>
+
+        {/* Mobile dropdown */}
         {menuOpen ? (
           <div
             dir={isArabic ? 'rtl' : 'ltr'}
-            className="border-t border-[#EEF2F7] px-3 pb-4 pt-3 sm:px-5 md:px-7"
+            className="border-t border-[#EEF2F7] px-3 pb-4 pt-3 sm:px-5 lg:hidden"
             style={{ animation: 'fadeIn 150ms ease-out' }}
           >
             {showPrimaryLinks ? (
-              <div className="mb-3 lg:hidden">
+              <div className="mb-3">
                 <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
                   {navItems.map((item) => (
                     <Link
@@ -176,7 +187,7 @@ export default function SiteHeader({
               </div>
             ) : null}
 
-            <div className={showPrimaryLinks ? 'border-t border-[#EEF2F7] pt-3 lg:border-0 lg:pt-0' : ''}>
+            <div className={showPrimaryLinks ? 'border-t border-[#EEF2F7] pt-3' : ''}>
               <AuthActions uiLang={uiLang} />
             </div>
           </div>
