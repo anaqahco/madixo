@@ -97,78 +97,66 @@ export default function SiteHeader({
 
   return (
     <div className={`mx-auto w-full ${maxWidthClass} ${className}`} ref={menuRef}>
-      <div className="overflow-hidden rounded-[24px] border border-[#E5E7EB] bg-white/95 shadow-[0_8px_30px_rgba(17,24,39,0.04)] backdrop-blur supports-[backdrop-filter]:bg-white/85 md:rounded-[28px]">
+      <div className="rounded-[20px] border border-[#E5E7EB] bg-white/95 shadow-[0_8px_30px_rgba(17,24,39,0.04)] backdrop-blur supports-[backdrop-filter]:bg-white/85 sm:rounded-[24px] md:rounded-[28px]">
 
-        {/* Top bar */}
         <div
           dir={isArabic ? 'rtl' : 'ltr'}
-          className="flex items-center justify-between px-4 py-3 sm:px-5 sm:py-3.5 md:px-7 md:py-4"
+          className="flex min-h-[56px] items-center gap-3 px-3 py-2.5 sm:min-h-[60px] sm:gap-4 sm:px-5 sm:py-3 md:px-7 md:py-4"
         >
-          {/* Logo */}
           <div className="shrink-0">{logo}</div>
 
-          {/* Desktop nav — only visible on large screens */}
           {showPrimaryLinks ? (
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={[
-                    'px-3 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap',
+                    'whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                     item.active
-                      ? 'text-[#0F766E] bg-[#CCFBF1]'
-                      : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6]',
+                      ? 'bg-[#CCFBF1] text-[#0F766E]'
+                      : 'text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#111827]',
                   ].join(' ')}
                 >
                   {item.label}
                 </Link>
               ))}
             </nav>
-          ) : null}
+          ) : (
+            <div className="flex-1" />
+          )}
 
-          {/* Right: Language + Hamburger */}
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <LanguageSwitcher
               value={uiLang}
               onChange={onLanguageChange}
               className="shrink-0"
             />
-
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] text-[#374151] transition hover:bg-[#F3F4F6] sm:h-10 sm:w-10"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] text-[#374151] transition hover:bg-[#F3F4F6]"
               aria-label={navCopy.menu}
               aria-expanded={menuOpen}
             >
               {menuOpen ? (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="4" y1="6" x2="20" y2="6" />
-                  <line x1="4" y1="12" x2="20" y2="12" />
-                  <line x1="4" y1="18" x2="20" y2="18" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="20" y2="17" /></svg>
               )}
             </button>
           </div>
         </div>
 
-        {/* Dropdown panel */}
         {menuOpen ? (
           <div
             dir={isArabic ? 'rtl' : 'ltr'}
-            className="border-t border-[#EEF2F7] px-4 py-4 sm:px-5 md:px-7"
+            className="border-t border-[#EEF2F7] px-3 pb-4 pt-3 sm:px-5 md:px-7"
             style={{ animation: 'fadeIn 150ms ease-out' }}
           >
-            {/* Nav links — always show in dropdown on mobile, hide on lg since they are in the top bar */}
             {showPrimaryLinks ? (
-              <div className="mb-4 lg:hidden">
-                <div className="grid grid-cols-2 gap-2">
+              <div className="mb-3 lg:hidden">
+                <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
                   {navItems.map((item) => (
                     <Link
                       key={item.href}
@@ -188,8 +176,7 @@ export default function SiteHeader({
               </div>
             ) : null}
 
-            {/* Auth section */}
-            <div className={showPrimaryLinks ? 'border-t border-[#EEF2F7] pt-4 lg:border-0 lg:pt-0' : ''}>
+            <div className={showPrimaryLinks ? 'border-t border-[#EEF2F7] pt-3 lg:border-0 lg:pt-0' : ''}>
               <AuthActions uiLang={uiLang} />
             </div>
           </div>
