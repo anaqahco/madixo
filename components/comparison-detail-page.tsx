@@ -76,7 +76,7 @@ export default function ComparisonDetailPageClient({
         <h1 className="mt-5 text-3xl font-bold sm:text-4xl tracking-tight text-[#111827] md:text-5xl">{localizeText(page.title, uiLang)}</h1>
         <p className="mt-5 text-base leading-7 sm:text-lg sm:leading-8 text-[#475467]">{localizeText(page.summary, uiLang)}</p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <Link href="/" className="inline-flex w-full items-center justify-center rounded-full bg-[#111827] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 sm:w-auto">{copy.start}</Link>
+          <Link href="/" className="inline-flex w-full items-center justify-center rounded-full bg-[#0F766E] px-5 py-3 text-sm font-semibold text-white hover:bg-[#0D9488] sm:w-auto">{copy.start}</Link>
           <Link href="/pricing" className="inline-flex w-full items-center justify-center rounded-full border border-[#D9E2F0] bg-white px-5 py-3 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB] sm:w-auto">{copy.pricing}</Link>
         </div>
       </div>
