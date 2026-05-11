@@ -346,15 +346,6 @@ export default function AuthActions({ uiLang }: Props) {
   const copy = COPY[uiLang];
   const nextPath = pathname || '/';
 
-  const pillBase =
-    'rounded-full border px-[13px] py-[9px] text-[13px] font-semibold leading-none transition-colors duration-200 sm:px-[15px] sm:py-[10px] sm:text-[14px]';
-  const secondaryPill =
-    'border-[#DCE4EE] bg-white text-[#374151] hover:bg-[#F8FAFC]';
-  const primaryPill =
-    'border-[#111827] bg-[#111827] text-white hover:bg-[#0F172A]';
-  const dangerPill =
-    'border-[#F8D1D1] bg-[#FFF7F7] text-[#C24141] hover:bg-[#FFF1F1]';
-
   const handleSignOut = () => {
     if (isSigningOut) return;
 
@@ -399,18 +390,23 @@ export default function AuthActions({ uiLang }: Props) {
     return <div className="h-8 sm:h-10" aria-hidden="true" />;
   }
 
+  const linkClass =
+    'flex items-center justify-center rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2.5 text-sm font-medium text-[#374151] transition-colors hover:bg-[#F3F4F6]';
+  const primaryLinkClass =
+    'flex items-center justify-center rounded-xl border border-[#111827] bg-[#111827] px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#0F172A]';
+
   if (sessionState === 'guest') {
     return (
       <div
         dir={isArabic ? 'rtl' : 'ltr'}
-        className="flex flex-wrap items-center gap-2 justify-start"
+        className="grid grid-cols-2 gap-1.5 sm:grid-cols-4"
       >
-        <Link href="/blog" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
+        <Link href="/blog" className={linkClass}>
           {copy.blog}
         </Link>
 
         {pathname !== '/pricing' ? (
-          <Link href="/pricing" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
+          <Link href="/pricing" className={linkClass}>
             {copy.pricing}
           </Link>
         ) : null}
@@ -419,14 +415,13 @@ export default function AuthActions({ uiLang }: Props) {
           <>
             <Link
               href={`/login?mode=login&next=${encodeURIComponent(nextPath)}`}
-              className={`${pillBase} whitespace-nowrap ${secondaryPill}`}
+              className={linkClass}
             >
               {copy.login}
             </Link>
-
             <Link
               href={`/login?mode=signup&next=${encodeURIComponent(nextPath)}`}
-              className={`${pillBase} whitespace-nowrap ${primaryPill}`}
+              className={primaryLinkClass}
             >
               {copy.signup}
             </Link>
@@ -443,110 +438,83 @@ export default function AuthActions({ uiLang }: Props) {
   const providerLabel = getProviderLabel(userSummary?.provider || 'email', uiLang);
 
   return (
-    <div className="flex w-full flex-col gap-3">
-      <div dir="ltr" className="flex flex-col gap-3 md:flex-row md:items-center md:gap-5 lg:gap-6">
-        <div
-          className={`w-full md:max-w-[460px] lg:max-w-[500px] md:flex-none ${
-            isArabic ? 'md:order-2' : 'md:order-1'
-          }`}
-        >
-          <div
-            dir="ltr"
-            className={`flex items-center gap-2.5 rounded-[22px] border border-[#E5E7EB] bg-white px-4 py-3 shadow-[0_6px_18px_rgba(17,24,39,0.05)] sm:gap-3 sm:px-5 sm:py-3.5 ${
-              isArabic ? 'flex-row-reverse text-right' : 'flex-row text-left'
-            }`}
-          >
-            {avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={avatarUrl}
-                alt={name || email || 'User avatar'}
-                className="h-10 w-10 rounded-full border border-[#E5E7EB] object-cover shadow-sm sm:h-11 sm:w-11"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-[#111827] text-sm font-bold text-white shadow-sm sm:h-11 sm:w-11">
-                {initials}
-              </div>
-            )}
-
-            <div className="min-w-0 flex-1 space-y-0.5">
-              <div
-                className={`flex flex-wrap items-center gap-2 ${
-                  isArabic ? 'justify-end' : 'justify-start'
-                }`}
-              >
-                <p className="truncate text-[13px] font-semibold text-[#111827] sm:text-sm">
-                  {name || email || copy.signedIn}
-                </p>
-                <span className="inline-flex items-center rounded-full bg-[#F3F4F6] px-2.5 py-0.5 text-[11px] font-semibold text-[#4B5563]">
-                  {providerLabel}
-                </span>
-              </div>
-
-              {email ? (
-                <p className="truncate text-[11px] text-[#6B7280] sm:text-xs">{email}</p>
-              ) : null}
-
-              <p className="text-[10px] font-medium text-[#6B7280] sm:text-[11px]">
-                {copy.signedInAs} {providerLabel}
-              </p>
-            </div>
+    <div dir={isArabic ? 'rtl' : 'ltr'} className="flex flex-col gap-3">
+      {/* User info — compact row */}
+      <div className="flex items-center gap-3 rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2.5 sm:px-4 sm:py-3">
+        {avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={avatarUrl}
+            alt={name || email || 'User avatar'}
+            className="h-9 w-9 shrink-0 rounded-full border border-[#E5E7EB] object-cover"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#111827] text-xs font-bold text-white">
+            {initials}
           </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold text-[#111827]">
+            {name || email || copy.signedIn}
+          </p>
+          {email ? (
+            <p className="truncate text-xs text-[#6B7280]">{email}</p>
+          ) : null}
         </div>
-
-        <div
-          dir={isArabic ? 'rtl' : 'ltr'}
-          className={`flex flex-wrap items-center gap-2 md:gap-2.5 justify-start md:flex-1 ${
-            isArabic ? 'md:order-1' : 'md:order-2'
-          }`}
-        >
-          <Link href="/blog" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
-            {copy.blog}
-          </Link>
-
-          {pathname !== '/dashboard' ? (
-            <Link href="/dashboard" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
-              {copy.dashboard}
-            </Link>
-          ) : null}
-
-          {pathname !== '/' ? (
-            <Link href="/" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
-              {copy.newScan}
-            </Link>
-          ) : null}
-
-          {pathname !== '/reports' ? (
-            <Link href="/reports" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
-              {copy.reports}
-            </Link>
-          ) : null}
-
-          {pathname !== '/compare' ? (
-            <Link href="/compare" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
-              {copy.compare}
-            </Link>
-          ) : null}
-
-          {pathname !== '/pricing' ? (
-            <Link href="/pricing" className={`${pillBase} whitespace-nowrap ${secondaryPill}`}>
-              {copy.pricing}
-            </Link>
-          ) : null}
-
-          <button
-            type="button"
-            onClick={handleSignOut}
-            disabled={isSigningOut}
-            className={`${pillBase} whitespace-nowrap ${dangerPill} ${
-              isSigningOut ? 'cursor-wait opacity-70' : ''
-            }`}
-          >
-            {isSigningOut ? copy.signingOut : copy.logout}
-          </button>
-        </div>
+        <span className="shrink-0 rounded-full bg-[#F3F4F6] px-2 py-0.5 text-[11px] font-semibold text-[#6B7280]">
+          {providerLabel}
+        </span>
       </div>
+
+      {/* Action links — clean grid */}
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+        {pathname !== '/dashboard' ? (
+          <Link href="/dashboard" className={linkClass}>
+            {copy.dashboard}
+          </Link>
+        ) : null}
+
+        {pathname !== '/' ? (
+          <Link href="/" className={linkClass}>
+            {copy.newScan}
+          </Link>
+        ) : null}
+
+        {pathname !== '/reports' ? (
+          <Link href="/reports" className={linkClass}>
+            {copy.reports}
+          </Link>
+        ) : null}
+
+        {pathname !== '/compare' ? (
+          <Link href="/compare" className={linkClass}>
+            {copy.compare}
+          </Link>
+        ) : null}
+
+        {pathname !== '/pricing' ? (
+          <Link href="/pricing" className={linkClass}>
+            {copy.pricing}
+          </Link>
+        ) : null}
+
+        <Link href="/blog" className={linkClass}>
+          {copy.blog}
+        </Link>
+      </div>
+
+      {/* Logout */}
+      <button
+        type="button"
+        onClick={handleSignOut}
+        disabled={isSigningOut}
+        className={`w-full rounded-xl border border-[#FECACA] bg-[#FEF2F2] px-3 py-2.5 text-sm font-medium text-[#DC2626] transition-colors hover:bg-[#FEE2E2] ${
+          isSigningOut ? 'cursor-wait opacity-70' : ''
+        }`}
+      >
+        {isSigningOut ? copy.signingOut : copy.logout}
+      </button>
     </div>
   );
 }
