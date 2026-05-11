@@ -59,35 +59,6 @@ export default function ContentHubShell({ children }: Props) {
         <SiteHeader uiLang={uiLang} onLanguageChange={setUiLang} logo={<MadixoLogo />} />
       </section>
 
-      <section className="px-6 pt-4">
-        <div
-          className={`mx-auto flex max-w-6xl flex-wrap items-center gap-3 ${
-            uiLang === 'ar' ? 'justify-end' : 'justify-start'
-          }`}
-        >
-          <Link
-            href="/blog"
-            className={`${pillBase} ${isBlog ? activePill : inactivePill}`}
-          >
-            {copy.blog}
-          </Link>
-
-          <Link
-            href="/use-cases"
-            className={`${pillBase} ${isUseCases ? activePill : inactivePill}`}
-          >
-            {copy.useCases}
-          </Link>
-
-          <Link
-            href="/compare-to"
-            className={`${pillBase} ${isComparisons ? activePill : inactivePill}`}
-          >
-            {copy.comparisons}
-          </Link>
-        </div>
-      </section>
-
       {children}
     </>
   );
