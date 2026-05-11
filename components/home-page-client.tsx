@@ -486,7 +486,7 @@ function PricingCard({
     <div
       className={`rounded-[28px] border p-5 shadow-sm sm:p-6 ${
         highlighted
-          ? 'border-[#111827] bg-[#111827] text-white'
+          ? 'border-[#0F766E] bg-gradient-to-br from-[#0F766E] to-[#064E3B] text-white'
           : 'border-[#D9E2F0] bg-[#F7F9FC] text-[#111827]'
       }`}
     >
@@ -505,7 +505,7 @@ function PricingCard({
 
       {highlighted ? (
         <div className="mt-4">
-          <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#111827]">
+          <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#0F766E]">
             {badgeLabel}
           </span>
         </div>
@@ -536,8 +536,8 @@ function PricingCard({
         onClick={onClick}
         className={`mt-6 w-full rounded-full px-5 py-3 text-sm font-semibold transition ${
           highlighted
-            ? 'bg-white text-[#111827] hover:opacity-90'
-            : 'bg-[#111827] text-white hover:opacity-90'
+            ? 'bg-white text-[#0F766E] hover:opacity-90'
+            : 'bg-[#0F766E] text-white hover:bg-[#0D9488]'
         }`}
       >
         {actionLabel}
@@ -863,6 +863,13 @@ export default function HomePageClient() {
     }, 250);
   };
 
+  const stepColors = [
+    { bg: 'bg-[#DBEAFE]', text: 'text-[#1D4ED8]', border: 'border-[#93C5FD]' },
+    { bg: 'bg-[#FEF3C7]', text: 'text-[#B45309]', border: 'border-[#FCD34D]' },
+    { bg: 'bg-[#CCFBF1]', text: 'text-[#0F766E]', border: 'border-[#5EEAD4]' },
+    { bg: 'bg-[#EDE9FE]', text: 'text-[#6D28D9]', border: 'border-[#C4B5FD]' },
+  ];
+
   const steps = [
     { number: 1, title: copy.step1Title, description: copy.step1Description },
     { number: 2, title: copy.step2Title, description: copy.step2Description },
@@ -1118,7 +1125,7 @@ export default function HomePageClient() {
       ) : null}
 
       <section className="mx-auto flex max-w-6xl flex-col items-center px-4 pb-12 pt-8 text-center sm:px-6 sm:pb-14 sm:pt-10 md:pt-12">
-        <span className="rounded-full border border-[#D9E2F0] bg-[#F8FAFD] px-4 py-2 text-sm font-semibold text-[#4B5563] shadow-sm">
+        <span className="rounded-full border border-[#5EEAD4] bg-[#CCFBF1] px-4 py-2 text-sm font-semibold text-[#0F766E] shadow-sm">
           {copy.heroEyebrow}
         </span>
 
@@ -1133,7 +1140,7 @@ export default function HomePageClient() {
         <div className="mt-8 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
           <button
             onClick={handleAnalyze}
-            className="cursor-pointer rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90 w-full sm:w-auto"
+            className="cursor-pointer rounded-full bg-[#0F766E] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0D9488] w-full sm:w-auto"
           >
             {copy.primaryCta}
           </button>
@@ -1148,9 +1155,11 @@ export default function HomePageClient() {
 
         <div
           ref={formSectionRef}
-          className="mt-12 w-full max-w-4xl rounded-[24px] border border-[#D9E2F0] bg-[#F7F9FC] p-4 shadow-sm sm:p-6 md:mt-14 md:rounded-[28px] md:p-8"
+          className="mt-12 w-full max-w-4xl overflow-hidden rounded-[24px] border border-[#D9E2F0] bg-[#F7F9FC] shadow-sm md:mt-14 md:rounded-[28px]"
         >
-          <p className="text-sm font-medium text-[#6B7280]">{copy.radarLabel}</p>
+          <div className="h-1.5 w-full bg-gradient-to-r from-[#0F766E] via-[#14B8A6] to-[#5EEAD4]" />
+          <div className="p-4 sm:p-6 md:p-8">
+          <p className="text-sm font-semibold text-[#0F766E]">{copy.radarLabel}</p>
           <p className="mt-3 text-sm leading-7 text-[#4B5563]">{copy.radarDescription}</p>
 
           <div className={`mt-6 grid gap-4 md:grid-cols-1 ${inputAlignClass}`}>
@@ -1245,17 +1254,18 @@ export default function HomePageClient() {
 
           <button
             onClick={handleAnalyze}
-            className="mt-6 w-full cursor-pointer rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto"
+            className="mt-6 w-full cursor-pointer rounded-full bg-[#0F766E] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0D9488] sm:w-auto"
           >
             {copy.analyzeOpportunity}
           </button>
+          </div>
         </div>
       </section>
 
 
       <section id={sectionId} className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
         <div className="text-center">
-          <p className="text-sm font-medium text-[#6B7280]">{copy.howMadixoWorks}</p>
+          <p className="text-sm font-semibold text-[#0F766E]">{copy.howMadixoWorks}</p>
           <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
             {copy.howMadixoWorks}
           </h2>
@@ -1265,26 +1275,29 @@ export default function HomePageClient() {
         </div>
 
         <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {steps.map((step) => (
+          {steps.map((step, index) => {
+            const color = stepColors[index] || stepColors[0];
+            return (
             <div
               key={step.number}
-              className="rounded-2xl border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6"
+              className={`rounded-2xl border-2 ${color.border} bg-white p-5 shadow-sm sm:p-6`}
             >
-              <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#EEF3F9] text-lg font-semibold text-[#111827]">
+              <div className={`mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full ${color.bg} text-lg font-bold ${color.text}`}>
                 {step.number}
               </div>
-              <h3 className="text-2xl font-semibold">{step.title}</h3>
+              <h3 className="text-xl font-bold sm:text-2xl">{step.title}</h3>
               <p className="mt-4 text-base leading-7 text-[#4B5563] sm:text-lg sm:leading-8">
                 {step.description}
               </p>
             </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
         <div className="text-center">
-          <p className="text-sm font-medium text-[#6B7280]">{copy.trustEyebrow}</p>
+          <p className="text-sm font-semibold text-[#0F766E]">{copy.trustEyebrow}</p>
           <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
             {copy.trustTitle}
           </h2>
@@ -1297,7 +1310,7 @@ export default function HomePageClient() {
           {trustCards.map((card) => (
             <div
               key={card.title}
-              className="rounded-2xl border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6"
+              className="rounded-2xl border border-[#D9E2F0] border-l-4 border-l-[#14B8A6] bg-white p-5 shadow-sm sm:p-6"
             >
               <h3 className="text-xl font-semibold tracking-tight text-[#111827] sm:text-2xl">
                 {card.title}
@@ -1310,7 +1323,7 @@ export default function HomePageClient() {
         </div>
 
         <div className="mt-8 rounded-[28px] border border-[#D9E2F0] bg-[#F7F9FC] p-5 shadow-sm sm:p-6">
-          <p className="text-sm font-semibold text-[#6B7280]">{copy.builtForTitle}</p>
+          <p className="text-sm font-semibold text-[#0F766E]">{copy.builtForTitle}</p>
           <div className="mt-4 flex flex-wrap justify-center gap-3">
             {fitItems.map((item) => (
               <span
@@ -1325,9 +1338,9 @@ export default function HomePageClient() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
-        <div className="rounded-[28px] border border-[#111827] bg-[#111827] p-5 shadow-sm sm:p-6 md:p-8">
+        <div className="rounded-[28px] border border-[#0F766E] bg-gradient-to-br from-[#111827] to-[#064E3B] p-5 shadow-lg sm:p-6 md:p-8">
           <div className="text-center">
-            <p className="text-sm font-medium text-white/60">{copy.chatgptEyebrow}</p>
+            <p className="text-sm font-medium text-[#5EEAD4]">{copy.chatgptEyebrow}</p>
             <h2 className="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
               {copy.chatgptTitle}
             </h2>
@@ -1344,7 +1357,7 @@ export default function HomePageClient() {
             ].map((card) => (
               <div
                 key={card.title}
-                className="rounded-2xl border border-white/15 bg-white/10 p-5 sm:p-6"
+                className="rounded-2xl border border-[#14B8A6]/30 bg-white/10 p-5 backdrop-blur sm:p-6"
               >
                 <h3 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
                   {card.title}
@@ -1360,7 +1373,7 @@ export default function HomePageClient() {
 
       <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
         <div className="text-center">
-          <p className="text-sm font-medium text-[#6B7280]">{copy.pricingEyebrow}</p>
+          <p className="text-sm font-semibold text-[#0F766E]">{copy.pricingEyebrow}</p>
           <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
             {copy.pricingTitle}
           </h2>
@@ -1388,7 +1401,7 @@ export default function HomePageClient() {
 
       <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
         <div className="text-center">
-          <p className="text-sm font-medium text-[#6B7280]">{copy.valueEyebrow}</p>
+          <p className="text-sm font-semibold text-[#0F766E]">{copy.valueEyebrow}</p>
           <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] sm:text-3xl md:text-4xl">
             {copy.valueTitle}
           </h2>
@@ -1417,7 +1430,7 @@ export default function HomePageClient() {
       <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6 sm:pb-16">
         <div className="rounded-[24px] border border-[#D9E2F0] bg-[#F8FAFD] p-5 shadow-sm md:p-6">
           <div className="text-center">
-            <p className="text-sm font-medium text-[#6B7280]">{copy.contentEyebrow}</p>
+            <p className="text-sm font-semibold text-[#0F766E]">{copy.contentEyebrow}</p>
             <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#111827] md:text-3xl">
               {copy.contentTitle}
             </h2>
@@ -1447,7 +1460,7 @@ export default function HomePageClient() {
                 <div className="mt-5 flex flex-wrap gap-3">
                   <Link
                     href={item.href}
-                    className="inline-flex rounded-full border border-[#111827] bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                    className="inline-flex rounded-full border border-[#0F766E] bg-[#0F766E] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0D9488]"
                   >
                     {item.cta}
                   </Link>
@@ -1502,7 +1515,7 @@ export default function HomePageClient() {
 
         <button
           onClick={scrollToIdeaForm}
-          className="mt-8 cursor-pointer rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+          className="mt-8 cursor-pointer rounded-full bg-[#0F766E] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0D9488]"
         >
           {copy.primaryCta}
         </button>
