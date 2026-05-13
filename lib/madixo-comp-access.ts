@@ -7,11 +7,12 @@ type UserLike = {
   id?: string | null;
   email?: string | null;
   user_metadata?: Record<string, unknown> | null;
+  app_metadata?: Record<string, unknown> | null;
 };
 
 export type MadixoComplimentaryAccess = {
   plan: Exclude<MadixoPlan, 'free'>;
-  source: 'metadata' | 'env_email' | 'env_user_id';
+  source: 'app_metadata' | 'env_email' | 'env_user_id';
   expiresAt: string | null;
 };
 
@@ -51,7 +52,21 @@ function isFutureIsoDate(value: string | null) {
   return timestamp > Date.now();
 }
 
-function readComplimentaryPlanFromMetadata(
+/**
+ * SECURITY: Reads a complimentary grant ONLY from app_metadata.
+ *
+ * Previously we read this from user_metadata, but user_metadata is reachable
+ * via `supabase.auth.updateUser({ data: ... })` from the browser. That meant
+ * any logged-in user could grant themselves a 'team' plan by writing
+ * `{ madixo_comp_plan: 'team' }` into their own user_metadata.
+ *
+ * app_metadata is server-only and can be written only via the Supabase admin
+ * API (service role key), so a client cannot tamper with it.
+ *
+ * Migrating existing comp values: see the SQL block in
+ * README-phase-0-security-fixes.md.
+ */
+function readComplimentaryPlanFromAppMetadata(
   metadata: SafeMetadata
 ): MadixoComplimentaryAccess | null {
   const plan = parsePlan(getString(metadata.madixo_comp_plan));
@@ -67,15 +82,22 @@ function readComplimentaryPlanFromMetadata(
 
   return {
     plan,
-    source: 'metadata',
+    source: 'app_metadata',
     expiresAt,
   };
 }
 
+/**
+ * Env-based allowlist for complimentary access.
+ *
+ * SECURITY: Only the authenticated email/id from Supabase are checked here.
+ * We removed the previous fallback that read these from user_metadata, because
+ * a client could write any email into user_metadata.madixo_user_email_for_comp
+ * and match an entry in MADIXO_COMP_TEAM_EMAILS.
+ */
 function readComplimentaryPlanFromEnv(user: UserLike): MadixoComplimentaryAccess | null {
-  const metadata = toMetadataRecord(user.user_metadata);
-  const email = normalizeIdentity(user.email ?? getString(metadata.madixo_user_email_for_comp));
-  const userId = normalizeIdentity(user.id ?? getString(metadata.madixo_user_id_for_comp));
+  const email = normalizeIdentity(user.email);
+  const userId = normalizeIdentity(user.id);
 
   const teamEmails = parseCsvList(process.env.MADIXO_COMP_TEAM_EMAILS);
   const teamUserIds = parseCsvList(process.env.MADIXO_COMP_TEAM_USER_IDS);
@@ -107,7 +129,10 @@ export function getMadixoComplimentaryAccess(user: unknown): MadixoComplimentary
   }
 
   const typedUser = user as UserLike;
-  const metadata = toMetadataRecord(typedUser.user_metadata);
+  const appMetadata = toMetadataRecord(typedUser.app_metadata);
 
-  return readComplimentaryPlanFromMetadata(metadata) ?? readComplimentaryPlanFromEnv(typedUser);
+  return (
+    readComplimentaryPlanFromAppMetadata(appMetadata) ??
+    readComplimentaryPlanFromEnv(typedUser)
+  );
 }
