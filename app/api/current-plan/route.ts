@@ -94,21 +94,53 @@ function buildBillingFromMetadata(metadata: SafeMetadata): MadixoBillingInfo {
   };
 }
 
-function buildPayloadFromMetadata(
-  metadata: SafeMetadata,
+/**
+ * SECURITY: Plan reads happen from app_metadata first (server-only, tamper-proof),
+ * then fall back to user_metadata for users not yet migrated. The complimentary
+ * access check also receives both metadatas so it can read its grants from the
+ * secure side.
+ *
+ * Before this change, the function only saw user_metadata, which is writable
+ * from the client via supabase.auth.updateUser(). That allowed a user to set
+ * their own madixo_plan to 'team' and have the API confirm it.
+ */
+function buildPayloadFromUser(
+  user: {
+    id?: string | null;
+    email?: string | null;
+    user_metadata?: Record<string, unknown> | null;
+    app_metadata?: Record<string, unknown> | null;
+  },
   language: 'ar' | 'en'
 ): CurrentPlanPayloadShape {
-  const complimentaryAccess = getMadixoComplimentaryAccess({ user_metadata: metadata });
-  const plan = complimentaryAccess?.plan ?? parsePlan(
-    typeof metadata.madixo_plan === 'string' ? metadata.madixo_plan : null
+  const userMetadata = toMetadataRecord(user.user_metadata);
+  const appMetadata = toMetadataRecord(user.app_metadata);
+
+  const complimentaryAccess = getMadixoComplimentaryAccess({
+    id: user.id ?? null,
+    email: user.email ?? null,
+    user_metadata: userMetadata,
+    app_metadata: appMetadata,
+  });
+
+  const appPlan = parsePlan(
+    typeof appMetadata.madixo_plan === 'string' ? appMetadata.madixo_plan : null
   );
-  const normalizedPlan = plan || 'free';
-  const billing = buildBillingFromMetadata(metadata);
+  const userPlan = parsePlan(
+    typeof userMetadata.madixo_plan === 'string' ? userMetadata.madixo_plan : null
+  );
+
+  // app_metadata first, then user_metadata fallback for legacy users
+  const plan = complimentaryAccess?.plan ?? appPlan ?? userPlan ?? 'free';
+
+  // Billing identifiers (Paddle customer id etc.) stay in user_metadata for now,
+  // because the webhook writes them there for the existing client to read.
+  const billing = buildBillingFromMetadata(userMetadata);
 
   return {
-    plan: normalizedPlan,
-    label: getPlanLabel(normalizedPlan, language),
-    limits: getPlanLimits(normalizedPlan),
+    plan,
+    label: getPlanLabel(plan, language),
+    limits: getPlanLimits(plan),
     billing: complimentaryAccess && !billing.customerId
       ? { ...billing, status: 'active' }
       : billing,
@@ -142,11 +174,12 @@ async function getPayloadForRequest(
       } = await withAuthTimeout(supabase.auth.getUser(accessToken), 6000, 'AUTH_TOKEN_TIMEOUT');
 
       if (!error && user) {
-        return buildPayloadFromMetadata(
+        return buildPayloadFromUser(
           {
-            ...toMetadataRecord(user.user_metadata),
-            madixo_user_email_for_comp: user.email ?? null,
-            madixo_user_id_for_comp: user.id ?? null,
+            id: user.id,
+            email: user.email ?? null,
+            user_metadata: user.user_metadata,
+            app_metadata: user.app_metadata,
           },
           language
         );
